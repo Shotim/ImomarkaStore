@@ -36,7 +36,7 @@ public class MessageUtils {
                 .build();
     }
 
-    public static SendMessage createTextMessageWithReplyKeyboardForMainMenu(User user, String text) {
+    public static SendMessage createClientTextMessageWithReplyKeyboardForMainMenu(User user, String text) {
         final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
         final var keyboardButtonsNewApplication = new KeyboardRow();
         final var keyboardButtonsEditName = new KeyboardRow();
@@ -55,6 +55,41 @@ public class MessageUtils {
                         keyboardButtonsEditName,
                         keyboardButtonsEditPhoneNumber,
                         keyboardButtonsGetCars));
+        return SendMessage.builder()
+                .text(text)
+                .replyMarkup(replyKeyboardMarkup)
+                .chatId(user.getId().toString())
+                .build();
+    }
+
+    public static SendMessage createOwnerTextMessageWithReplyKeyBoardForMainMenu(User user, String text) {
+        final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
+
+        final var keyboardButtonsGetApplications = new KeyboardRow();
+        final var keyboardButtonGetApplications =
+                new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.owner.getApplications"));
+        keyboardButtonsGetApplications.add(keyboardButtonGetApplications);
+
+        final var keyboardButtonsGetArchivedApplications = new KeyboardRow();
+        final var keyboardButtonGetArchivedApplications =
+                new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.owner.getArchivedApplications"));
+        keyboardButtonsGetArchivedApplications.add(keyboardButtonGetArchivedApplications);
+
+        final var keyboardButtonsGetClients = new KeyboardRow();
+        final var keyboardButtonGetClients =
+                new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.owner.getClients"));
+        keyboardButtonsGetClients.add(keyboardButtonGetClients);
+
+        final var keyboardButtonsGetBlackList = new KeyboardRow();
+        final var keyboardButtonGetBlackList =
+                new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.owner.getBlackList"));
+        keyboardButtonsGetBlackList.add(keyboardButtonGetBlackList);
+        replyKeyboardMarkup.setKeyboard(List.of(
+                keyboardButtonsGetApplications,
+                keyboardButtonsGetArchivedApplications,
+                keyboardButtonsGetClients,
+                keyboardButtonsGetBlackList
+        ));
         return SendMessage.builder()
                 .text(text)
                 .replyMarkup(replyKeyboardMarkup)

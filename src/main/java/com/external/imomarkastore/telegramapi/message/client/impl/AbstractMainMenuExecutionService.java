@@ -11,7 +11,7 @@ import lombok.SneakyThrows;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyboardForMainMenu;
+import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
 
 @RequiredArgsConstructor
 public abstract class AbstractMainMenuExecutionService implements MessageExecutionService {
@@ -33,7 +33,7 @@ public abstract class AbstractMainMenuExecutionService implements MessageExecuti
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = UpdateUtils.getUserFromUpdate(update);
         final var text = messageSource.getMessage("youReturnedBackToMainMenu");
-        final var message = createTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
         inomarkaStore.execute(message);
     }
 }

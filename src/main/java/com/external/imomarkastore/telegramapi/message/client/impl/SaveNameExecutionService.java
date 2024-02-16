@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
 import static com.external.imomarkastore.constant.ClientState.SAVE_NAME;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyboardForMainMenu;
+import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -44,7 +44,7 @@ public class SaveNameExecutionService implements MessageExecutionService {
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = getUserFromUpdate(update);
         final var text = messageSource.getMessage("nameSavedSuccessfully");
-        final var message = createTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
         inomarkaStore.execute(message);
     }
 }

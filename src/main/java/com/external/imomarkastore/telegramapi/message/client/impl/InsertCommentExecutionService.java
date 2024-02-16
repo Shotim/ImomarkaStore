@@ -20,7 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import static com.external.imomarkastore.constant.ApplicationStatus.FULLY_CREATED;
 import static com.external.imomarkastore.constant.ClientState.INSERT_COMMENT;
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyboardForMainMenu;
+import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -74,7 +74,7 @@ public class InsertCommentExecutionService implements MessageExecutionService {
                 .build();
         inomarkaStore.execute(deleteMessage);
         final var text = messageSource.getMessage("applicationCreated");
-        final var message = createTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
         inomarkaStore.execute(message);
 
         clientInfo.setAdditionalJsonDataForNextOperations(null);
