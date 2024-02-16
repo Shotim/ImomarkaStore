@@ -39,6 +39,25 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                 .orElseThrow(InternalError::new);
     }
 
+    @Override
+    public void updateJsonData(String jsonData) {
+        getOwnerInfoOptional()
+                .ifPresentOrElse(
+                        ownerInfo -> {
+                            ownerInfo.setJsonData(jsonData);
+                            repository.save(ownerInfo);
+                        }, () -> {
+                            throw new InternalError();
+                        });
+    }
+
+    @Override
+    public String getJsonData() {
+        return getOwnerInfoOptional()
+                .map(OwnerInfo::getJsonData)
+                .orElseThrow(InternalError::new);
+    }
+
     private Optional<OwnerInfo> getOwnerInfoOptional() {
         return repository.findAll().stream()
                 .findFirst();

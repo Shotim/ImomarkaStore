@@ -17,4 +17,5 @@ public class OwnerInfo {
     private Long telegramUserId;
     @Enumerated(STRING)
     private OwnerState ownerState;
+    private String jsonData;
 }
