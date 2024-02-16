@@ -3,6 +3,7 @@ package com.external.imomarkastore;
 import com.external.imomarkastore.constant.ClientState;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ClientInfoService;
+import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
@@ -35,31 +36,34 @@ import static org.hibernate.internal.util.collections.CollectionHelper.isNotEmpt
 public class InomarkaStore extends TelegramLongPollingBot {
 
     private final String botName;
-    private final Map<ClientState, List<ClientState>> stateMatrix;
+    private final Map<ClientState, List<ClientState>> clientStateMatrix;
     private final Map<String, ClientState> buttonClientToStateMatrix;
-    private final ClientInfoService clientInfoService;
     private Map<String, CommandExecutionService> clientCommandExecutionServicesByCommands;
     private final List<ClientState> callbackExecutionClientStates;
     private final List<ClientState> messageExecutionClientStates;
     private Map<ClientState, MessageExecutionService> messageExecutionServicesByClientState;
+    private final ClientInfoService clientInfoService;
+    private final OwnerInfoService ownerInfoService;
     private final BotMessageSource messageSource;
 
     public InomarkaStore(@Value("${bot.token}") String botToken,
-                         @Value("${bot.name}") String botName,
-                         @Qualifier("stateMatrix") Map<ClientState, List<ClientState>> stateMatrix,
                          ClientInfoService clientInfoService,
+                         BotMessageSource messageSource,
+                         OwnerInfoService ownerInfoService,
+                         @Value("${bot.name}") String botName,
+                         @Qualifier("clientStateMatrix") Map<ClientState, List<ClientState>> clientStateMatrix,
                          @Qualifier("buttonToClientStateMatrix") Map<String, ClientState> buttonClientToStateMatrix,
                          @Qualifier("callbackExecutionClientStates") List<ClientState> callbackExecutionClientStates,
-                         @Qualifier("messageExecutionClientStates") List<ClientState> messageExecutionClientStates,
-                         BotMessageSource messageSource) {
+                         @Qualifier("messageExecutionClientStates") List<ClientState> messageExecutionClientStates) {
         super(botToken);
         this.botName = botName;
-        this.stateMatrix = stateMatrix;
+        this.clientStateMatrix = clientStateMatrix;
         this.clientInfoService = clientInfoService;
         this.buttonClientToStateMatrix = buttonClientToStateMatrix;
         this.callbackExecutionClientStates = callbackExecutionClientStates;
         this.messageExecutionClientStates = messageExecutionClientStates;
         this.messageSource = messageSource;
+        this.ownerInfoService = ownerInfoService;
     }
 
     @Autowired
@@ -86,6 +90,18 @@ public class InomarkaStore extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         final var user = getUserFromUpdate(update);
+        if (ownerInfoService.isOwner(user.getId())) {
+            processOwnerAction(update);
+        } else {
+            processClientAction(update, user);
+        }
+    }
+
+    private void processOwnerAction(Update update) {
+
+    }
+
+    private void processClientAction(Update update, User user) {
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
         if (update.hasCallbackQuery()) {
             processCallBacks(update, clientInfoOptional);
@@ -109,7 +125,7 @@ public class InomarkaStore extends TelegramLongPollingBot {
         if (clientInfoOptional.isPresent()) {
             final var clientInfo = clientInfoOptional.get();
             final var clientInfoState = clientInfo.getState();
-            final var nextStates = stateMatrix.get(clientInfoState);
+            final var nextStates = clientStateMatrix.get(clientInfoState);
             final var messageNextStates = nextStates.stream()
                     .filter(messageExecutionClientStates::contains).toList();
             final var buttonState = isNotBlank(text) ? buttonClientToStateMatrix.get(text) : null;
@@ -139,7 +155,7 @@ public class InomarkaStore extends TelegramLongPollingBot {
         if (clientInfoOptional.isPresent()) {
             final var clientInfo = clientInfoOptional.get();
             final var clientInfoState = clientInfo.getState();
-            final var nextStates = stateMatrix.get(clientInfoState);
+            final var nextStates = clientStateMatrix.get(clientInfoState);
             final var callbackNextStates = nextStates.stream()
                     .filter(callbackExecutionClientStates::contains)
                     .toList();
