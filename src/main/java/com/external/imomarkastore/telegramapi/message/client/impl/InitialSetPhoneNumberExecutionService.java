@@ -16,9 +16,9 @@ import java.util.stream.Stream;
 
 import static com.external.imomarkastore.constant.ClientState.INITIAL_SET_PHONE_NUMBER;
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
+import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithRemoveKeyBoard;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static com.external.imomarkastore.util.ValidationUtils.formatAndValidatePhoneNumber;
@@ -68,7 +68,7 @@ public class InitialSetPhoneNumberExecutionService implements MessageExecutionSe
         final var message = createTextMessageForUser(user, outputText);
         inomarkaStore.execute(message);
         final var text = "Теперь Вы можете создать запрос, который Вас интересует.";
-        final var sendMessage = createTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var sendMessage = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
         inomarkaStore.execute(sendMessage);
     }
 }

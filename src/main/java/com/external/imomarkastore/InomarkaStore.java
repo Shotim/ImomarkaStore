@@ -1,10 +1,12 @@
 package com.external.imomarkastore;
 
 import com.external.imomarkastore.constant.ClientState;
+import com.external.imomarkastore.constant.OwnerState;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
+import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.SneakyThrows;
@@ -42,6 +44,8 @@ public class InomarkaStore extends TelegramLongPollingBot {
     private final List<ClientState> callbackExecutionClientStates;
     private final List<ClientState> messageExecutionClientStates;
     private Map<ClientState, MessageExecutionService> messageExecutionServicesByClientState;
+    private final Map<String, OwnerState> commandToOwnerStateMatrix;
+    private Map<String, OwnerActionExecuteService> ownerActionExecutionServicesByStateName;
     private final ClientInfoService clientInfoService;
     private final OwnerInfoService ownerInfoService;
     private final BotMessageSource messageSource;
@@ -54,7 +58,8 @@ public class InomarkaStore extends TelegramLongPollingBot {
                          @Qualifier("clientStateMatrix") Map<ClientState, List<ClientState>> clientStateMatrix,
                          @Qualifier("buttonToClientStateMatrix") Map<String, ClientState> buttonClientToStateMatrix,
                          @Qualifier("callbackExecutionClientStates") List<ClientState> callbackExecutionClientStates,
-                         @Qualifier("messageExecutionClientStates") List<ClientState> messageExecutionClientStates) {
+                         @Qualifier("messageExecutionClientStates") List<ClientState> messageExecutionClientStates,
+                         @Qualifier("commandToOwnerStateMatrix") Map<String, OwnerState> commandToOwnerStateMatrix) {
         super(botToken);
         this.botName = botName;
         this.clientStateMatrix = clientStateMatrix;
@@ -64,6 +69,7 @@ public class InomarkaStore extends TelegramLongPollingBot {
         this.messageExecutionClientStates = messageExecutionClientStates;
         this.messageSource = messageSource;
         this.ownerInfoService = ownerInfoService;
+        this.commandToOwnerStateMatrix = commandToOwnerStateMatrix;
     }
 
     @Autowired
@@ -82,6 +88,14 @@ public class InomarkaStore extends TelegramLongPollingBot {
         this.messageExecutionServicesByClientState = messageExecutionServicesByClientState;
     }
 
+    @Autowired
+    @Lazy
+    public void setOwnerActionExecutionServicesByStateName(
+            @Qualifier("ownerActionExecutionServicesByStateName")
+            Map<String, OwnerActionExecuteService> ownerActionExecutionServicesByStateName) {
+        this.ownerActionExecutionServicesByStateName = ownerActionExecutionServicesByStateName;
+    }
+
     @Override
     public String getBotUsername() {
         return botName;
@@ -98,29 +112,47 @@ public class InomarkaStore extends TelegramLongPollingBot {
     }
 
     private void processOwnerAction(Update update) {
+        final var text = getTextFromUpdate(update);
+        final var ownerState = commandToOwnerStateMatrix.get(text);
+        if (nonNull(ownerState)) {
+            processOwnerCommand(update, ownerState);
+        } else {
+            // TODO
+        }
 
+    }
+
+    private void processOwnerCommand(Update update, OwnerState ownerState) {
+        final var ownerActionExecuteService = ownerActionExecutionServicesByStateName.get(ownerState.name());
+        if (nonNull(ownerActionExecuteService)) {
+            ownerActionExecuteService.execute(update);
+        } else {
+            final var errorText = messageSource.getMessage("error.botConfig");
+            final var user = getUserFromUpdate(update);
+            sendErrorMessage(user, errorText);
+        }
     }
 
     private void processClientAction(Update update, User user) {
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
         if (update.hasCallbackQuery()) {
-            processCallBacks(update, clientInfoOptional);
+            processClientCallBacks(update, clientInfoOptional);
         } else {
-            processMessagesAndCommands(update, clientInfoOptional);
+            processClientMessagesAndCommands(update, clientInfoOptional);
         }
     }
 
-    private void processMessagesAndCommands(Update update, Optional<ClientInfo> clientInfoOptional) {
+    private void processClientMessagesAndCommands(Update update, Optional<ClientInfo> clientInfoOptional) {
         final var text = getTextFromUpdate(update);
         final var commandExecutionService = clientCommandExecutionServicesByCommands.get(text);
         if (nonNull(commandExecutionService)) {
             commandExecutionService.execute(update);
         } else {
-            processMessages(update, clientInfoOptional, text);
+            processClientMessages(update, clientInfoOptional, text);
         }
     }
 
-    private void processMessages(Update update, Optional<ClientInfo> clientInfoOptional, String text) {
+    private void processClientMessages(Update update, Optional<ClientInfo> clientInfoOptional, String text) {
         final var user = getUserFromUpdate(update);
         if (clientInfoOptional.isPresent()) {
             final var clientInfo = clientInfoOptional.get();
@@ -149,7 +181,7 @@ public class InomarkaStore extends TelegramLongPollingBot {
         }
     }
 
-    private void processCallBacks(Update update, Optional<ClientInfo> clientInfoOptional) {
+    private void processClientCallBacks(Update update, Optional<ClientInfo> clientInfoOptional) {
         final var data = update.getCallbackQuery().getData();
         final var callbackState = data.substring(0, data.indexOf(":"));
         if (clientInfoOptional.isPresent()) {

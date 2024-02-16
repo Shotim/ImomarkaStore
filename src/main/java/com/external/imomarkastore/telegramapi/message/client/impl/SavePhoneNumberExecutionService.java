@@ -16,8 +16,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
 import static com.external.imomarkastore.constant.ClientState.SAVE_PHONE_NUMBER;
+import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithRemoveKeyBoard;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static com.external.imomarkastore.util.ValidationUtils.formatAndValidatePhoneNumber;
@@ -67,7 +67,7 @@ public class SavePhoneNumberExecutionService implements MessageExecutionService 
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = getUserFromUpdate(update);
         final var text = messageSource.getMessage("phoneNumberSavedSuccessfully");
-        final var message = createTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
         inomarkaStore.execute(message);
     }
 }
