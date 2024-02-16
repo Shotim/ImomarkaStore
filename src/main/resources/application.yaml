@@ -1,0 +1,12 @@
+bot:
+  name: Магазин автозапчастей «Иномарка» г. Костомукша
+  token: 6313061261:AAGfXDn13s9-cnpvzDzAKVAhiz4obPXjlyo
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: postgres
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/inomarkaStore
+  jpa:
+    hibernate:
+      ddl-auto: update
