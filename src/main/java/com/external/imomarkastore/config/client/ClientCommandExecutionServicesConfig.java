@@ -1,4 +1,4 @@
-package com.external.imomarkastore.config;
+package com.external.imomarkastore.config.client;
 
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 @Configuration
-public class CommandExecutionServicesConfig {
+public class ClientCommandExecutionServicesConfig {
 
     @Bean("clientCommandExecutionServicesByCommands")
     public Map<String, CommandExecutionService> messageExecutionServicesByCommands(

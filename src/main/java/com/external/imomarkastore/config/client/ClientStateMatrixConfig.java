@@ -1,4 +1,4 @@
-package com.external.imomarkastore.config;
+package com.external.imomarkastore.config.client;
 
 import com.external.imomarkastore.constant.ClientState;
 import org.springframework.context.annotation.Bean;
@@ -28,10 +28,10 @@ import static com.external.imomarkastore.constant.ClientState.SAVE_PHONE_NUMBER;
 import static java.util.Map.entry;
 
 @Configuration
-public class StateMatrixConfig {
+public class ClientStateMatrixConfig {
 
-    @Bean("stateMatrix")
-    public Map<ClientState, List<ClientState>> createStateMatrix() {
+    @Bean("clientStateMatrix")
+    public Map<ClientState, List<ClientState>> createClientStateMatrix() {
         return Map.ofEntries(entry(INITIAL_START, List.of(INITIAL_SET_NAME)),
                 entry(INITIAL_SET_NAME, List.of(INITIAL_SET_PHONE_NUMBER)),
                 entry(INITIAL_SET_PHONE_NUMBER, List.of(MAIN_MENU)),

@@ -1,4 +1,4 @@
-package com.external.imomarkastore.config;
+package com.external.imomarkastore.config.client;
 
 import com.external.imomarkastore.constant.ClientState;
 import com.external.imomarkastore.util.BotMessageSource;
@@ -19,7 +19,7 @@ import static com.external.imomarkastore.constant.ClientState.INSERT_COMMENT;
 
 @Configuration
 @RequiredArgsConstructor
-public class ButtonToStateConfig {
+public class ButtonToClientStateConfig {
 
     private final BotMessageSource messageSource;
 

@@ -1,4 +1,4 @@
-package com.external.imomarkastore.config;
+package com.external.imomarkastore.config.client;
 
 import com.external.imomarkastore.constant.ClientState;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
@@ -12,7 +12,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 @Configuration
-public class MessageExecutionServicesConfig {
+public class ClientMessageExecutionServicesConfig {
 
     @Bean("messageExecutionServicesByClientState")
     public Map<ClientState, MessageExecutionService> messageExecutionServicesByClientState(
