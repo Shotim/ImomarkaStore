@@ -25,13 +25,13 @@ public class ButtonToClientStateConfig {
 
     @Bean("buttonToClientStateMatrix")
     public Map<String, ClientState> buttonToClientStateMatrix() {
-        return Map.of(messageSource.getMessage("buttonName.newApplication"), CREATE_APPLICATION,
-                messageSource.getMessage("buttonName.editName"), EDIT_NAME,
-                messageSource.getMessage("buttonName.editPhoneNumber"), EDIT_PHONE_NUMBER,
-                messageSource.getMessage("buttonName.getCars"), GET_CARS,
-                messageSource.getMessage("buttonName.deleteCar"), DELETE_CAR,
-                messageSource.getMessage("buttonName.backToMainMenu"), BACK_TO_MAIN_MENU,
-                messageSource.getMessage("buttonName.chooseCarForApplication"), CHOOSE_CAR_FOR_APPLICATION,
-                messageSource.getMessage("buttonName.skipInsertComment"), INSERT_COMMENT);
+        return Map.of(messageSource.getMessage("buttonName.client.newApplication"), CREATE_APPLICATION,
+                messageSource.getMessage("buttonName.client.editName"), EDIT_NAME,
+                messageSource.getMessage("buttonName.client.editPhoneNumber"), EDIT_PHONE_NUMBER,
+                messageSource.getMessage("buttonName.client.getCars"), GET_CARS,
+                messageSource.getMessage("buttonName.client.deleteCar"), DELETE_CAR,
+                messageSource.getMessage("buttonName.client.backToMainMenu"), BACK_TO_MAIN_MENU,
+                messageSource.getMessage("buttonName.client.chooseCarForApplication"), CHOOSE_CAR_FOR_APPLICATION,
+                messageSource.getMessage("buttonName.client.skipInsertComment"), INSERT_COMMENT);
     }
 }

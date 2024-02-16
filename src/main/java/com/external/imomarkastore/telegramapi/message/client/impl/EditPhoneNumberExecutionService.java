@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.message.impl;
+package com.external.imomarkastore.telegramapi.message.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.constant.ClientState;
@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
-import static com.external.imomarkastore.constant.ClientState.EDIT_NAME;
+import static com.external.imomarkastore.constant.ClientState.EDIT_PHONE_NUMBER;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithRemoveKeyBoard;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -21,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
-public class EditNameExecutionService implements MessageExecutionService {
+public class EditPhoneNumberExecutionService implements MessageExecutionService {
 
     private final ClientInfoService clientInfoService;
     private final InomarkaStore inomarkaStore;
@@ -29,7 +29,7 @@ public class EditNameExecutionService implements MessageExecutionService {
 
     @Override
     public ClientState getState() {
-        return EDIT_NAME;
+        return EDIT_PHONE_NUMBER;
     }
 
     @Override
@@ -40,10 +40,10 @@ public class EditNameExecutionService implements MessageExecutionService {
     @Override
     @SneakyThrows
     public void sendMessages(Update update, ClientInfo clientInfo) {
-        final var clientInfoName = isBlank(clientInfo.getName()) ? EMPTY : clientInfo.getName();
-        final var text = messageSource.getMessage("changeName",
-                List.of(clientInfoName).toArray());
-        clientInfo.setState(EDIT_NAME);
+        final var phoneNumber = isBlank(clientInfo.getPhoneNumber()) ? EMPTY : clientInfo.getPhoneNumber();
+        final var text = messageSource.getMessage("changePhoneNumber",
+                List.of(phoneNumber).toArray());
+        clientInfo.setState(EDIT_PHONE_NUMBER);
         clientInfoService.update(clientInfo);
         final var user = getUserFromUpdate(update);
         final var message = createTextMessageForUserWithRemoveKeyBoard(user, text);

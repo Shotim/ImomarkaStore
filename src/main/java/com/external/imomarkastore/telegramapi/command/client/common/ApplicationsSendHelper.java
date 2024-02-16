@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.command.common;
+package com.external.imomarkastore.telegramapi.command.client.common;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.model.Application;

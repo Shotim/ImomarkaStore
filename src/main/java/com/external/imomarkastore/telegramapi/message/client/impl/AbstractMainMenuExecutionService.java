@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.message.impl;
+package com.external.imomarkastore.telegramapi.message.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.model.ClientInfo;

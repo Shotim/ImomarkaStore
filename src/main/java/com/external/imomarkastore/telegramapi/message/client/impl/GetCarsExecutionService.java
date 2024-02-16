@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.message.impl;
+package com.external.imomarkastore.telegramapi.message.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.constant.ClientState;
@@ -64,7 +64,7 @@ public class GetCarsExecutionService implements MessageExecutionService {
                 if (haveOnlyArchivedApplications) {
                     final var messageWithInlineButton =
                             createTextMessageWithInlineButton(user, carDetailsText,
-                                    messageSource.getMessage("buttonName.deleteCar"),
+                                    messageSource.getMessage("buttonName.client.deleteCar"),
                                     "%s:%s".formatted(DELETE_CAR.name(), carDetails.getId()));
                     final var executed = inomarkaStore.execute(messageWithInlineButton);
                     jsonObject.add(carDetails.getId().toString(), new JsonPrimitive(executed.getMessageId()));

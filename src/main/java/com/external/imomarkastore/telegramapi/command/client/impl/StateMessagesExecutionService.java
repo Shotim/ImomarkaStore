@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.command.impl;
+package com.external.imomarkastore.telegramapi.command.client.impl;
 
 import com.external.imomarkastore.constant.ClientState;
 import com.external.imomarkastore.model.ClientInfo;

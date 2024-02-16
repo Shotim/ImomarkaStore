@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.message.impl;
+package com.external.imomarkastore.telegramapi.message.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.constant.ClientState;
@@ -66,7 +66,7 @@ public class CreateApplicationExecutionService implements MessageExecutionServic
                 final var carDetailsText = carDetailsService.getCarDetailsPayload(carDetails);
                 final var messageWithInlineButton = createTextMessageWithInlineButton
                         (user, carDetailsText,
-                                messageSource.getMessage("buttonName.chooseCarForApplication"),
+                                messageSource.getMessage("buttonName.client.chooseCarForApplication"),
                                 "%s:%s".formatted(CHOOSE_CAR_FOR_APPLICATION.name(), carDetails.getId()));
                 final var executed = inomarkaStore.execute(messageWithInlineButton);
                 messageIds.add(executed.getMessageId());

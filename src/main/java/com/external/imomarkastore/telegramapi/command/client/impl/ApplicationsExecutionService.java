@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.command.impl;
+package com.external.imomarkastore.telegramapi.command.client.impl;
 
 import com.external.imomarkastore.constant.ClientState;
 import com.external.imomarkastore.model.Application;
@@ -6,7 +6,7 @@ import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ApplicationService;
 import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
-import com.external.imomarkastore.telegramapi.command.common.ApplicationsSendHelper;
+import com.external.imomarkastore.telegramapi.command.client.common.ApplicationsSendHelper;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.SneakyThrows;

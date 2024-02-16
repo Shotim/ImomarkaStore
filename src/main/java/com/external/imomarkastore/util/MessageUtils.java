@@ -42,10 +42,10 @@ public class MessageUtils {
         final var keyboardButtonsEditName = new KeyboardRow();
         final var keyboardButtonsEditPhoneNumber = new KeyboardRow();
         final var keyboardButtonsGetCars = new KeyboardRow();
-        final var keyboardButtonNewApplication = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.newApplication"));
-        final var keyboardButtonEditName = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.editName"));
-        final var keyboardButtonEditPhoneNumber = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.editPhoneNumber"));
-        final var keyboardButtonGetCars = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.getCars"));
+        final var keyboardButtonNewApplication = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.client.newApplication"));
+        final var keyboardButtonEditName = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.client.editName"));
+        final var keyboardButtonEditPhoneNumber = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.client.editPhoneNumber"));
+        final var keyboardButtonGetCars = new KeyboardButton(MESSAGE_SOURCE.getMessage("buttonName.client.getCars"));
         keyboardButtonsNewApplication.add(keyboardButtonNewApplication);
         keyboardButtonsEditName.add(keyboardButtonEditName);
         keyboardButtonsEditPhoneNumber.add(keyboardButtonEditPhoneNumber);
@@ -79,7 +79,7 @@ public class MessageUtils {
         final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
         final var keyboardRow = new KeyboardRow();
         final var keyboardButton = new KeyboardButton();
-        keyboardButton.setText(MESSAGE_SOURCE.getMessage("buttonName.backToMainMenu"));
+        keyboardButton.setText(MESSAGE_SOURCE.getMessage("buttonName.client.backToMainMenu"));
         keyboardRow.add(keyboardButton);
         replyKeyboardMarkup.setKeyboard(List.of(keyboardRow));
         return SendMessage.builder()

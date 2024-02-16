@@ -1,4 +1,4 @@
-package com.external.imomarkastore.telegramapi.message.impl;
+package com.external.imomarkastore.telegramapi.message.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.constant.ClientState;
@@ -65,7 +65,7 @@ public class InsertMainPurposeExecutionService implements MessageExecutionServic
         final var application = applicationService
                 .findFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
         final var message = createTextMessageWithInlineButton(user, text,
-                messageSource.getMessage("buttonName.skipInsertComment"),
+                messageSource.getMessage("buttonName.client.skipInsertComment"),
                 "%s:%s".formatted(INSERT_COMMENT.name(), application.getId()));
         final var messageId = inomarkaStore.execute(message).getMessageId();
         final var jsonObject = new JsonObject();
