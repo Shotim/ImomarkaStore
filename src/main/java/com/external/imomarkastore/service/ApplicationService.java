@@ -18,6 +18,7 @@ public interface ApplicationService {
 
     List<Application> getFullyCreatedApplicationsForClient(ClientInfo clientInfo);
     List<Application> getFullyCreatedApplications();
+    List<Application> getArchivedApplications();
 
     List<Application> getArchivedApplicationsForClient(ClientInfo clientInfo);
 

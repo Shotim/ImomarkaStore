@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
-import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
+import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLICATIONS;
+import static com.external.imomarkastore.constant.OwnerState.RESTORE_APPLICATION;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
 @RequiredArgsConstructor
-public class OwnerApplicationsExecutionService implements OwnerActionExecuteService {
-
+public class OwnerArchiveApplicationsExecutionService implements OwnerActionExecuteService {
     private final ApplicationService applicationService;
     private final OwnerInfoService ownerInfoService;
     private final BotMessageSource messageSource;
@@ -28,26 +28,26 @@ public class OwnerApplicationsExecutionService implements OwnerActionExecuteServ
 
     @Override
     public String getCommand() {
-        return GET_APPLICATIONS.name();
+        return GET_ARCHIVED_APPLICATIONS.name();
     }
 
     @Override
     @SneakyThrows
     public void execute(Update update) {
         final var user = getUserFromUpdate(update);
-        final var applications = applicationService.getFullyCreatedApplications();
+        final var applications = applicationService.getArchivedApplications();
         final var jsonObject = new JsonObject();
         if (applications.isEmpty()) {
-            applicationSendHelper.sendApplicationsMessageForOwner("owner.youDoNotHaveActiveApplications", user, jsonObject);
+            applicationSendHelper.sendApplicationsMessageForOwner("owner.youDoNotHaveArchiveApplications", user, jsonObject);
         } else {
-            applicationSendHelper.sendApplicationsMessageForOwner("owner.yourActiveApplications", user, jsonObject);
+            applicationSendHelper.sendApplicationsMessageForOwner("owner.yourArchiveApplications", user, jsonObject);
             for (Application application : applications) {
                 final var messageIds = new JsonArray();
                 jsonObject.add(application.getId().toString(), messageIds);
-                final var archiveApplicationButtonName =
-                        messageSource.getMessage("buttonName.owner.archiveApplication");
-                final var callbackData = "%s:%s".formatted(MOVE_APPLICATION_TO_ARCHIVE, application.getId());
-                applicationSendHelper.createAndSendApplicationMessage(user, application, messageIds, archiveApplicationButtonName, callbackData);
+                final var restoreApplicationButtonName =
+                        messageSource.getMessage("buttonName.owner.restoreApplication");
+                final var callbackData = "%s:%s".formatted(RESTORE_APPLICATION, application.getId());
+                applicationSendHelper.createAndSendApplicationMessage(user, application, messageIds, restoreApplicationButtonName, callbackData);
             }
         }
         ownerInfoService.updateState(GET_APPLICATIONS);

@@ -63,6 +63,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public List<Application> getArchivedApplications() {
+
+        return repository.findByStatusOrderByCreatedAtAsc(ARCHIVED);
+    }
+
+    @Override
     public List<Application> getArchivedApplicationsForClient(ClientInfo clientInfo) {
 
         return repository.findByStatusAndTelegramUserIdOrPhoneNumber(
