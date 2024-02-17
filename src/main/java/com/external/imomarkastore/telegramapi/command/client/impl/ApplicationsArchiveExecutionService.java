@@ -58,8 +58,8 @@ public class ApplicationsArchiveExecutionService extends StateMessagesExecutionS
 
         final var applicationsEmpty = applications.isEmpty();
         final var text = messageSource.getMessage(applicationsEmpty ?
-                "youDoNotHaveArchiveApplications" :
-                "yourArchiveApplications");
+                "client.youDoNotHaveArchiveApplications" :
+                "client.yourArchiveApplications");
         applicationsSendHelper.sendApplications(user, applications, text);
         super.sendMessages(update, clientInfoOptional.orElseGet(ClientInfo::new));
     }
