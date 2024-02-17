@@ -61,7 +61,7 @@ public class InitialSetPhoneNumberExecutionService implements MessageExecutionSe
     @SneakyThrows
     public void sendMessages(Update update, ClientInfo clientInfo) {
 
-        final var outputText = messageSource.getMessage("template.clientInfo",
+        final var outputText = messageSource.getMessage("template.client.clientInfo",
                 Stream.of(clientInfo.getName(), clientInfo.getPhoneNumber())
                         .map(string -> isBlank(string) ? EMPTY : string).toArray());
         final var user = getUserFromUpdate(update);

@@ -19,4 +19,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     Optional<Application> findTopByTelegramUserIdAndStatusOrderByCreatedAtDesc(Long telegramUserId, ApplicationStatus status);
 
     List<Application> findByStatusNotAndCarDetailsIdOrderById(ApplicationStatus status, UUID carDetailsId);
+
+    List<Application> findByStatusOrderByCreatedAtAsc(ApplicationStatus status);
 }

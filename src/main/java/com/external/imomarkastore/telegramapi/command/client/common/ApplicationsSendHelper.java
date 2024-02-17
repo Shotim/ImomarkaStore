@@ -36,7 +36,7 @@ public class ApplicationsSendHelper {
 
         if (!applications.isEmpty()) {
             for (Application application : applications) {
-                final var applicationPayload = applicationService.getApplicationPayload(application);
+                final var applicationPayload = applicationService.getApplicationPayloadForClient(application);
                 final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
                 final var photoIds = Stream.of(
                                 Optional.ofNullable(application.getMainPurposePhotoId()),

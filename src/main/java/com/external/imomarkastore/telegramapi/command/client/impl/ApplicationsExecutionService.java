@@ -58,8 +58,8 @@ public class ApplicationsExecutionService extends StateMessagesExecutionService 
 
         final var applicationsEmpty = applications.isEmpty();
         final var text = messageSource.getMessage(applicationsEmpty ?
-                "youDoNotHaveActiveApplications" :
-                "yourActiveApplications");
+                "client.youDoNotHaveActiveApplications" :
+                "client.yourActiveApplications");
         applicationsSendHelper.sendApplications(user, applications, text);
         super.sendMessages(update, clientInfoOptional.orElseGet(ClientInfo::new));
     }

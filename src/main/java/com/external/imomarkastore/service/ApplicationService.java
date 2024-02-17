@@ -17,6 +17,7 @@ public interface ApplicationService {
     Application update(Application application);
 
     List<Application> getFullyCreatedApplicationsForClient(ClientInfo clientInfo);
+    List<Application> getFullyCreatedApplications();
 
     List<Application> getArchivedApplicationsForClient(ClientInfo clientInfo);
 
@@ -24,7 +25,8 @@ public interface ApplicationService {
 
     Application findFirstInProgressByTelegramUserId(Long telegramUserId);
 
-    String getApplicationPayload(Application application);
+    String getApplicationPayloadForClient(Application application);
+    String getApplicationPayloadForOwner(Application application);
 
     List<Application> updateAll(List<Application> applications);
 

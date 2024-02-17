@@ -6,6 +6,7 @@ import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.repository.ApplicationRepository;
 import com.external.imomarkastore.service.ApplicationService;
 import com.external.imomarkastore.service.CarDetailsService;
+import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository repository;
     private final CarDetailsService carDetailsService;
+    private final ClientInfoService clientInfoService;
     private final BotMessageSource messageSource;
 
     @Override
@@ -56,6 +58,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public List<Application> getFullyCreatedApplications() {
+        return repository.findByStatusOrderByCreatedAtAsc(FULLY_CREATED);
+    }
+
+    @Override
     public List<Application> getArchivedApplicationsForClient(ClientInfo clientInfo) {
 
         return repository.findByStatusAndTelegramUserIdOrPhoneNumber(
@@ -74,18 +81,40 @@ public class ApplicationServiceImpl implements ApplicationService {
                 telegramUserId, CREATION_IN_PROGRESS).orElseThrow(IllegalArgumentException::new);
     }
 
-    public String getApplicationPayload(Application application) {
+    public String getApplicationPayloadForClient(Application application) {
         final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
         final var carDetails = carDetailsOptional
                 .map(CarDetails::getDetails).orElse(EMPTY);
         final var vinNumber = carDetailsOptional.map(CarDetails::getVinNumber).orElse(EMPTY);
-        return messageSource.getMessage("template.application", Stream.of(
+        return messageSource.getMessage("template.client.application", Stream.of(
                         application.getId().toString(),
                         carDetails,
                         vinNumber,
                         application.getMainPurpose(),
                         application.getComment(),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()))
+                .map(string -> isBlank(string) ? EMPTY : string)
+                .toArray());
+    }
+
+    @Override
+    public String getApplicationPayloadForOwner(Application application) {
+        final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
+        final var carDetails = carDetailsOptional
+                .map(CarDetails::getDetails).orElse(EMPTY);
+        final var vinNumber = carDetailsOptional.map(CarDetails::getVinNumber).orElse(EMPTY);
+        final var clientInfoOptional = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
+        final var clientName = clientInfoOptional.map(ClientInfo::getName).orElse(EMPTY);
+        final var clientPhoneNumber = clientInfoOptional.map(ClientInfo::getPhoneNumber).orElse(EMPTY);
+        return messageSource.getMessage("template.owner.application", Stream.of(
+                        application.getId().toString(),
+                        carDetails,
+                        vinNumber,
+                        application.getMainPurpose(),
+                        application.getComment(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()),
+                        clientName,
+                        clientPhoneNumber)
                 .map(string -> isBlank(string) ? EMPTY : string)
                 .toArray());
     }

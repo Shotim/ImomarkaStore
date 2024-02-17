@@ -19,7 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import static com.external.imomarkastore.constant.ClientState.DELETE_CAR;
 import static com.external.imomarkastore.constant.ClientState.GET_CARS;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithButtonBackToMainMenu;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithButtonBackToMainMenuForClient;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -53,7 +53,7 @@ public class GetCarsExecutionService implements MessageExecutionService {
         final var user = getUserFromUpdate(update);
         if (!carDetailsList.isEmpty()) {
             final var carDetailsListText = messageSource.getMessage("carDetailsList");
-            final var message = createTextMessageWithButtonBackToMainMenu(user, carDetailsListText);
+            final var message = createTextMessageWithButtonBackToMainMenuForClient(user, carDetailsListText);
             inomarkaStore.execute(message);
 
             final var jsonObject = new JsonObject();
@@ -77,7 +77,7 @@ public class GetCarsExecutionService implements MessageExecutionService {
             clientInfoService.update(clientInfo);
         } else {
             final var text = messageSource.getMessage("noActiveCarDetailsFound");
-            final var message = createTextMessageWithButtonBackToMainMenu(user, text);
+            final var message = createTextMessageWithButtonBackToMainMenuForClient(user, text);
             inomarkaStore.execute(message);
             clientInfoService.update(clientInfo);
         }

@@ -60,7 +60,7 @@ public class CarDetailsServiceImpl implements CarDetailsService {
 
     @Override
     public String getCarDetailsPayload(CarDetails carDetails) {
-        return messageSource.getMessage("template.carDetails",
+        return messageSource.getMessage("template.client.carDetails",
                 Stream.of(carDetails.getDetails(), carDetails.getVinNumber())
                         .map(string -> isBlank(string) ? EMPTY : string).toArray());
     }
