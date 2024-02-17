@@ -18,4 +18,9 @@ public class OwnerInfo {
     @Enumerated(STRING)
     private OwnerState ownerState;
     private String jsonData;
+    private String ownerName;
+    private String phoneNumber;
+    private String address;
+    private String email;
+    private String inn;
 }

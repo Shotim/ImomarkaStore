@@ -4,16 +4,22 @@ import com.external.imomarkastore.constant.OwnerState;
 import com.external.imomarkastore.model.OwnerInfo;
 import com.external.imomarkastore.repository.OwnerInfoRepository;
 import com.external.imomarkastore.service.OwnerInfoService;
+import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
 public class OwnerInfoServiceImpl implements OwnerInfoService {
 
     private final OwnerInfoRepository repository;
+    private final BotMessageSource messageSource;
 
     @Override
     public void updateState(OwnerState state) {
@@ -56,6 +62,23 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
         return getOwnerInfoOptional()
                 .map(OwnerInfo::getJsonData)
                 .orElseThrow(InternalError::new);
+    }
+
+    @Override
+    public String createContactsPayload() {
+        return getOwnerInfoOptional()
+                .map(this::getPayload)
+                .orElseThrow(InternalError::new);
+    }
+
+    private String getPayload(OwnerInfo ownerInfo) {
+        return messageSource.getMessage("shopInfo", List.of(
+                isBlank(ownerInfo.getOwnerName()) ? EMPTY : ownerInfo.getOwnerName(),
+                isBlank(ownerInfo.getPhoneNumber()) ? EMPTY : ownerInfo.getPhoneNumber(),
+                isBlank(ownerInfo.getAddress()) ? EMPTY : ownerInfo.getAddress(),
+                isBlank(ownerInfo.getEmail()) ? EMPTY : ownerInfo.getEmail(),
+                isBlank(ownerInfo.getInn()) ? EMPTY : ownerInfo.getInn()
+        ).toArray());
     }
 
     private Optional<OwnerInfo> getOwnerInfoOptional() {

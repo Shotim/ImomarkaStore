@@ -13,4 +13,6 @@ public interface OwnerInfoService {
     void updateJsonData(String jsonData);
 
     String getJsonData();
+
+    String createContactsPayload();
 }

@@ -19,10 +19,11 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.external.imomarkastore.util.MessageUtils.createInlineKeyboardMarkup;
+import static com.external.imomarkastore.util.MessageUtils.createInlineKeyBoardMarkup;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithButtonBackToMainMenuForOwner;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
 
@@ -44,8 +45,8 @@ public class ApplicationSendHelper {
                 .map(Optional::get)
                 .toList();
         final var text = applicationService.getApplicationPayloadForOwner(application);
-        final var inlineKeyboardMarkup = createInlineKeyboardMarkup(
-                archiveApplicationButtonName, callbackData);
+        final var inlineKeyboardMarkup = createInlineKeyBoardMarkup(
+                Map.of(archiveApplicationButtonName, callbackData));
         if (photoIds.size() == 1) {
             final var sendPhoto = SendPhoto.builder()
                     .caption(text)

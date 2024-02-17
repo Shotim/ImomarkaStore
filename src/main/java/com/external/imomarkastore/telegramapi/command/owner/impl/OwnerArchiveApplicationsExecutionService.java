@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.RESTORE_APPLICATION;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
@@ -50,7 +49,7 @@ public class OwnerArchiveApplicationsExecutionService implements OwnerActionExec
                 applicationSendHelper.createAndSendApplicationMessage(user, application, messageIds, restoreApplicationButtonName, callbackData);
             }
         }
-        ownerInfoService.updateState(GET_APPLICATIONS);
+        ownerInfoService.updateState(GET_ARCHIVED_APPLICATIONS);
         ownerInfoService.updateJsonData(jsonObject.toString());
     }
 }

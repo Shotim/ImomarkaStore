@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.external.imomarkastore.config.ApplicationContextHolder.getBotMessageSource;
 import static lombok.AccessLevel.PRIVATE;
@@ -37,101 +38,67 @@ public class MessageUtils {
     }
 
     public static SendMessage createClientTextMessageWithReplyKeyboardForMainMenu(User user, String text) {
-        final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
-
-        final var keyboardButtonsNewApplication = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.client.newApplication"));
-
-        final var keyboardButtonsEditName = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.client.editName"));
-
-        final var keyboardButtonsEditPhoneNumber = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.client.editPhoneNumber"));
-
-        final var keyboardButtonsGetCars = createKeyBoardRowWithOneButton(
+        final var buttonNames = List.of(
+                MESSAGE_SOURCE.getMessage("buttonName.client.newApplication"),
+                MESSAGE_SOURCE.getMessage("buttonName.client.editName"),
+                MESSAGE_SOURCE.getMessage("buttonName.client.editPhoneNumber"),
                 MESSAGE_SOURCE.getMessage("buttonName.client.getCars"));
-
-        replyKeyboardMarkup.setKeyboard(
-                List.of(keyboardButtonsNewApplication,
-                        keyboardButtonsEditName,
-                        keyboardButtonsEditPhoneNumber,
-                        keyboardButtonsGetCars));
-        return SendMessage.builder()
-                .text(text)
-                .replyMarkup(replyKeyboardMarkup)
-                .chatId(user.getId().toString())
-                .build();
+        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 
     public static SendMessage createOwnerTextMessageWithReplyKeyBoardForMainMenu(User user, String text) {
-        final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
-
-        final var keyboardButtonsGetApplications = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.owner.getApplications"));
-
-        final var keyboardButtonsGetArchivedApplications = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.owner.getArchivedApplications"));
-
-        final var keyboardButtonsGetClients = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.owner.getClients"));
-
-        final var keyboardButtonsGetBlackList = createKeyBoardRowWithOneButton(
+        final var buttonNames = List.of(
+                MESSAGE_SOURCE.getMessage("buttonName.owner.getApplications"),
+                MESSAGE_SOURCE.getMessage("buttonName.owner.getArchivedApplications"),
+                MESSAGE_SOURCE.getMessage("buttonName.owner.getClients"),
                 MESSAGE_SOURCE.getMessage("buttonName.owner.getBlackList"));
-
-        replyKeyboardMarkup.setKeyboard(List.of(
-                keyboardButtonsGetApplications,
-                keyboardButtonsGetArchivedApplications,
-                keyboardButtonsGetClients,
-                keyboardButtonsGetBlackList
-        ));
-        return SendMessage.builder()
-                .text(text)
-                .replyMarkup(replyKeyboardMarkup)
-                .chatId(user.getId().toString())
-                .build();
+        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 
     public static SendMessage createTextMessageWithInlineButton(User user, String text, String buttonText, String buttonCallbackData) {
-        final var replyMarkup = createInlineKeyboardMarkup(buttonText, buttonCallbackData);
+        return createTextMessageWithInlineButtons(user, text, Map.of(buttonText, buttonCallbackData));
+    }
+
+    public static SendMessage createTextMessageWithInlineButtons(User user, String text, Map<String, String> buttonTextToCallBackData) {
+        final var inlineKeyBoardMarkup = createInlineKeyBoardMarkup(buttonTextToCallBackData);
         return SendMessage.builder()
                 .text(text)
-                .replyMarkup(replyMarkup)
+                .replyMarkup(inlineKeyBoardMarkup)
                 .chatId(user.getId().toString())
                 .build();
     }
 
-    public static InlineKeyboardMarkup createInlineKeyboardMarkup(String buttonText, String buttonCallbackData) {
+    public static SendMessage createTextMessageWithReplyKeyBoardMarkup(User user, String text, List<String> buttonNames) {
+        final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        final var keyboardRows = buttonNames.stream().map(MessageUtils::createKeyBoardRowWithOneButton).toList();
+        replyKeyboardMarkup.setKeyboard(keyboardRows);
+        return SendMessage.builder()
+                .text(text)
+                .chatId(user.getId().toString())
+                .replyMarkup(replyKeyboardMarkup)
+                .build();
+    }
+
+    public static InlineKeyboardMarkup createInlineKeyBoardMarkup(Map<String, String> buttonTextToCallBackData) {
         final var replyMarkup = new InlineKeyboardMarkup();
-        final var keyboardButton = new InlineKeyboardButton();
-        keyboardButton.setText(buttonText);
-        keyboardButton.setCallbackData(buttonCallbackData);
-        replyMarkup.setKeyboard(List.of(List.of(keyboardButton)));
+        final var inlineButtons = buttonTextToCallBackData.entrySet().stream().map(entry -> {
+            final var button = new InlineKeyboardButton();
+            button.setText(entry.getKey());
+            button.setCallbackData(entry.getValue());
+            return List.of(button);
+        }).toList();
+        replyMarkup.setKeyboard(inlineButtons);
         return replyMarkup;
     }
 
     public static SendMessage createTextMessageWithButtonBackToMainMenuForClient(User user, String text) {
-        final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        final var keyboardRow = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.client.backToMainMenu"));
-        replyKeyboardMarkup.setKeyboard(List.of(keyboardRow));
-        return SendMessage.builder()
-                .chatId(user.getId().toString())
-                .replyMarkup(replyKeyboardMarkup)
-                .text(text)
-                .build();
+        final var buttonNames = List.of(MESSAGE_SOURCE.getMessage("buttonName.client.backToMainMenu"));
+        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 
     public static SendMessage createTextMessageWithButtonBackToMainMenuForOwner(User user, String text) {
-        final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        final var keyboardRow = createKeyBoardRowWithOneButton(
-                MESSAGE_SOURCE.getMessage("buttonName.owner.backToMainMenu"));
-
-        replyKeyboardMarkup.setKeyboard(List.of(keyboardRow));
-        return SendMessage.builder()
-                .chatId(user.getId().toString())
-                .replyMarkup(replyKeyboardMarkup)
-                .text(text)
-                .build();
+        final var buttonNames = List.of(MESSAGE_SOURCE.getMessage("buttonName.owner.backToMainMenu"));
+        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 
     private static KeyboardRow createKeyBoardRowWithOneButton(String buttonText) {
