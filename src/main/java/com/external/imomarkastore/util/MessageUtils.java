@@ -46,15 +46,6 @@ public class MessageUtils {
         return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 
-    public static SendMessage createOwnerTextMessageWithReplyKeyBoardForMainMenu(User user, String text) {
-        final var buttonNames = List.of(
-                MESSAGE_SOURCE.getMessage("buttonName.owner.getApplications"),
-                MESSAGE_SOURCE.getMessage("buttonName.owner.getArchivedApplications"),
-                MESSAGE_SOURCE.getMessage("buttonName.owner.getClients"),
-                MESSAGE_SOURCE.getMessage("buttonName.owner.getBlackList"));
-        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
-    }
-
     public static SendMessage createTextMessageWithInlineButton(User user, String text, String buttonText, String buttonCallbackData) {
         return createTextMessageWithInlineButtons(user, text, Map.of(buttonText, buttonCallbackData));
     }
@@ -89,16 +80,6 @@ public class MessageUtils {
         }).toList();
         replyMarkup.setKeyboard(inlineButtons);
         return replyMarkup;
-    }
-
-    public static SendMessage createTextMessageWithButtonBackToMainMenuForClient(User user, String text) {
-        final var buttonNames = List.of(MESSAGE_SOURCE.getMessage("buttonName.client.backToMainMenu"));
-        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
-    }
-
-    public static SendMessage createTextMessageWithButtonBackToMainMenuForOwner(User user, String text) {
-        final var buttonNames = List.of(MESSAGE_SOURCE.getMessage("buttonName.owner.backToMainMenu"));
-        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 
     private static KeyboardRow createKeyBoardRowWithOneButton(String buttonText) {

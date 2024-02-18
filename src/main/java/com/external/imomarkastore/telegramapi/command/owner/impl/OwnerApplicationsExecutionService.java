@@ -20,7 +20,6 @@ import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 @Service
 @RequiredArgsConstructor
 public class OwnerApplicationsExecutionService implements OwnerActionExecuteService {
-
     private final ApplicationService applicationService;
     private final OwnerInfoService ownerInfoService;
     private final BotMessageSource messageSource;
@@ -38,7 +37,7 @@ public class OwnerApplicationsExecutionService implements OwnerActionExecuteServ
         final var applications = applicationService.getFullyCreatedApplications();
         final var jsonObject = new JsonObject();
         if (applications.isEmpty()) {
-            applicationSendHelper.sendApplicationsMessageForOwner("owner.youDoNotHaveActiveApplications", user, jsonObject);
+            applicationSendHelper.sendNoApplicationsMessageForOwner("owner.youDoNotHaveActiveApplications", user, jsonObject);
         } else {
             applicationSendHelper.sendApplicationsMessageForOwner("owner.yourActiveApplications", user, jsonObject);
             for (Application application : applications) {

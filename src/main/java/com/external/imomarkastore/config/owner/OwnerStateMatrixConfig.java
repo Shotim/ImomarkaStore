@@ -47,7 +47,7 @@ public class OwnerStateMatrixConfig {
                 entry(GET_APPLICATIONS,
                         List.of(EXPORT_APPLICATIONS, MOVE_APPLICATION_TO_ARCHIVE, BACK_TO_MAIN_MENU)),
                 entry(GET_ARCHIVED_APPLICATIONS,
-                        List.of(DELETE_APPLICATION, RESTORE_APPLICATION, BACK_TO_MAIN_MENU)),
+                        List.of(EXPORT_APPLICATIONS, DELETE_APPLICATION, RESTORE_APPLICATION, BACK_TO_MAIN_MENU)),
                 entry(GET_CLIENTS,
                         List.of(GET_CLIENT_APPLICATIONS, MOVE_CLIENT_TO_BLACK_LIST, BACK_TO_MAIN_MENU)),
                 entry(GET_BLACK_LIST,

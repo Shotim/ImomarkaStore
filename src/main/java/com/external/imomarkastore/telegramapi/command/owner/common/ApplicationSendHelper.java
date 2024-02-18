@@ -19,13 +19,14 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.external.imomarkastore.util.MessageUtils.createInlineKeyBoardMarkup;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithButtonBackToMainMenuForOwner;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyBoardMarkup;
 
 @Component
 @RequiredArgsConstructor
@@ -79,7 +80,21 @@ public class ApplicationSendHelper {
 
     public void sendApplicationsMessageForOwner(String code, User user, JsonObject jsonObject) throws TelegramApiException {
         final var message = messageSource.getMessage(code);
-        final var sendMessage = createTextMessageWithButtonBackToMainMenuForOwner(user, message);
+        final var buttonNames = List.of(
+                messageSource.getMessage("buttonName.owner.exportApplications"),
+                messageSource.getMessage("buttonName.owner.backToMainMenu")
+        );
+        final var sendMessage = createTextMessageWithReplyKeyBoardMarkup(user, message, buttonNames);
+        final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
+        jsonObject.add("root", new JsonPrimitive(messageId));
+    }
+
+    public void sendNoApplicationsMessageForOwner(String code, User user, JsonObject jsonObject) throws TelegramApiException {
+        final var message = messageSource.getMessage(code);
+        final var buttonNames = List.of(
+                messageSource.getMessage("buttonName.owner.backToMainMenu")
+        );
+        final var sendMessage = createTextMessageWithReplyKeyBoardMarkup(user, message, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         jsonObject.add("root", new JsonPrimitive(messageId));
     }

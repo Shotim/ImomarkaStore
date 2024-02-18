@@ -9,10 +9,12 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.List;
+
 import static com.external.imomarkastore.constant.OwnerState.MAIN_MENU;
 import static com.external.imomarkastore.constant.OwnerState.START;
-import static com.external.imomarkastore.util.MessageUtils.createOwnerTextMessageWithReplyKeyBoardForMainMenu;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -39,7 +41,12 @@ public class OwnerStartExecutionService implements OwnerActionExecuteService {
         inomarkaStore.execute(textMessageForUser);
 
         final var startWork = messageSource.getMessage("owner.startWork");
-        final var startWorkMessage = createOwnerTextMessageWithReplyKeyBoardForMainMenu(user, startWork);
+        final var buttonNames = List.of(
+                messageSource.getMessage("buttonName.owner.getApplications"),
+                messageSource.getMessage("buttonName.owner.getArchivedApplications"),
+                messageSource.getMessage("buttonName.owner.getClients"),
+                messageSource.getMessage("buttonName.owner.getBlackList"));
+        final var startWorkMessage = createTextMessageWithReplyKeyBoardMarkup(user, startWork, buttonNames);
         inomarkaStore.execute(startWorkMessage);
     }
 }

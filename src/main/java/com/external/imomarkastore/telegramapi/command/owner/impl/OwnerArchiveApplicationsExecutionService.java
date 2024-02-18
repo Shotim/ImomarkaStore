@@ -37,7 +37,7 @@ public class OwnerArchiveApplicationsExecutionService implements OwnerActionExec
         final var applications = applicationService.getArchivedApplications();
         final var jsonObject = new JsonObject();
         if (applications.isEmpty()) {
-            applicationSendHelper.sendApplicationsMessageForOwner("owner.youDoNotHaveArchiveApplications", user, jsonObject);
+            applicationSendHelper.sendNoApplicationsMessageForOwner("owner.youDoNotHaveArchiveApplications", user, jsonObject);
         } else {
             applicationSendHelper.sendApplicationsMessageForOwner("owner.yourArchiveApplications", user, jsonObject);
             for (Application application : applications) {

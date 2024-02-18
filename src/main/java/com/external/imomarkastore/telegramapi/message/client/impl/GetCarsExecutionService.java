@@ -14,13 +14,17 @@ import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+
+import java.util.List;
 
 import static com.external.imomarkastore.constant.ClientState.DELETE_CAR;
 import static com.external.imomarkastore.constant.ClientState.GET_CARS;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithButtonBackToMainMenuForClient;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -81,5 +85,10 @@ public class GetCarsExecutionService implements MessageExecutionService {
             inomarkaStore.execute(message);
             clientInfoService.update(clientInfo);
         }
+    }
+
+    private SendMessage createTextMessageWithButtonBackToMainMenuForClient(User user, String text) {
+        final var buttonNames = List.of(messageSource.getMessage("buttonName.client.backToMainMenu"));
+        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 }
