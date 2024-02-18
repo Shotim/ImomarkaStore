@@ -6,9 +6,7 @@ import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.telegramapi.command.owner.common.ApplicationSendHelper;
 import com.external.imomarkastore.util.BotMessageSource;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -19,7 +17,6 @@ import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +36,7 @@ public class OwnerApplicationsExecutionService implements OwnerActionExecuteServ
     public void execute(Update update) {
         final var user = getUserFromUpdate(update);
         final var applications = applicationService.getFullyCreatedApplications();
-        final var jsonData = ownerInfoService.getJsonData();
-        final var jsonObject = isBlank(jsonData) ?
-                new JsonObject() :
-                new Gson().fromJson(jsonData, JsonObject.class);
+        final var jsonObject = ownerInfoService.getJsonDataObject();
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         jsonObject.add("receivedApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
         if (applications.isEmpty()) {

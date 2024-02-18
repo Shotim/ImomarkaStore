@@ -5,12 +5,13 @@ import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.external.imomarkastore.constant.OwnerState.EDIT_ADDRESS;
@@ -19,8 +20,9 @@ import static com.external.imomarkastore.constant.OwnerState.EDIT_INN;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_NAME;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_PHONE_NUMBER;
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButtons;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
+import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -55,12 +57,17 @@ public class OwnerGetContactsExecutionService implements OwnerActionExecuteServi
         rootMessages.add(contactsPayloadMessageId);
 
         final var additionalPayload = messageSource.getMessage("owner.editContactsOrBackToMainMenu");
-        final var additionalPayloadMessage = createTextMessageForUser(user, additionalPayload);
+        final var buttonNames = List.of(
+                messageSource.getMessage("buttonName.owner.backToMainMenu")
+        );
+        final var additionalPayloadMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, additionalPayload, buttonNames);
         final var additionalPayloadMessageId = inomarkaStore.execute(additionalPayloadMessage).getMessageId();
         rootMessages.add(additionalPayloadMessageId);
 
         ownerInfoService.updateState(GET_CONTACTS);
-        final var jsonObject = new JsonObject();
+        final var jsonObject = ownerInfoService.getJsonDataObject();
+        final var messageIdFromUpdate = getMessageIdFromUpdate(update);
+        jsonObject.add("receivedGetContactsMessageId", new JsonPrimitive(messageIdFromUpdate));
         jsonObject.add("root", rootMessages);
         ownerInfoService.updateJsonData(jsonObject.toString());
     }

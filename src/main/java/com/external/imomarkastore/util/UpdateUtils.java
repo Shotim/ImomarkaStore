@@ -43,4 +43,8 @@ public class UpdateUtils {
     public static Integer getMessageIdFromUpdate(Update update) {
         return update.getMessage().getMessageId();
     }
+
+    public static String getCallbackIdFromUpdate(Update update) {
+        return update.getCallbackQuery().getId();
+    }
 }

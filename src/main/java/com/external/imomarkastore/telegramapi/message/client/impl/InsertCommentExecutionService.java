@@ -13,14 +13,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.ApplicationStatus.FULLY_CREATED;
 import static com.external.imomarkastore.constant.ClientState.INSERT_COMMENT;
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
+import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
+import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -59,10 +60,8 @@ public class InsertCommentExecutionService implements MessageExecutionService {
         final var user = getUserFromUpdate(update);
         if (update.hasCallbackQuery()) {
             final var text = messageSource.getMessage("commentWasNotAdded");
-            final var callbackQuery = AnswerCallbackQuery.builder()
-                    .callbackQueryId(update.getCallbackQuery().getId())
-                    .text(text)
-                    .build();
+            final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
+            final var callbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, text);
             inomarkaStore.execute(callbackQuery);
         }
         final var jsonDataString = clientInfo.getAdditionalJsonDataForNextOperations();

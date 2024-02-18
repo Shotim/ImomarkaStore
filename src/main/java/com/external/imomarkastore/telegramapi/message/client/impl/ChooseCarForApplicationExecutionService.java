@@ -14,14 +14,15 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
 import static com.external.imomarkastore.constant.ClientState.CHOOSE_CAR_FOR_APPLICATION;
+import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
+import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getIdFromCallbackData;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -69,10 +70,8 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
             final var chooseCarMessage = createTextMessageForUser(user, chooseCarMessageText);
             inomarkaStore.execute(chooseCarMessage);
 
-            final var callbackQuery = AnswerCallbackQuery.builder()
-                    .callbackQueryId(update.getCallbackQuery().getId())
-                    .text(chooseCarMessageText)
-                    .build();
+            final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
+            final var callbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, chooseCarMessageText);
             inomarkaStore.execute(callbackQuery);
         }
         final var jsonString = clientInfo.getAdditionalJsonDataForNextOperations();

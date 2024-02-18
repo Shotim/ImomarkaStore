@@ -4,7 +4,6 @@ import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.util.BotMessageSource;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -40,8 +39,7 @@ public class OwnerBackToMainMenuExecutionService implements OwnerActionExecuteSe
     @SneakyThrows
     public void execute(Update update) {
 
-        final var jsonData = ownerInfoService.getJsonData();
-        final var jsonObject = new Gson().fromJson(jsonData, JsonObject.class);
+        final var jsonObject = ownerInfoService.getJsonDataObject();
         final var messageIds = new ArrayList<Integer>();
         extractMessageIds(jsonObject, messageIds);
         final var user = getUserFromUpdate(update);

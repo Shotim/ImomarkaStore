@@ -1,6 +1,7 @@
 package com.external.imomarkastore.util;
 
 import lombok.NoArgsConstructor;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -95,6 +96,13 @@ public class MessageUtils {
         return DeleteMessage.builder()
                 .chatId(user.getId().toString())
                 .messageId(messageId)
+                .build();
+    }
+
+    public static AnswerCallbackQuery createAnswerCallbackQuery(String callbackId, String text) {
+        return AnswerCallbackQuery.builder()
+                .callbackQueryId(callbackId)
+                .text(text)
                 .build();
     }
 }

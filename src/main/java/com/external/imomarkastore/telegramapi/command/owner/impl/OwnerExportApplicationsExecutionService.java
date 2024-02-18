@@ -10,9 +10,7 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.util.BotMessageSource;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -40,7 +38,6 @@ import static java.util.Collections.emptyList;
 import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.commons.io.FileUtils.readFileToByteArray;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND;
 import static org.apache.poi.ss.usermodel.IndexedColors.LIGHT_BLUE;
 import static org.apache.poi.ss.usermodel.IndexedColors.WHITE;
@@ -72,10 +69,7 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
             case GET_ARCHIVED_APPLICATIONS -> applicationService.getArchivedApplications();
             default -> emptyList();
         };
-        final var jsonData = ownerInfoService.getJsonData();
-        final var jsonObject = isBlank(jsonData) ?
-                new JsonObject() :
-                new Gson().fromJson(jsonData, JsonObject.class);
+        final var jsonObject = ownerInfoService.getJsonDataObject();
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         jsonObject.add("receivedExportApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
         final var messageIds = new JsonArray();

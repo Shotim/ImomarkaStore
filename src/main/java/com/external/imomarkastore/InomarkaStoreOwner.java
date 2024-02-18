@@ -57,29 +57,60 @@ public class InomarkaStoreOwner {
     }
 
     public void processAction(Update update) {
+        if (update.hasCallbackQuery()) {
+            processCallbacks(update);
+        } else {
+            processCommandsAndMessages(update);
+        }
+    }
+
+    private void processCallbacks(Update update) {
+        final var data = update.getCallbackQuery().getData();
+        final var callbackState = data.contains(":") ?
+                data.substring(0, data.indexOf(":")) :
+                data;
+        final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
+        final var nextStates = ownerStateMatrix.get(currentOwnerState);
+        final var nextState = OwnerState.valueOf(callbackState);
+        if (!nextStates.contains(nextState)) {
+            throwException(update, nextStates);
+        } else {
+            final var ownerActionExecuteService = ownerActionExecutionServicesByStateName.get(nextState.name());
+            ownerActionExecuteService.execute(update);
+        }
+    }
+
+    private void processCommandsAndMessages(Update update) {
         final var text = getTextFromUpdate(update);
         final var ownerState = commandToOwnerStateMatrix.get(text);
         if (nonNull(ownerState)) {
             processOwnerCommand(update, ownerState);
         } else {
-            final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
-            final var nextStates = ownerStateMatrix.get(currentOwnerState);
-            final var buttonState = isNotBlank(text) ? buttonToOwnerStateMatrix.get(text) : null;
-            if (nonNull(buttonState) && !nextStates.contains(buttonState)) {
-                throwException(update, nextStates);
-            }
-            final var ownerStateFromUpdate = isNotEmpty(nextStates) && nextStates.size() == 1 ?
-                    nextStates.get(0) : buttonState;
+            processMessages(update, text);
+        }
+    }
+
+    private void processMessages(Update update, String text) {
+        final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
+        final var nextStates = ownerStateMatrix.get(currentOwnerState);
+        final var buttonState = isNotBlank(text) ? buttonToOwnerStateMatrix.get(text) : null;
+        if (nonNull(buttonState) && !nextStates.contains(buttonState)) {
+            throwException(update, nextStates);
+        }
+        final var ownerStateFromUpdate = isNotEmpty(nextStates) && nextStates.size() == 1 ?
+                nextStates.get(0) : buttonState;
+        final var user = getUserFromUpdate(update);
+        if (nonNull(ownerStateFromUpdate)) {
             final var ownerActionExecuteService = ownerActionExecutionServicesByStateName.get(ownerStateFromUpdate.name());
             if (nonNull(ownerActionExecuteService)) {
                 ownerActionExecuteService.execute(update);
             } else {
                 final var errorText = messageSource.getMessage("error.botConfig");
-                final var user = getUserFromUpdate(update);
                 throwException(user, errorText);
             }
+        } else {
+            throwException(user, "Should not happen!");
         }
-
     }
 
     private void processOwnerCommand(Update update, OwnerState ownerState) {

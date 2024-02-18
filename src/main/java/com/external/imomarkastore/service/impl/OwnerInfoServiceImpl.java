@@ -5,6 +5,8 @@ import com.external.imomarkastore.model.OwnerInfo;
 import com.external.imomarkastore.repository.OwnerInfoRepository;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.util.BotMessageSource;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,18 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                 .ifPresentOrElse(
                         ownerInfo -> {
                             ownerInfo.setOwnerState(state);
+                            repository.save(ownerInfo);
+                        }, () -> {
+                            throw new InternalError();
+                        });
+    }
+
+    @Override
+    public void updateName(String name) {
+        getOwnerInfoOptional()
+                .ifPresentOrElse(
+                        ownerInfo -> {
+                            ownerInfo.setOwnerName(name);
                             repository.save(ownerInfo);
                         }, () -> {
                             throw new InternalError();
@@ -62,6 +76,14 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
         return getOwnerInfoOptional()
                 .map(OwnerInfo::getJsonData)
                 .orElse(EMPTY);
+    }
+
+    @Override
+    public JsonObject getJsonDataObject() {
+        final var jsonData = this.getJsonData();
+        return isBlank(jsonData) ?
+                new JsonObject() :
+                new Gson().fromJson(jsonData, JsonObject.class);
     }
 
     @Override

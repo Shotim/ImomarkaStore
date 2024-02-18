@@ -12,14 +12,15 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.UUID;
 
 import static com.external.imomarkastore.constant.CarState.ARCHIVED;
 import static com.external.imomarkastore.constant.ClientState.DELETE_CAR;
+import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
+import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getIdFromCallbackData;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -52,10 +53,8 @@ public class DeleteCarExecutionService implements MessageExecutionService {
     public void sendMessages(Update update, ClientInfo clientInfo) {
 
         final var text = messageSource.getMessage("carDeleted");
-        final var callbackQuery = AnswerCallbackQuery.builder()
-                .callbackQueryId(update.getCallbackQuery().getId())
-                .text(text)
-                .build();
+        final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
+        final var callbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, text);
         inomarkaStore.execute(callbackQuery);
 
         final var id = getIdFromCallbackData(update);
