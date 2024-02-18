@@ -2,6 +2,7 @@ package com.external.imomarkastore.util;
 
 import lombok.NoArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -43,14 +44,14 @@ public class MessageUtils {
                 MESSAGE_SOURCE.getMessage("buttonName.client.editName"),
                 MESSAGE_SOURCE.getMessage("buttonName.client.editPhoneNumber"),
                 MESSAGE_SOURCE.getMessage("buttonName.client.getCars"));
-        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
+        return createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 
-    public static SendMessage createTextMessageWithInlineButton(User user, String text, String buttonText, String buttonCallbackData) {
-        return createTextMessageWithInlineButtons(user, text, Map.of(buttonText, buttonCallbackData));
+    public static SendMessage createTextMessageForUserWithInlineButton(User user, String text, String buttonText, String buttonCallbackData) {
+        return createTextMessageForUserWithInlineButtons(user, text, Map.of(buttonText, buttonCallbackData));
     }
 
-    public static SendMessage createTextMessageWithInlineButtons(User user, String text, Map<String, String> buttonTextToCallBackData) {
+    public static SendMessage createTextMessageForUserWithInlineButtons(User user, String text, Map<String, String> buttonTextToCallBackData) {
         final var inlineKeyBoardMarkup = createInlineKeyBoardMarkup(buttonTextToCallBackData);
         return SendMessage.builder()
                 .text(text)
@@ -59,7 +60,7 @@ public class MessageUtils {
                 .build();
     }
 
-    public static SendMessage createTextMessageWithReplyKeyBoardMarkup(User user, String text, List<String> buttonNames) {
+    public static SendMessage createTextMessageForUserWithReplyKeyBoardMarkup(User user, String text, List<String> buttonNames) {
         final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
         final var keyboardRows = buttonNames.stream().map(MessageUtils::createKeyBoardRowWithOneButton).toList();
         replyKeyboardMarkup.setKeyboard(keyboardRows);
@@ -88,5 +89,12 @@ public class MessageUtils {
                 new KeyboardButton(buttonText);
         keyboardRow.add(keyboardButton);
         return keyboardRow;
+    }
+
+    public static DeleteMessage createDeleteMessageForUser(User user, Integer messageId) {
+        return DeleteMessage.builder()
+                .chatId(user.getId().toString())
+                .messageId(messageId)
+                .build();
     }
 }

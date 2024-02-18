@@ -23,8 +23,8 @@ import java.util.List;
 import static com.external.imomarkastore.constant.ClientState.DELETE_CAR;
 import static com.external.imomarkastore.constant.ClientState.GET_CARS;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyBoardMarkup;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -67,7 +67,7 @@ public class GetCarsExecutionService implements MessageExecutionService {
                         applicationService.getNotArchivedApplicationsForCar(carDetails).isEmpty();
                 if (haveOnlyArchivedApplications) {
                     final var messageWithInlineButton =
-                            createTextMessageWithInlineButton(user, carDetailsText,
+                            createTextMessageForUserWithInlineButton(user, carDetailsText,
                                     messageSource.getMessage("buttonName.client.deleteCar"),
                                     "%s:%s".formatted(DELETE_CAR.name(), carDetails.getId()));
                     final var executed = inomarkaStore.execute(messageWithInlineButton);
@@ -89,6 +89,6 @@ public class GetCarsExecutionService implements MessageExecutionService {
 
     private SendMessage createTextMessageWithButtonBackToMainMenuForClient(User user, String text) {
         final var buttonNames = List.of(messageSource.getMessage("buttonName.client.backToMainMenu"));
-        return createTextMessageWithReplyKeyBoardMarkup(user, text, buttonNames);
+        return createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
     }
 }

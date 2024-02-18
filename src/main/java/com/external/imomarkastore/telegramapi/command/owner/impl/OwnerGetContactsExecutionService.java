@@ -20,7 +20,7 @@ import static com.external.imomarkastore.constant.OwnerState.EDIT_NAME;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_PHONE_NUMBER;
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButtons;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButtons;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -50,7 +50,7 @@ public class OwnerGetContactsExecutionService implements OwnerActionExecuteServi
         );
         final var rootMessages = new JsonArray();
 
-        final var contactsPayloadMessage = createTextMessageWithInlineButtons(user, text, buttonTextToCallbackData);
+        final var contactsPayloadMessage = createTextMessageForUserWithInlineButtons(user, text, buttonTextToCallbackData);
         final var contactsPayloadMessageId = inomarkaStore.execute(contactsPayloadMessage).getMessageId();
         rootMessages.add(contactsPayloadMessageId);
 

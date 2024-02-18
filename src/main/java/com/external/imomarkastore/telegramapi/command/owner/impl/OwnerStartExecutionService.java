@@ -14,7 +14,7 @@ import java.util.List;
 import static com.external.imomarkastore.constant.OwnerState.MAIN_MENU;
 import static com.external.imomarkastore.constant.OwnerState.START;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyBoardMarkup;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -46,7 +46,7 @@ public class OwnerStartExecutionService implements OwnerActionExecuteService {
                 messageSource.getMessage("buttonName.owner.getArchivedApplications"),
                 messageSource.getMessage("buttonName.owner.getClients"),
                 messageSource.getMessage("buttonName.owner.getBlackList"));
-        final var startWorkMessage = createTextMessageWithReplyKeyBoardMarkup(user, startWork, buttonNames);
+        final var startWorkMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, startWork, buttonNames);
         inomarkaStore.execute(startWorkMessage);
     }
 }

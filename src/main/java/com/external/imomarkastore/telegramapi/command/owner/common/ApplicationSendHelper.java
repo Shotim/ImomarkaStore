@@ -25,8 +25,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.external.imomarkastore.util.MessageUtils.createInlineKeyBoardMarkup;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithReplyKeyBoardMarkup;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 
 @Component
 @RequiredArgsConstructor
@@ -58,7 +58,7 @@ public class ApplicationSendHelper {
             final var photoMessageId = inomarkaStore.execute(sendPhoto).getMessageId();
             messageIds.add(new JsonPrimitive(photoMessageId));
         } else {
-            final var textMessageWithInlineButton = createTextMessageWithInlineButton(
+            final var textMessageWithInlineButton = createTextMessageForUserWithInlineButton(
                     user, text, archiveApplicationButtonName, callbackData);
             final var applicationMessage = inomarkaStore.execute(textMessageWithInlineButton);
             messageIds.add(new JsonPrimitive(applicationMessage.getMessageId()));
@@ -84,7 +84,7 @@ public class ApplicationSendHelper {
                 messageSource.getMessage("buttonName.owner.exportApplications"),
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var sendMessage = createTextMessageWithReplyKeyBoardMarkup(user, message, buttonNames);
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, message, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         jsonObject.add("root", new JsonPrimitive(messageId));
     }
@@ -94,7 +94,7 @@ public class ApplicationSendHelper {
         final var buttonNames = List.of(
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var sendMessage = createTextMessageWithReplyKeyBoardMarkup(user, message, buttonNames);
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, message, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         jsonObject.add("root", new JsonPrimitive(messageId));
     }

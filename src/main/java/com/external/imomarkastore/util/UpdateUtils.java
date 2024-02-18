@@ -39,4 +39,8 @@ public class UpdateUtils {
                         .stream()
                         .max(comparingInt(PhotoSize::getFileSize));
     }
+
+    public static Integer getMessageIdFromUpdate(Update update) {
+        return update.getMessage().getMessageId();
+    }
 }

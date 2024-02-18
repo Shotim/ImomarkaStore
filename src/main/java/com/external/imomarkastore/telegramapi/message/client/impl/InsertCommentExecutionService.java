@@ -14,13 +14,13 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.ApplicationStatus.FULLY_CREATED;
 import static com.external.imomarkastore.constant.ClientState.INSERT_COMMENT;
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
 import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
+import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -68,10 +68,7 @@ public class InsertCommentExecutionService implements MessageExecutionService {
         final var jsonDataString = clientInfo.getAdditionalJsonDataForNextOperations();
         final var jsonObject = new Gson().fromJson(jsonDataString, JsonObject.class);
         final var messageId = jsonObject.get("messageId").getAsInt();
-        final var deleteMessage = DeleteMessage.builder()
-                .messageId(messageId)
-                .chatId(user.getId())
-                .build();
+        final var deleteMessage = createDeleteMessageForUser(user, messageId);
         inomarkaStore.execute(deleteMessage);
         final var text = messageSource.getMessage("applicationCreated");
         final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);

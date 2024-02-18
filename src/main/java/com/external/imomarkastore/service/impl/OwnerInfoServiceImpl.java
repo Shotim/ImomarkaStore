@@ -61,7 +61,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     public String getJsonData() {
         return getOwnerInfoOptional()
                 .map(OwnerInfo::getJsonData)
-                .orElseThrow(InternalError::new);
+                .orElse(EMPTY);
     }
 
     @Override

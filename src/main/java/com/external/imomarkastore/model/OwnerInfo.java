@@ -1,6 +1,7 @@
 package com.external.imomarkastore.model;
 
 import com.external.imomarkastore.constant.OwnerState;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -17,6 +18,7 @@ public class OwnerInfo {
     private Long telegramUserId;
     @Enumerated(STRING)
     private OwnerState ownerState;
+    @Column(length = 8192)
     private String jsonData;
     private String ownerName;
     private String phoneNumber;

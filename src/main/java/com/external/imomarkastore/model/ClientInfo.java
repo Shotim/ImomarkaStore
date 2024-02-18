@@ -1,6 +1,7 @@
 package com.external.imomarkastore.model;
 
 import com.external.imomarkastore.constant.ClientState;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -30,6 +31,7 @@ public class ClientInfo {
     @Setter
     private ClientState state;
     @Setter
+    @Column(length = 8192)
     private String additionalJsonDataForNextOperations;
 
     public void setPhoneNumber(String phoneNumber) {

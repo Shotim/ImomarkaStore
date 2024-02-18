@@ -20,7 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import static com.external.imomarkastore.constant.ClientState.CHOOSE_CAR_FOR_APPLICATION;
 import static com.external.imomarkastore.constant.ClientState.CREATE_APPLICATION;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithRemoveKeyBoard;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -64,7 +64,7 @@ public class CreateApplicationExecutionService implements MessageExecutionServic
             messageIds.add(rootMainMessage);
             for (CarDetails carDetails : carDetailsForClient) {
                 final var carDetailsText = carDetailsService.getCarDetailsPayload(carDetails);
-                final var messageWithInlineButton = createTextMessageWithInlineButton
+                final var messageWithInlineButton = createTextMessageForUserWithInlineButton
                         (user, carDetailsText,
                                 messageSource.getMessage("buttonName.client.chooseCarForApplication"),
                                 "%s:%s".formatted(CHOOSE_CAR_FOR_APPLICATION.name(), carDetails.getId()));

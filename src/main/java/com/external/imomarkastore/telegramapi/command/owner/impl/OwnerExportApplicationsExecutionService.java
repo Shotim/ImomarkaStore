@@ -10,6 +10,10 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.util.BotMessageSource;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -29,11 +33,14 @@ import java.util.Optional;
 
 import static com.external.imomarkastore.constant.OwnerState.EXPORT_APPLICATIONS;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
+import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
+import static java.nio.file.Files.delete;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.commons.io.FileUtils.readFileToByteArray;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND;
 import static org.apache.poi.ss.usermodel.IndexedColors.LIGHT_BLUE;
 import static org.apache.poi.ss.usermodel.IndexedColors.WHITE;
@@ -59,20 +66,31 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
     @SneakyThrows
     public void execute(Update update) {
         final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
+
         final List<Application> applications = switch (currentOwnerState) {
             case GET_APPLICATIONS -> applicationService.getFullyCreatedApplications();
             case GET_ARCHIVED_APPLICATIONS -> applicationService.getArchivedApplications();
             default -> emptyList();
         };
+        final var jsonData = ownerInfoService.getJsonData();
+        final var jsonObject = isBlank(jsonData) ?
+                new JsonObject() :
+                new Gson().fromJson(jsonData, JsonObject.class);
+        final var messageIdFromUpdate = getMessageIdFromUpdate(update);
+        jsonObject.add("receivedExportApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
+        final var messageIds = new JsonArray();
+        jsonObject.add("exportMessageIds", messageIds);
         final var user = getUserFromUpdate(update);
         if (applications.isEmpty()) {
             final var text = messageSource.getMessage("owner.noApplicationsToExport");
             final var message = createTextMessageForUser(user, text);
-            inomarkaStore.execute(message);
+            final var messageId = inomarkaStore.execute(message).getMessageId();
+            messageIds.add(messageId);
         } else {
             final var text = messageSource.getMessage("owner.exportedApplications");
             final var message = createTextMessageForUser(user, text);
-            inomarkaStore.execute(message);
+            final var messageId = inomarkaStore.execute(message).getMessageId();
+            messageIds.add(messageId);
             try (final var workbook = new XSSFWorkbook()) {
                 final var sheetName = messageSource.getMessage("owner.excel.sheet");
                 final var sheet = workbook.createSheet(sheetName);
@@ -165,10 +183,12 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
                         .chatId(user.getId().toString())
                         .document(new InputFile(file, filePath))
                         .build();
-                inomarkaStore.execute(sendDocument);
-                file.delete();
+                final var exportFileMessageId = inomarkaStore.execute(sendDocument).getMessageId();
+                messageIds.add(exportFileMessageId);
+                delete(file.toPath());
             }
         }
+        ownerInfoService.updateJsonData(jsonObject.toString());
     }
 
     private void setPicture(Optional<String> photoIdOptional, XSSFWorkbook workbook, XSSFSheet sheet, int col1, int rowNumber) throws TelegramApiException, IOException {

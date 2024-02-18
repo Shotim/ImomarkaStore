@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.ClientState.INSERT_COMMENT;
 import static com.external.imomarkastore.constant.ClientState.INSERT_MAIN_PURPOSE;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
 import static com.external.imomarkastore.util.UpdateUtils.getPhotoFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
@@ -64,7 +64,7 @@ public class InsertMainPurposeExecutionService implements MessageExecutionServic
         final var text = messageSource.getMessage("insertComment");
         final var application = applicationService
                 .findFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
-        final var message = createTextMessageWithInlineButton(user, text,
+        final var message = createTextMessageForUserWithInlineButton(user, text,
                 messageSource.getMessage("buttonName.client.skipInsertComment"),
                 "%s:%s".formatted(INSERT_COMMENT.name(), application.getId()));
         final var messageId = inomarkaStore.execute(message).getMessageId();

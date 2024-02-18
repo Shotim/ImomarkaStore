@@ -13,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.UUID;
 
 import static com.external.imomarkastore.constant.CarState.ARCHIVED;
 import static com.external.imomarkastore.constant.ClientState.DELETE_CAR;
+import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getIdFromCallbackData;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -67,10 +67,7 @@ public class DeleteCarExecutionService implements MessageExecutionService {
         final var messageId = jsonObject.remove(id.toString()).getAsInt();
         final var user = getUserFromUpdate(update);
 
-        final var deleteMessage = DeleteMessage.builder()
-                .messageId(messageId)
-                .chatId(user.getId())
-                .build();
+        final var deleteMessage = createDeleteMessageForUser(user, messageId);
         inomarkaStore.execute(deleteMessage);
     }
 }
