@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.OwnerState.EDIT_EMAIL;
-import static com.external.imomarkastore.constant.OwnerState.EDIT_PHONE_NUMBER;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
@@ -44,6 +43,6 @@ public class OwnerEditEmailExecutionService implements OwnerActionExecuteService
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         jsonDataObject.add("editEmailMessageId", new JsonPrimitive(editEmailMessageId));
         ownerInfoService.updateJsonData(jsonDataObject.toString());
-        ownerInfoService.updateState(EDIT_PHONE_NUMBER);
+        ownerInfoService.updateState(EDIT_EMAIL);
     }
 }
