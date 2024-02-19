@@ -17,6 +17,8 @@ public class ClientCommandExecutionServicesConfig {
     public Map<String, CommandExecutionService> messageExecutionServicesByCommands(
             List<CommandExecutionService> commandExecutionServiceList) {
         return commandExecutionServiceList.stream()
+                .filter(commandExecutionService -> !commandExecutionService.getClass()
+                        .getName().toLowerCase().startsWith("owner"))
                 .collect(toMap(CommandExecutionService::getCommand, identity()));
     }
 }

@@ -48,6 +48,18 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     }
 
     @Override
+    public void updatePhoneNumber(String phoneNumber) {
+        getOwnerInfoOptional()
+                .ifPresentOrElse(
+                        ownerInfo -> {
+                            ownerInfo.setPhoneNumber(phoneNumber);
+                            repository.save(ownerInfo);
+                        }, () -> {
+                            throw new InternalError();
+                        });
+    }
+
+    @Override
     public boolean isOwner(Long telegramUserId) {
         return repository.findById(telegramUserId).isPresent();
     }
