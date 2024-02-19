@@ -12,10 +12,12 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.List;
+
 import static com.external.imomarkastore.constant.OwnerState.BACK_TO_MAIN_MENU;
 import static com.external.imomarkastore.constant.OwnerState.MAIN_MENU;
 import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -44,7 +46,14 @@ public class OwnerBackToMainMenuExecutionService implements OwnerActionExecuteSe
         final var deleteReceivedMessageForUser = createDeleteMessageForUser(user, messageIdFromUpdate);
         inomarkaStore.execute(deleteReceivedMessageForUser);
         final var text = messageSource.getMessage("youReturnedBackToMainMenu");
-        final var sendMessage = createTextMessageForUser(user, text);
+        final var buttonNames = List.of(
+                messageSource.getMessage("buttonName.owner.getApplications"),
+                messageSource.getMessage("buttonName.owner.getArchivedApplications"),
+                messageSource.getMessage("buttonName.owner.getClients"),
+                messageSource.getMessage("buttonName.owner.getBlackList"),
+                messageSource.getMessage("buttonName.owner.getContacts")
+        );
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         ownerInfoService.updateState(MAIN_MENU);
         final var newJsonObject = new JsonObject();

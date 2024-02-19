@@ -18,6 +18,7 @@ import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_BLACK_LIST;
 import static com.external.imomarkastore.constant.OwnerState.GET_CLIENTS;
+import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
 import static java.util.Map.entry;
 
 @Configuration
@@ -33,6 +34,7 @@ public class ButtonToOwnerStateConfig {
                 entry(messageSource.getMessage("buttonName.owner.getArchivedApplications"), GET_ARCHIVED_APPLICATIONS),
                 entry(messageSource.getMessage("buttonName.owner.getClients"), GET_CLIENTS),
                 entry(messageSource.getMessage("buttonName.owner.getBlackList"), GET_BLACK_LIST),
+                entry(messageSource.getMessage("buttonName.owner.getContacts"), GET_CONTACTS),
                 entry(messageSource.getMessage("buttonName.owner.exportApplications"), EXPORT_APPLICATIONS),
                 entry(messageSource.getMessage("buttonName.owner.backToMainMenu"), BACK_TO_MAIN_MENU),
                 entry(messageSource.getMessage("buttonName.owner.editName"), EDIT_NAME),

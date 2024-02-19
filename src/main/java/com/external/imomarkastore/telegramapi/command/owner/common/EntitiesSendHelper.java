@@ -30,14 +30,14 @@ import static com.external.imomarkastore.util.MessageUtils.createTextMessageForU
 
 @Component
 @RequiredArgsConstructor
-public class ApplicationSendHelper {
+public class EntitiesSendHelper {
 
     private final CarDetailsService carDetailsService;
     private final ApplicationService applicationService;
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
 
-    public void createAndSendApplicationMessage(User user, Application application, JsonArray messageIds, String archiveApplicationButtonName, String callbackData) throws TelegramApiException {
+    public void createAndSendApplicationMessage(User user, Application application, JsonArray messageIds, String buttonName, String callbackData) throws TelegramApiException {
         final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
         final var photoIds = Stream.of(
                         Optional.ofNullable(application.getMainPurposePhotoId()),
@@ -47,7 +47,7 @@ public class ApplicationSendHelper {
                 .toList();
         final var text = applicationService.getApplicationPayloadForOwner(application);
         final var inlineKeyboardMarkup = createInlineKeyBoardMarkup(
-                Map.of(archiveApplicationButtonName, callbackData));
+                Map.of(buttonName, callbackData));
         if (photoIds.size() == 1) {
             final var sendPhoto = SendPhoto.builder()
                     .caption(text)
@@ -59,7 +59,7 @@ public class ApplicationSendHelper {
             messageIds.add(new JsonPrimitive(photoMessageId));
         } else {
             final var textMessageWithInlineButton = createTextMessageForUserWithInlineButton(
-                    user, text, archiveApplicationButtonName, callbackData);
+                    user, text, buttonName, callbackData);
             final var applicationMessage = inomarkaStore.execute(textMessageWithInlineButton);
             messageIds.add(new JsonPrimitive(applicationMessage.getMessageId()));
             if (photoIds.size() > 1) {
@@ -89,7 +89,7 @@ public class ApplicationSendHelper {
         jsonObject.add("root", new JsonPrimitive(messageId));
     }
 
-    public void sendNoApplicationsMessageForOwner(String code, User user, JsonObject jsonObject) throws TelegramApiException {
+    public void sendMessageForOwnerWithBackToMainMenuButton(String code, User user, JsonObject jsonObject) throws TelegramApiException {
         final var message = messageSource.getMessage(code);
         final var buttonNames = List.of(
                 messageSource.getMessage("buttonName.owner.backToMainMenu")

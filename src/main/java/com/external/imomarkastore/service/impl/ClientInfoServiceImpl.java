@@ -6,6 +6,7 @@ import com.external.imomarkastore.service.ClientInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import static java.util.UUID.randomUUID;
 public class ClientInfoServiceImpl implements ClientInfoService {
 
     private final ClientInfoRepository repository;
+
     @Override
     public Optional<ClientInfo> getById(UUID id) {
         return repository.findById(id);
@@ -33,11 +35,22 @@ public class ClientInfoServiceImpl implements ClientInfoService {
         clientInfo.setTelegramUserId(telegramUserId);
         clientInfo.setId(randomUUID());
         clientInfo.setState(INITIAL_START);
+        clientInfo.setIsInBlackList(false);
         return repository.save(clientInfo);
     }
 
     @Override
     public ClientInfo update(ClientInfo clientInfo) {
         return repository.save(clientInfo);
+    }
+
+    @Override
+    public List<ClientInfo> getActiveClients() {
+        return repository.findActiveClients();
+    }
+
+    @Override
+    public List<ClientInfo> getBlackListClients() {
+        return repository.findBlackListedClients();
     }
 }

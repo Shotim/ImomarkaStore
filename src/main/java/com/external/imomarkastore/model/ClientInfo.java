@@ -33,6 +33,8 @@ public class ClientInfo {
     @Setter
     @Column(length = 8192)
     private String additionalJsonDataForNextOperations;
+    @Setter
+    private Boolean isInBlackList;
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = scaleString(phoneNumber);

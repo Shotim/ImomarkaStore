@@ -19,8 +19,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.external.imomarkastore.constant.ClientState.CHOOSE_CAR_FOR_APPLICATION;
 import static com.external.imomarkastore.constant.ClientState.CREATE_APPLICATION;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithRemoveKeyBoard;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithRemoveKeyBoard;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service

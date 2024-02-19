@@ -4,7 +4,7 @@ import com.external.imomarkastore.model.Application;
 import com.external.imomarkastore.service.ApplicationService;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
-import com.external.imomarkastore.telegramapi.command.owner.common.ApplicationSendHelper;
+import com.external.imomarkastore.telegramapi.command.owner.common.EntitiesSendHelper;
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
@@ -20,11 +20,11 @@ import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
 @RequiredArgsConstructor
-public class OwnerApplicationsExecutionService implements OwnerActionExecuteService {
+public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteService {
     private final ApplicationService applicationService;
     private final OwnerInfoService ownerInfoService;
     private final BotMessageSource messageSource;
-    private final ApplicationSendHelper applicationSendHelper;
+    private final EntitiesSendHelper entitiesSendHelper;
 
     @Override
     public String getCommand() {
@@ -40,16 +40,16 @@ public class OwnerApplicationsExecutionService implements OwnerActionExecuteServ
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         jsonObject.add("receivedApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
         if (applications.isEmpty()) {
-            applicationSendHelper.sendNoApplicationsMessageForOwner("owner.youDoNotHaveActiveApplications", user, jsonObject);
+            entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton("owner.youDoNotHaveActiveApplications", user, jsonObject);
         } else {
-            applicationSendHelper.sendApplicationsMessageForOwner("owner.yourActiveApplications", user, jsonObject);
+            entitiesSendHelper.sendApplicationsMessageForOwner("owner.yourActiveApplications", user, jsonObject);
             for (Application application : applications) {
                 final var messageIds = new JsonArray();
                 jsonObject.add(application.getId().toString(), messageIds);
                 final var archiveApplicationButtonName =
                         messageSource.getMessage("buttonName.owner.archiveApplication");
                 final var callbackData = "%s:%s".formatted(MOVE_APPLICATION_TO_ARCHIVE, application.getId());
-                applicationSendHelper.createAndSendApplicationMessage(user, application, messageIds, archiveApplicationButtonName, callbackData);
+                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, archiveApplicationButtonName, callbackData);
             }
         }
         ownerInfoService.updateState(GET_APPLICATIONS);

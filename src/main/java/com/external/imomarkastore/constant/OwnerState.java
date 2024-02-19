@@ -17,7 +17,7 @@ public enum OwnerState {
     MOVE_CLIENT_TO_BLACK_LIST("Перенос клиента в черный список"),
     GET_CLIENT_APPLICATIONS("Получение заявок клиента"),
     GET_BLACK_LIST("Получение черного списка"),
-    MOVE_CLIENT_BACK_FROM_BLACK_LIST("Перенос клиента из черного списка"),
+    BACK_FROM_BLACK_LIST("Перенос клиента из черного списка"),
     GET_CONTACTS("Получение контактов"),
     EDIT_NAME("Изменение имени"),
     EDIT_PHONE_NUMBER("Изменение номера телефона"),
