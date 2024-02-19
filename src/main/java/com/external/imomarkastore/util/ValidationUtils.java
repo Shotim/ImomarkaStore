@@ -30,4 +30,13 @@ public class ValidationUtils {
             return data.trim().toUpperCase();
         }
     }
+
+    public static String formatAndValidateEmail(String data) {
+        if (!isNotBlank(data) ||
+                !data.trim().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            throw new IllegalArgumentException("Wrong email format");
+        } else {
+            return data.trim();
+        }
+    }
 }

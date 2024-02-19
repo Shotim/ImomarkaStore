@@ -15,6 +15,8 @@ public interface OwnerInfoService {
 
     void updateAddress(String address);
 
+    void updateEmail(String email);
+
     OwnerState getCurrentOwnerState();
 
     void updateJsonData(String jsonData);

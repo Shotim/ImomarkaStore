@@ -72,6 +72,18 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     }
 
     @Override
+    public void updateEmail(String email) {
+        getOwnerInfoOptional()
+                .ifPresentOrElse(
+                        ownerInfo -> {
+                            ownerInfo.setEmail(email);
+                            repository.save(ownerInfo);
+                        }, () -> {
+                            throw new InternalError();
+                        });
+    }
+
+    @Override
     public boolean isOwner(Long telegramUserId) {
         return repository.findById(telegramUserId).isPresent();
     }

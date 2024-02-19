@@ -8,7 +8,6 @@ import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -19,7 +18,6 @@ import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OwnerSaveNameExecutionService implements OwnerActionExecuteService {
