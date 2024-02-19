@@ -3,6 +3,7 @@ package com.external.imomarkastore.telegramapi.command.owner.impl;
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
+import com.external.imomarkastore.telegramapi.command.owner.common.DeleteMessagesHelper;
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -12,16 +13,9 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-
-import java.util.ArrayList;
 
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_PHONE_NUMBER;
-import static com.external.imomarkastore.util.JsonUtils.extractMessageIds;
-import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
@@ -36,6 +30,7 @@ public class OwnerSavePhoneNumberExecutionService implements OwnerActionExecuteS
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
     private final OwnerGetContactsExecutionService ownerGetContactsExecutionService;
+    private final DeleteMessagesHelper deleteMessagesHelper;
 
     @Override
     public String getCommand() {
@@ -59,11 +54,7 @@ public class OwnerSavePhoneNumberExecutionService implements OwnerActionExecuteS
             jsonDataObject.add("successfulPhoneNumberSaveMessageId", new JsonPrimitive(successfulPhoneNumberSaveMessageId));
             ownerInfoService.updateJsonData(jsonDataObject.toString());
             ownerInfoService.updateState(GET_CONTACTS);
-            final var messageIds = new ArrayList<Integer>();
-            extractMessageIds(jsonDataObject, messageIds);
-            for (Integer messageId : messageIds) {
-                deleteMessage(user, messageId);
-            }
+            deleteMessagesHelper.deleteMessagesFromJsonDataForUser(user, jsonDataObject);
             ownerInfoService.updateJsonData(null);
             ownerGetContactsExecutionService.execute(update);
         } catch (IllegalArgumentException exception) {
@@ -83,15 +74,6 @@ public class OwnerSavePhoneNumberExecutionService implements OwnerActionExecuteS
             final var errorMessageIds = new JsonArray();
             errorMessageIds.add(errorMessageId);
             jsonDataObject.add(property, errorMessageIds);
-        }
-    }
-
-    private void deleteMessage(User user, Integer messageId) throws TelegramApiException {
-        try {
-            final var deleteMessage = createDeleteMessageForUser(user, messageId);
-            inomarkaStore.execute(deleteMessage);
-        } catch (TelegramApiRequestException exception) {
-            log.error("Tried to delete already deleted message.");
         }
     }
 }

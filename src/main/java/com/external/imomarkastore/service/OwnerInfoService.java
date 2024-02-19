@@ -10,7 +10,10 @@ public interface OwnerInfoService {
     void updateState(OwnerState state);
 
     void updateName(String name);
+
     void updatePhoneNumber(String phoneNumber);
+
+    void updateAddress(String address);
 
     OwnerState getCurrentOwnerState();
 
