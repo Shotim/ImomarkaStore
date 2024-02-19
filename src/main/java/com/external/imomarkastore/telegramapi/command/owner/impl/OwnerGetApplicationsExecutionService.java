@@ -13,6 +13,8 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Map;
+
 import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
@@ -49,7 +51,7 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
                 final var archiveApplicationButtonName =
                         messageSource.getMessage("buttonName.owner.archiveApplication");
                 final var callbackData = "%s:%s".formatted(MOVE_APPLICATION_TO_ARCHIVE, application.getId());
-                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, archiveApplicationButtonName, callbackData);
+                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, Map.of(archiveApplicationButtonName, callbackData));
             }
         }
         ownerInfoService.updateState(GET_APPLICATIONS);

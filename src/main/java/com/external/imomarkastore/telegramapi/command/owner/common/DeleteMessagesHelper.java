@@ -21,16 +21,21 @@ import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageFo
 public class DeleteMessagesHelper {
 
     private final InomarkaStore inomarkaStore;
-    public void deleteMessagesFromJsonDataForUser(User user, JsonObject jsonDataObject) throws TelegramApiException {
+
+    public void deleteAllMessagesFromJsonDataForUser(User user, JsonObject jsonDataObject) throws TelegramApiException {
         final var messageIds = new ArrayList<Integer>();
         extractMessageIds(jsonDataObject, messageIds);
         for (Integer messageId : messageIds) {
-            try {
-                final var deleteMessage = createDeleteMessageForUser(user, messageId);
-                inomarkaStore.execute(deleteMessage);
-            } catch (TelegramApiRequestException exception) {
-                log.error("Tried to delete already deleted message.");
-            }
+            deleteMessageById(user, messageId);
+        }
+    }
+
+    public void deleteMessageById(User user, Integer messageId) throws TelegramApiException {
+        try {
+            final var deleteMessage = createDeleteMessageForUser(user, messageId);
+            inomarkaStore.execute(deleteMessage);
+        } catch (TelegramApiRequestException exception) {
+            log.error("Tried to delete already deleted message.");
         }
     }
 

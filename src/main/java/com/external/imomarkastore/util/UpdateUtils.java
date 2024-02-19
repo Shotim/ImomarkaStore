@@ -25,10 +25,16 @@ public class UpdateUtils {
         return update.getMessage().getText();
     }
 
-    public static UUID getIdFromCallbackData(Update update) {
+    public static UUID getUUIDIdFromCallbackData(Update update) {
         final var data = update.getCallbackQuery().getData();
         final var id = data.substring(data.indexOf(":") + 1);
         return UUID.fromString(id);
+    }
+
+    public static Long getLongIdFromCallbackData(Update update) {
+        final var data = update.getCallbackQuery().getData();
+        final var id = data.substring(data.indexOf(":") + 1);
+        return Long.valueOf(id);
     }
 
     public static Optional<PhotoSize> getPhotoFromUpdate(Update update) {

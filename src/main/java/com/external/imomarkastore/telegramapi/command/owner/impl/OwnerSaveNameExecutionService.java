@@ -48,7 +48,7 @@ public class OwnerSaveNameExecutionService implements OwnerActionExecuteService 
         jsonDataObject.add("successfulNameSaveMessageId", new JsonPrimitive(successfulNameSaveMessageId));
         ownerInfoService.updateJsonData(jsonDataObject.toString());
         ownerInfoService.updateState(GET_CONTACTS);
-        deleteMessagesHelper.deleteMessagesFromJsonDataForUser(user, jsonDataObject);
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
         ownerInfoService.updateJsonData(null);
         ownerGetContactsExecutionService.execute(update);
     }

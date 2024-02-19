@@ -48,7 +48,7 @@ public class OwnerSaveInnExecutionService implements OwnerActionExecuteService {
         jsonDataObject.add("successfulInnSaveMessageId", new JsonPrimitive(successfulInnSaveMessageId));
         ownerInfoService.updateJsonData(jsonDataObject.toString());
         ownerInfoService.updateState(GET_CONTACTS);
-        deleteMessagesHelper.deleteMessagesFromJsonDataForUser(user, jsonDataObject);
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
         ownerInfoService.updateJsonData(null);
         ownerGetContactsExecutionService.execute(update);
     }

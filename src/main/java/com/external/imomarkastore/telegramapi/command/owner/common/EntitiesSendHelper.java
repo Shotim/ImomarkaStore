@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.external.imomarkastore.util.MessageUtils.createInlineKeyBoardMarkup;
-import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButtons;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 
 @Component
@@ -37,7 +37,7 @@ public class EntitiesSendHelper {
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
 
-    public void createAndSendApplicationMessage(User user, Application application, JsonArray messageIds, String buttonName, String callbackData) throws TelegramApiException {
+    public void createAndSendApplicationMessage(User user, Application application, JsonArray messageIds, Map<String, String> buttonNameToCallbackData) throws TelegramApiException {
         final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
         final var photoIds = Stream.of(
                         Optional.ofNullable(application.getMainPurposePhotoId()),
@@ -47,7 +47,7 @@ public class EntitiesSendHelper {
                 .toList();
         final var text = applicationService.getApplicationPayloadForOwner(application);
         final var inlineKeyboardMarkup = createInlineKeyBoardMarkup(
-                Map.of(buttonName, callbackData));
+                buttonNameToCallbackData);
         if (photoIds.size() == 1) {
             final var sendPhoto = SendPhoto.builder()
                     .caption(text)
@@ -58,8 +58,8 @@ public class EntitiesSendHelper {
             final var photoMessageId = inomarkaStore.execute(sendPhoto).getMessageId();
             messageIds.add(new JsonPrimitive(photoMessageId));
         } else {
-            final var textMessageWithInlineButton = createTextMessageForUserWithInlineButton(
-                    user, text, buttonName, callbackData);
+            final var textMessageWithInlineButton = createTextMessageForUserWithInlineButtons(
+                    user, text, buttonNameToCallbackData);
             final var applicationMessage = inomarkaStore.execute(textMessageWithInlineButton);
             messageIds.add(new JsonPrimitive(applicationMessage.getMessageId()));
             if (photoIds.size() > 1) {

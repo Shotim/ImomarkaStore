@@ -13,6 +13,9 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Map;
+
+import static com.external.imomarkastore.constant.OwnerState.DELETE_APPLICATION;
 import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.RESTORE_APPLICATION;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
@@ -48,8 +51,12 @@ public class OwnerGetArchiveApplicationsExecutionService implements OwnerActionE
                 jsonObject.add(application.getId().toString(), messageIds);
                 final var restoreApplicationButtonName =
                         messageSource.getMessage("buttonName.owner.restoreApplication");
-                final var callbackData = "%s:%s".formatted(RESTORE_APPLICATION, application.getId());
-                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, restoreApplicationButtonName, callbackData);
+                final var restoreApplicationCallbackData = "%s:%s".formatted(RESTORE_APPLICATION, application.getId());
+                final var deleteApplicationButtonName = messageSource.getMessage("buttonName.owner.deleteApplication");
+                final var deleteApplicationCallbackData = "%s:%s".formatted(DELETE_APPLICATION, application.getId());
+                final var buttonNameToCallbackData = Map.of(restoreApplicationButtonName, restoreApplicationCallbackData,
+                        deleteApplicationButtonName, deleteApplicationCallbackData);
+                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, buttonNameToCallbackData);
             }
         }
         ownerInfoService.updateState(GET_ARCHIVED_APPLICATIONS);

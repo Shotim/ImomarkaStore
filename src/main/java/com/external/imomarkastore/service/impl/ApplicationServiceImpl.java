@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.external.imomarkastore.constant.ApplicationStatus.ARCHIVED;
@@ -42,7 +41,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Optional<Application> getById(UUID id) {
+    public Optional<Application> getById(Long id) {
         return repository.findById(id);
     }
 
@@ -133,5 +132,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<Application> getNotArchivedApplicationsForCar(CarDetails carDetails) {
         return repository.findByStatusNotAndCarDetailsIdOrderById(ARCHIVED, carDetails.getId());
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        repository.deleteById(id);
     }
 }

@@ -41,7 +41,7 @@ public class OwnerBackToMainMenuExecutionService implements OwnerActionExecuteSe
 
         final var jsonObject = ownerInfoService.getJsonDataObject();
         final var user = getUserFromUpdate(update);
-        deleteMessagesHelper.deleteMessagesFromJsonDataForUser(user, jsonObject);
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonObject);
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         final var deleteReceivedMessageForUser = createDeleteMessageForUser(user, messageIdFromUpdate);
         inomarkaStore.execute(deleteReceivedMessageForUser);

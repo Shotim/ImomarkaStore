@@ -52,7 +52,7 @@ public class OwnerSavePhoneNumberExecutionService implements OwnerActionExecuteS
             jsonDataObject.add("successfulPhoneNumberSaveMessageId", new JsonPrimitive(successfulPhoneNumberSaveMessageId));
             ownerInfoService.updateJsonData(jsonDataObject.toString());
             ownerInfoService.updateState(GET_CONTACTS);
-            deleteMessagesHelper.deleteMessagesFromJsonDataForUser(user, jsonDataObject);
+            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
             ownerInfoService.updateJsonData(null);
             ownerGetContactsExecutionService.execute(update);
         } catch (IllegalArgumentException exception) {

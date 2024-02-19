@@ -1,6 +1,7 @@
 package com.external.imomarkastore.config.client;
 
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
+import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,10 +16,9 @@ public class ClientCommandExecutionServicesConfig {
 
     @Bean("clientCommandExecutionServicesByCommands")
     public Map<String, CommandExecutionService> messageExecutionServicesByCommands(
-            List<CommandExecutionService> commandExecutionServiceList) {
+            List<CommandExecutionService> commandExecutionServiceList, List<OwnerActionExecuteService> ownerActionExecuteServices) {
         return commandExecutionServiceList.stream()
-                .filter(commandExecutionService -> !commandExecutionService.getClass()
-                        .getName().toLowerCase().startsWith("owner"))
+                .filter(commandExecutionService -> !ownerActionExecuteServices.contains(commandExecutionService))
                 .collect(toMap(CommandExecutionService::getCommand, identity()));
     }
 }
