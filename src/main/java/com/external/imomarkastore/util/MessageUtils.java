@@ -23,10 +23,13 @@ public class MessageUtils {
 
     private static final BotMessageSource MESSAGE_SOURCE = getBotMessageSource();
 
-
     public static SendMessage createTextMessageForUser(User user, String text) {
+        return createTextMessageForUser(user.getId(), text);
+    }
+
+    public static SendMessage createTextMessageForUser(Long telegramUserId, String text) {
         return SendMessage.builder()
-                .chatId(user.getId().toString())
+                .chatId(telegramUserId.toString())
                 .text(text)
                 .build();
     }

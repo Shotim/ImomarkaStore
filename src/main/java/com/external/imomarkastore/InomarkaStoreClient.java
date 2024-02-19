@@ -23,6 +23,7 @@ import java.util.Optional;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
+import static java.lang.Boolean.TRUE;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -74,10 +75,15 @@ public class InomarkaStoreClient {
 
     public void processAction(Update update, User user) {
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
-        if (update.hasCallbackQuery()) {
-            processClientCallBacks(update, clientInfoOptional);
+        if (clientInfoOptional.isPresent() && TRUE.equals(clientInfoOptional.get().getIsInBlackList())) {
+            final var text = messageSource.getMessage("youBlackListed");
+            throwException(user, text);
         } else {
-            processClientMessagesAndCommands(update, clientInfoOptional);
+            if (update.hasCallbackQuery()) {
+                processClientCallBacks(update, clientInfoOptional);
+            } else {
+                processClientMessagesAndCommands(update, clientInfoOptional);
+            }
         }
     }
 
