@@ -20,17 +20,20 @@ import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_BLACK_LIST;
 import static com.external.imomarkastore.constant.OwnerState.GET_CLIENTS;
-import static com.external.imomarkastore.constant.OwnerState.GET_CLIENT_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
+import static com.external.imomarkastore.constant.OwnerState.GET_PHOTO;
 import static com.external.imomarkastore.constant.OwnerState.MAIN_MENU;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_CLIENT_TO_BLACK_LIST;
+import static com.external.imomarkastore.constant.OwnerState.PREPARE_GET_PHOTO;
+import static com.external.imomarkastore.constant.OwnerState.PREPARE_QR_FOR_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.RESTORE_APPLICATION;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_ADDRESS;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_EMAIL;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_INN;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_NAME;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_PHONE_NUMBER;
+import static com.external.imomarkastore.constant.OwnerState.SEND_QR_FOR_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.START;
 import static java.util.Map.entry;
 
@@ -43,17 +46,16 @@ public class OwnerStateMatrixConfig {
                 entry(START,
                         List.of(MAIN_MENU)),
                 entry(MAIN_MENU,
-                        List.of(GET_APPLICATIONS, GET_ARCHIVED_APPLICATIONS, GET_CLIENTS, GET_BLACK_LIST, GET_CONTACTS)),
+                        List.of(GET_APPLICATIONS, GET_ARCHIVED_APPLICATIONS, GET_CLIENTS,
+                                GET_BLACK_LIST, GET_CONTACTS, PREPARE_QR_FOR_PAYMENT, PREPARE_GET_PHOTO)),
                 entry(GET_APPLICATIONS,
                         List.of(EXPORT_APPLICATIONS, MOVE_APPLICATION_TO_ARCHIVE, BACK_TO_MAIN_MENU)),
                 entry(GET_ARCHIVED_APPLICATIONS,
                         List.of(EXPORT_APPLICATIONS, DELETE_APPLICATION, RESTORE_APPLICATION, BACK_TO_MAIN_MENU)),
                 entry(GET_CLIENTS,
-                        List.of(GET_CLIENT_APPLICATIONS, MOVE_CLIENT_TO_BLACK_LIST, BACK_TO_MAIN_MENU)),
+                        List.of(MOVE_CLIENT_TO_BLACK_LIST, BACK_TO_MAIN_MENU)),
                 entry(GET_BLACK_LIST,
                         List.of(BACK_FROM_BLACK_LIST, BACK_TO_MAIN_MENU)),
-                entry(GET_CLIENT_APPLICATIONS,
-                        List.of(GET_CLIENTS, BACK_TO_MAIN_MENU)),
                 entry(GET_CONTACTS,
                         List.of(EDIT_NAME, EDIT_PHONE_NUMBER, EDIT_ADDRESS, EDIT_INN, EDIT_EMAIL, BACK_TO_MAIN_MENU)),
                 entry(EDIT_NAME,
@@ -70,7 +72,9 @@ public class OwnerStateMatrixConfig {
                 entry(SAVE_PHONE_NUMBER, List.of(GET_CONTACTS)),
                 entry(SAVE_ADDRESS, List.of(GET_CONTACTS)),
                 entry(SAVE_INN, List.of(GET_CONTACTS)),
-                entry(SAVE_EMAIL, List.of(GET_CONTACTS))
+                entry(SAVE_EMAIL, List.of(GET_CONTACTS)),
+                entry(PREPARE_QR_FOR_PAYMENT, List.of(SEND_QR_FOR_PAYMENT, BACK_TO_MAIN_MENU)),
+                entry(PREPARE_GET_PHOTO, List.of(GET_PHOTO, BACK_TO_MAIN_MENU))
         );
     }
 }

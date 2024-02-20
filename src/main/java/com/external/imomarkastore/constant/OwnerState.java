@@ -15,7 +15,6 @@ public enum OwnerState {
     BACK_TO_MAIN_MENU("Возвращение в главное меню"),
     GET_CLIENTS("Получение списка клиентов"),
     MOVE_CLIENT_TO_BLACK_LIST("Перенос клиента в черный список"),
-    GET_CLIENT_APPLICATIONS("Получение заявок клиента"),
     GET_BLACK_LIST("Получение черного списка"),
     BACK_FROM_BLACK_LIST("Перенос клиента из черного списка"),
     GET_CONTACTS("Получение контактов"),
@@ -28,7 +27,11 @@ public enum OwnerState {
     SAVE_PHONE_NUMBER("Сохранение номера телефона"),
     SAVE_ADDRESS("Сохранение адреса"),
     SAVE_INN("Сохранение ИНН"),
-    SAVE_EMAIL("Сохранение email-а");
+    SAVE_EMAIL("Сохранение email-а"),
+    PREPARE_QR_FOR_PAYMENT("Подготовка к отправке QR для оплаты"),//TODO
+    SEND_QR_FOR_PAYMENT("Отправить QR для оплаты"),//TODO
+    PREPARE_GET_PHOTO("Поиск фото по идентификатору"),
+    GET_PHOTO("Получение фото по идентификатору");
 
     @Getter
     private final String ownerStateText;

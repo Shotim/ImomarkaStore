@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.external.imomarkastore.constant.OwnerState.BACK_TO_MAIN_MENU;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
@@ -97,9 +98,9 @@ public class InomarkaStoreOwner {
         if (nonNull(buttonState) && !nextStates.contains(buttonState)) {
             throwException(update, nextStates);
         }
-        final var ownerStateFromUpdate = isNotEmpty(nextStates) && nextStates.size() == 1 ?
-                nextStates.get(0) : buttonState;
         final var user = getUserFromUpdate(update);
+        final var ownerStateFromUpdate = isNotEmpty(nextStates) && nextStates.size() == 1 ?
+                nextStates.get(0) : getNextState(nextStates, buttonState);
         if (nonNull(ownerStateFromUpdate)) {
             final var ownerActionExecuteService = ownerActionExecutionServicesByStateName.get(ownerStateFromUpdate.name());
             if (nonNull(ownerActionExecuteService)) {
@@ -111,6 +112,14 @@ public class InomarkaStoreOwner {
         } else {
             throwException(user, "Should not happen!");
         }
+    }
+
+    private OwnerState getNextState(List<OwnerState> nextStates, OwnerState buttonState) {
+        return nonNull(buttonState) ?
+                buttonState :
+                nextStates.stream()
+                        .filter(ownerState -> !BACK_TO_MAIN_MENU.equals(ownerState))
+                        .findFirst().orElse(null);
     }
 
     private void processOwnerCommand(Update update, OwnerState ownerState) {

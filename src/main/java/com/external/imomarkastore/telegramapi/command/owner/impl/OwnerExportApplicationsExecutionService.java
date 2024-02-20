@@ -14,17 +14,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -36,12 +32,10 @@ import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static java.nio.file.Files.delete;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.io.FileUtils.getFile;
-import static org.apache.commons.io.FileUtils.readFileToByteArray;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND;
 import static org.apache.poi.ss.usermodel.IndexedColors.LIGHT_BLUE;
 import static org.apache.poi.ss.usermodel.IndexedColors.WHITE;
-import static org.apache.poi.ss.usermodel.Workbook.PICTURE_TYPE_JPEG;
 
 @Service
 @RequiredArgsConstructor
@@ -142,13 +136,17 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
                     final var cell2 = row.createCell(2);
                     cell2.setCellValue(vinNumber);
                     cell2.setCellStyle(dataStyle);
-                    final var vinNumberPhotoIdOptional = carDetailsOptional.map(CarDetails::getVinNumberPhotoId);
-                    setPicture(vinNumberPhotoIdOptional, workbook, sheet, 3, rowNumber);
+                    final var vinNumberPhotoId = carDetailsOptional.map(CarDetails::getVinNumberPhotoId).orElse(EMPTY);
+                    final var cell3 = row.createCell(3);
+                    cell3.setCellValue(vinNumberPhotoId);
+                    cell3.setCellStyle(dataStyle);
                     final var cell4 = row.createCell(4);
                     cell4.setCellValue(application.getMainPurpose());
                     cell4.setCellStyle(dataStyle);
-                    final var mainPurposePhotoIdOptional = Optional.ofNullable(application.getMainPurposePhotoId());
-                    setPicture(mainPurposePhotoIdOptional, workbook, sheet, 5, rowNumber);
+                    final var mainPurposePhotoId = Optional.ofNullable(application.getMainPurposePhotoId()).orElse(EMPTY);
+                    final var cell5 = row.createCell(5);
+                    cell5.setCellValue(mainPurposePhotoId);
+                    cell5.setCellStyle(dataStyle);
                     final var cell6 = row.createCell(6);
                     cell6.setCellValue(application.getComment());
                     cell6.setCellStyle(dataStyle);
@@ -183,24 +181,5 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
             }
         }
         ownerInfoService.updateJsonData(jsonObject.toString());
-    }
-
-    private void setPicture(Optional<String> photoIdOptional, XSSFWorkbook workbook, XSSFSheet sheet, int col1, int rowNumber) throws TelegramApiException, IOException {
-        if (photoIdOptional.isPresent()) {
-            final var getFile = GetFile.builder()
-                    .fileId(photoIdOptional.get())
-                    .build();
-            final var file = inomarkaStore.execute(getFile);
-            final var photo = inomarkaStore.downloadFile(file);
-            final var bytes = readFileToByteArray(photo);
-            final var pictureIdx = workbook.addPicture(bytes, PICTURE_TYPE_JPEG);
-            final var helper = workbook.getCreationHelper();
-            final var drawing = sheet.createDrawingPatriarch();
-            final var anchor = helper.createClientAnchor();
-            anchor.setCol1(col1);
-            anchor.setRow1(rowNumber - 1);
-            final var picture = drawing.createPicture(anchor, pictureIdx);
-            picture.resize(0.1);
-        }
     }
 }
