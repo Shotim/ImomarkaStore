@@ -37,6 +37,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setTelegramUserId(telegramUserId);
         application.setPhoneNumber(phoneNumber);
         application.setStatus(CREATION_IN_PROGRESS);
+        application.setSentRequestForPayment(false);
         return repository.save(application);
     }
 
@@ -58,13 +59,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getFullyCreatedApplications() {
-        return repository.findByStatusOrderByCreatedAtAsc(FULLY_CREATED);
+        return repository.findByStatusOrderByCreatedAtDesc(FULLY_CREATED);
     }
 
     @Override
     public List<Application> getArchivedApplications() {
 
-        return repository.findByStatusOrderByCreatedAtAsc(ARCHIVED);
+        return repository.findByStatusOrderByCreatedAtDesc(ARCHIVED);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Application findFirstInProgressByTelegramUserId(Long telegramUserId) {
+    public Application getFirstInProgressByTelegramUserId(Long telegramUserId) {
         return repository.findTopByTelegramUserIdAndStatusOrderByCreatedAtDesc(
                 telegramUserId, CREATION_IN_PROGRESS).orElseThrow(IllegalArgumentException::new);
     }

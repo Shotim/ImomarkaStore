@@ -47,7 +47,7 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
     public void execute(Update update, ClientInfo clientInfo) {
         final var carDetailsId = getUUIDIdFromCallbackData(update);
         final var user = getUserFromUpdate(update);
-        final var application = applicationService.findFirstInProgressByTelegramUserId(user.getId());
+        final var application = applicationService.getFirstInProgressByTelegramUserId(user.getId());
         application.setCarDetailsId(carDetailsId);
         applicationService.update(application);
         clientInfo.setState(CHOOSE_CAR_FOR_APPLICATION);

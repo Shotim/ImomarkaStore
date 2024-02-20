@@ -5,6 +5,7 @@ import com.external.imomarkastore.constant.ClientState;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ApplicationService;
 import com.external.imomarkastore.service.ClientInfoService;
+import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.Gson;
@@ -32,6 +33,7 @@ public class InsertCommentExecutionService implements MessageExecutionService {
     private final ApplicationService applicationService;
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
+    private final OwnerInfoService ownerInfoService;
 
     @Override
     public ClientState getState() {
@@ -44,7 +46,7 @@ public class InsertCommentExecutionService implements MessageExecutionService {
     public void execute(Update update, ClientInfo clientInfo) {
         clientInfo.setState(MAIN_MENU);
         clientInfoService.update(clientInfo);
-        final var application = applicationService.findFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
+        final var application = applicationService.getFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
         final var text = update.hasCallbackQuery() ?
                 messageSource.getMessage("noComment") :
                 getTextFromUpdate(update);

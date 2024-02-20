@@ -44,7 +44,7 @@ public class InsertVinNumberExecutionService implements MessageExecutionService 
     @Transactional
     public void execute(Update update, ClientInfo clientInfo) {
         try {
-            final var application = applicationService.findFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
+            final var application = applicationService.getFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
             final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
             if (carDetailsOptional.isEmpty()) {
                 log.error("CarDetails not found");

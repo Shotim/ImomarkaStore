@@ -44,7 +44,7 @@ public class InsertMainPurposeExecutionService implements MessageExecutionServic
         clientInfo.setState(INSERT_MAIN_PURPOSE);
         clientInfoService.update(clientInfo);
         final var application = applicationService
-                .findFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
+                .getFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
         if (photoOptional.isPresent()) {
             application.setMainPurpose(messageSource.getMessage("onPhoto"));
             application.setMainPurposePhotoId(photoOptional.get().getFileId());
@@ -63,7 +63,7 @@ public class InsertMainPurposeExecutionService implements MessageExecutionServic
 
         final var text = messageSource.getMessage("insertComment");
         final var application = applicationService
-                .findFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
+                .getFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
         final var message = createTextMessageForUserWithInlineButton(user, text,
                 messageSource.getMessage("buttonName.client.skipInsertComment"),
                 "%s:%s".formatted(INSERT_COMMENT.name(), application.getId()));

@@ -42,6 +42,8 @@ public class Application {
     @CreationTimestamp
     @Setter
     private LocalDateTime createdAt;
+    @Setter
+    private boolean sentRequestForPayment;
 
     public void setMainPurpose(String mainPurpose) {
         this.mainPurpose = scaleString(mainPurpose);

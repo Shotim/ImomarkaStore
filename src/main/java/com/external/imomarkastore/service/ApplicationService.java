@@ -23,7 +23,7 @@ public interface ApplicationService {
 
     List<Application> getApplicationsForClient(ClientInfo clientInfo);
 
-    Application findFirstInProgressByTelegramUserId(Long telegramUserId);
+    Application getFirstInProgressByTelegramUserId(Long telegramUserId);
 
     String getApplicationPayloadForClient(Application application);
     String getApplicationPayloadForOwner(Application application);

@@ -40,7 +40,7 @@ public class InsertCarDetailsExecutionService implements MessageExecutionService
     public void execute(Update update, ClientInfo clientInfo) {
         clientInfo.setState(INSERT_CAR_DETAILS);
         clientInfoService.update(clientInfo);
-        final var application = applicationService.findFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
+        final var application = applicationService.getFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
         final var text = getTextFromUpdate(update);
         final var carDetails = carDetailsService.create();
         application.setCarDetailsId(carDetails.getId());

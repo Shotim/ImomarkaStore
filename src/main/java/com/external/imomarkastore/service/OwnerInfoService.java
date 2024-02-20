@@ -28,4 +28,6 @@ public interface OwnerInfoService {
     JsonObject getJsonDataObject();
 
     String createContactsPayload();
+
+    Long getTelegramUserId();
 }

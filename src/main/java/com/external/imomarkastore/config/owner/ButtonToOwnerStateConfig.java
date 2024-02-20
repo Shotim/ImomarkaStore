@@ -20,7 +20,6 @@ import static com.external.imomarkastore.constant.OwnerState.GET_BLACK_LIST;
 import static com.external.imomarkastore.constant.OwnerState.GET_CLIENTS;
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
 import static com.external.imomarkastore.constant.OwnerState.PREPARE_GET_PHOTO;
-import static com.external.imomarkastore.constant.OwnerState.PREPARE_QR_FOR_PAYMENT;
 import static java.util.Map.entry;
 
 @Configuration
@@ -45,7 +44,7 @@ public class ButtonToOwnerStateConfig {
                 entry(messageSource.getMessage("buttonName.owner.editInn"), EDIT_INN),
                 entry(messageSource.getMessage("buttonName.owner.editEmail"), EDIT_EMAIL),
                 entry(messageSource.getMessage("buttonName.owner.getPhoto"), PREPARE_GET_PHOTO),
-                entry(messageSource.getMessage("buttonName.owner.prepareSendQRForPayment"), PREPARE_QR_FOR_PAYMENT)//TODO
+                entry(messageSource.getMessage("buttonName.owner.backToApplications"), GET_APPLICATIONS)
         );
     }
 }

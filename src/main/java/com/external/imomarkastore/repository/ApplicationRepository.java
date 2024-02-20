@@ -20,5 +20,5 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     List<Application> findByStatusNotAndCarDetailsIdOrderById(ApplicationStatus status, UUID carDetailsId);
 
-    List<Application> findByStatusOrderByCreatedAtAsc(ApplicationStatus status);
+    List<Application> findByStatusOrderByCreatedAtDesc(ApplicationStatus status);
 }

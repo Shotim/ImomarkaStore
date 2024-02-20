@@ -4,6 +4,7 @@ import com.external.imomarkastore.model.Application;
 import com.external.imomarkastore.service.ApplicationService;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
+import com.external.imomarkastore.telegramapi.command.owner.common.DeleteMessagesHelper;
 import com.external.imomarkastore.telegramapi.command.owner.common.EntitiesSendHelper;
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonArray;
@@ -13,12 +14,14 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
+import static com.external.imomarkastore.constant.OwnerState.PREPARE_PAYMENT;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
     private final OwnerInfoService ownerInfoService;
     private final BotMessageSource messageSource;
     private final EntitiesSendHelper entitiesSendHelper;
+    private final DeleteMessagesHelper deleteMessagesHelper;
 
     @Override
     public String getCommand() {
@@ -39,6 +43,7 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
         final var user = getUserFromUpdate(update);
         final var applications = applicationService.getFullyCreatedApplications();
         final var jsonObject = ownerInfoService.getJsonDataObject();
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonObject);
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         jsonObject.add("receivedApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
         if (applications.isEmpty()) {
@@ -50,8 +55,16 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
                 jsonObject.add(application.getId().toString(), messageIds);
                 final var archiveApplicationButtonName =
                         messageSource.getMessage("buttonName.owner.archiveApplication");
-                final var callbackData = "%s:%s".formatted(MOVE_APPLICATION_TO_ARCHIVE, application.getId());
-                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, Map.of(archiveApplicationButtonName, callbackData));
+                final var archiveApplicationCallbackData = "%s:%s".formatted(MOVE_APPLICATION_TO_ARCHIVE, application.getId());
+                final var sendPaymentButtonName = messageSource.getMessage("buttonName.owner.sendPayment");
+                final var sendPaymentCallbackData = "%s:%s".formatted(PREPARE_PAYMENT, application.getId());
+
+                final var buttonNameToCallbackData = new HashMap<String, String>();
+                buttonNameToCallbackData.put(archiveApplicationButtonName, archiveApplicationCallbackData);
+                if (!application.isSentRequestForPayment() && nonNull(application.getTelegramUserId())) {
+                    buttonNameToCallbackData.put(sendPaymentButtonName, sendPaymentCallbackData);
+                }
+                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, buttonNameToCallbackData);
             }
         }
         ownerInfoService.updateState(GET_APPLICATIONS);

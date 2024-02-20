@@ -108,6 +108,13 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     }
 
     @Override
+    public Long getTelegramUserId() {
+        return getOwnerInfoOptional()
+                .map(OwnerInfo::getTelegramUserId)
+                .orElseThrow(InternalError::new);
+    }
+
+    @Override
     public void updateJsonData(String jsonData) {
         getOwnerInfoOptional()
                 .ifPresentOrElse(

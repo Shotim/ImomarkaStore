@@ -28,8 +28,8 @@ public enum OwnerState {
     SAVE_ADDRESS("Сохранение адреса"),
     SAVE_INN("Сохранение ИНН"),
     SAVE_EMAIL("Сохранение email-а"),
-    PREPARE_QR_FOR_PAYMENT("Подготовка к отправке QR для оплаты"),//TODO
-    SEND_QR_FOR_PAYMENT("Отправить QR для оплаты"),//TODO
+    PREPARE_PAYMENT("Подготовка к отправке оплаты"),
+    SEND_PAYMENT("Отправить оплату"),
     PREPARE_GET_PHOTO("Поиск фото по идентификатору"),
     GET_PHOTO("Получение фото по идентификатору");
 

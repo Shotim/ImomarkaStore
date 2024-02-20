@@ -2,9 +2,11 @@ package com.external.imomarkastore.util;
 
 import lombok.NoArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
@@ -106,6 +108,23 @@ public class MessageUtils {
         return AnswerCallbackQuery.builder()
                 .callbackQueryId(callbackId)
                 .text(text)
+                .build();
+    }
+
+    public static SendInvoice createSendInvoice(Long telegramUserId, String title, String description, Integer priceValue, String priceLabel) {
+        final var price = new LabeledPrice();
+        price.setAmount(priceValue);
+        price.setLabel(priceLabel);
+        return SendInvoice.builder()
+                .chatId(telegramUserId)
+                .title(title)
+                .description(description)
+                .startParameter("get_access")
+                .currency("RUB")
+                .price(price)
+                .needEmail(true)
+                .needPhoneNumber(true)
+                .protectContent(true)
                 .build();
     }
 }
