@@ -21,7 +21,7 @@ import static com.external.imomarkastore.constant.ClientState.DELETE_CAR;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
-import static com.external.imomarkastore.util.UpdateUtils.getUUIDIdFromCallbackData;
+import static com.external.imomarkastore.util.UpdateUtils.getUUIDIdFromCallbackDataFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -39,7 +39,7 @@ public class DeleteCarExecutionService implements MessageExecutionService {
 
     @Override
     public void execute(Update update, ClientInfo clientInfo) {
-        final UUID uuid = getUUIDIdFromCallbackData(update);
+        final UUID uuid = getUUIDIdFromCallbackDataFromUpdate(update);
         final var carDetailsOptional = carDetailsService.getById(uuid);
         carDetailsOptional.ifPresent(carDetails -> {
             carDetails.setCarState(ARCHIVED);
@@ -57,7 +57,7 @@ public class DeleteCarExecutionService implements MessageExecutionService {
         final var callbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, text);
         inomarkaStore.execute(callbackQuery);
 
-        final var id = getUUIDIdFromCallbackData(update);
+        final var id = getUUIDIdFromCallbackDataFromUpdate(update);
         final var jsonObject = new Gson()
                 .fromJson(clientInfo.getAdditionalJsonDataForNextOperations(), JsonObject.class);
         clientInfo.setAdditionalJsonDataForNextOperations(jsonObject.toString());

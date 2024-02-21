@@ -43,9 +43,9 @@ public class OwnerGetArchiveApplicationsExecutionService implements OwnerActionE
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         jsonObject.add("receivedArchivedApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
         if (applications.isEmpty()) {
-            entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton("owner.youDoNotHaveArchiveApplications", user, jsonObject);
+            entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton("owner.youDoNotHaveArchiveApplications", user.getId(), jsonObject);
         } else {
-            entitiesSendHelper.sendApplicationsMessageForOwner("owner.yourArchiveApplications", user, jsonObject);
+            entitiesSendHelper.sendApplicationsMessageForOwner("owner.yourArchiveApplications", user.getId(), jsonObject);
             for (Application application : applications) {
                 final var messageIds = new JsonArray();
                 jsonObject.add(application.getId().toString(), messageIds);

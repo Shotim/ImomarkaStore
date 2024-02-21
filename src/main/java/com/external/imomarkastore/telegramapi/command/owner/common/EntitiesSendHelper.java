@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -78,23 +77,23 @@ public class EntitiesSendHelper {
         }
     }
 
-    public void sendApplicationsMessageForOwner(String code, User user, JsonObject jsonObject) throws TelegramApiException {
+    public void sendApplicationsMessageForOwner(String code, Long telegramUserId, JsonObject jsonObject) throws TelegramApiException {
         final var message = messageSource.getMessage(code);
         final var buttonNames = List.of(
                 messageSource.getMessage("buttonName.owner.exportApplications"),
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), message, buttonNames);
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(telegramUserId, message, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         jsonObject.add("root", new JsonPrimitive(messageId));
     }
 
-    public void sendMessageForOwnerWithBackToMainMenuButton(String code, User user, JsonObject jsonObject) throws TelegramApiException {
+    public void sendMessageForOwnerWithBackToMainMenuButton(String code, Long telegramUserId, JsonObject jsonObject) throws TelegramApiException {
         final var message = messageSource.getMessage(code);
         final var buttonNames = List.of(
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), message, buttonNames);
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(telegramUserId, message, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         jsonObject.add("root", new JsonPrimitive(messageId));
     }

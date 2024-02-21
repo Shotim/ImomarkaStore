@@ -45,10 +45,10 @@ public class OwnerGetClientsExecutionService implements OwnerActionExecuteServic
         jsonDataObject.addProperty("receivedGetClientsMessageId", messageIdFromUpdate);
         if (activeClients.isEmpty()) {
             entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton(
-                    "owner.youDoNotHaveActiveClients", user, jsonDataObject);
+                    "owner.youDoNotHaveActiveClients", user.getId(), jsonDataObject);
         } else {
             entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton(
-                    "owner.yourActiveClients", user, jsonDataObject);
+                    "owner.yourActiveClients", user.getId(), jsonDataObject);
             for (ClientInfo clientInfo : activeClients) {
                 final var text = messageSource.getMessage("template.owner.clientInfo",
                         List.of(clientInfo.getName(), clientInfo.getPhoneNumber()).toArray());

@@ -15,7 +15,7 @@ import static com.external.imomarkastore.constant.OwnerState.MOVE_CLIENT_TO_BLAC
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
-import static com.external.imomarkastore.util.UpdateUtils.getUUIDIdFromCallbackData;
+import static com.external.imomarkastore.util.UpdateUtils.getUUIDIdFromCallbackDataFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -38,7 +38,7 @@ public class OwnerMoveClientToBlackListExecutionService implements OwnerActionEx
     public void execute(Update update) {
         final var user = getUserFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);
-        final var clientId = getUUIDIdFromCallbackData(update);
+        final var clientId = getUUIDIdFromCallbackDataFromUpdate(update);
         final var clientInfoOptional = clientInfoService.getById(clientId);
         if (clientInfoOptional.isPresent()) {
             final var clientInfo = clientInfoOptional.get();

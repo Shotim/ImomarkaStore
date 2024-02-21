@@ -23,7 +23,7 @@ import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQ
 import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
-import static com.external.imomarkastore.util.UpdateUtils.getUUIDIdFromCallbackData;
+import static com.external.imomarkastore.util.UpdateUtils.getUUIDIdFromCallbackDataFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -45,7 +45,7 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
 
     @Override
     public void execute(Update update, ClientInfo clientInfo) {
-        final var carDetailsId = getUUIDIdFromCallbackData(update);
+        final var carDetailsId = getUUIDIdFromCallbackDataFromUpdate(update);
         final var user = getUserFromUpdate(update);
         final var application = applicationService.getFirstInProgressByTelegramUserId(user.getId());
         application.setCarDetailsId(carDetailsId);
@@ -59,7 +59,7 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
     @SneakyThrows
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = getUserFromUpdate(update);
-        final var carDetailsId = getUUIDIdFromCallbackData(update);
+        final var carDetailsId = getUUIDIdFromCallbackDataFromUpdate(update);
         final var carDetailsOptional = carDetailsService.getById(carDetailsId);
         if (carDetailsOptional.isPresent()) {
             final var carDetails = carDetailsOptional.get();

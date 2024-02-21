@@ -47,9 +47,9 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         jsonObject.add("receivedApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
         if (applications.isEmpty()) {
-            entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton("owner.youDoNotHaveActiveApplications", user, jsonObject);
+            entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton("owner.youDoNotHaveActiveApplications", user.getId(), jsonObject);
         } else {
-            entitiesSendHelper.sendApplicationsMessageForOwner("owner.yourActiveApplications", user, jsonObject);
+            entitiesSendHelper.sendApplicationsMessageForOwner("owner.yourActiveApplications", user.getId(), jsonObject);
             for (Application application : applications) {
                 final var messageIds = new JsonArray();
                 jsonObject.add(application.getId().toString(), messageIds);

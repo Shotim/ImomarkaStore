@@ -6,9 +6,11 @@ import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ApplicationService;
 import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.service.OwnerInfoService;
+import com.external.imomarkastore.telegramapi.command.owner.common.EntitiesSendHelper;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -16,12 +18,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Map;
+
 import static com.external.imomarkastore.constant.ApplicationStatus.FULLY_CREATED;
 import static com.external.imomarkastore.constant.ClientState.INSERT_COMMENT;
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
 import static com.external.imomarkastore.util.MessageUtils.createDeleteMessageForUser;
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
@@ -34,6 +39,7 @@ public class InsertCommentExecutionService implements MessageExecutionService {
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
     private final OwnerInfoService ownerInfoService;
+    private final EntitiesSendHelper entitiesSendHelper;
 
     @Override
     public ClientState getState() {
@@ -52,7 +58,24 @@ public class InsertCommentExecutionService implements MessageExecutionService {
                 getTextFromUpdate(update);
         application.setComment(text);
         application.setStatus(FULLY_CREATED);
-        applicationService.update(application);
+        final var ownerUserId = ownerInfoService.getTelegramUserId();
+        final var newApplicationCreatedText = messageSource.getMessage("owner.createdNewApplication");
+        final var textMessageForOwner = createTextMessageForUser(ownerUserId, newApplicationCreatedText);
+        final var sendMessageForOwnerMessageId = inomarkaStore.execute(textMessageForOwner).getMessageId();
+        final var messageIds = new JsonArray();
+        messageIds.add(sendMessageForOwnerMessageId);
+        final var callbackData = "NEW_APPLICATION:%s".formatted(application.getId());
+        final var skipApplicationButtonName = messageSource.getMessage("buttonName.owner.skipApplication");
+        final var buttonNameToCallbackData = Map.of(
+                skipApplicationButtonName,
+                callbackData
+        );
+        final var updatedApplication = applicationService.update(application);
+        entitiesSendHelper.createAndSendApplicationMessage(
+                ownerUserId, updatedApplication, messageIds, buttonNameToCallbackData);
+        final var jsonDataObject = ownerInfoService.getJsonDataObject();
+        jsonDataObject.add(callbackData, messageIds);
+        ownerInfoService.updateJsonData(jsonDataObject.toString());
         sendMessages(update, clientInfo);
     }
 

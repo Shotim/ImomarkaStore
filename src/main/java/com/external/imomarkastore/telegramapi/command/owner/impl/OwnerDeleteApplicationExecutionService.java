@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import static com.external.imomarkastore.constant.OwnerState.DELETE_APPLICATION;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
-import static com.external.imomarkastore.util.UpdateUtils.getLongIdFromCallbackData;
+import static com.external.imomarkastore.util.UpdateUtils.getLongIdFromCallbackDataFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -39,7 +39,7 @@ public class OwnerDeleteApplicationExecutionService implements OwnerActionExecut
     @SneakyThrows
     public void execute(Update update) {
         final var user = getUserFromUpdate(update);
-        final var applicationId = getLongIdFromCallbackData(update);
+        final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);
         final var applicationOptional = applicationService.getById(applicationId);
         if (applicationOptional.isPresent()) {

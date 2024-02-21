@@ -19,7 +19,7 @@ import static com.external.imomarkastore.constant.OwnerState.PREPARE_PAYMENT;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
-import static com.external.imomarkastore.util.UpdateUtils.getLongIdFromCallbackData;
+import static com.external.imomarkastore.util.UpdateUtils.getLongIdFromCallbackDataFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -42,7 +42,7 @@ public class OwnerPreparePaymentExecutionService implements OwnerActionExecuteSe
     @SneakyThrows
     public void execute(Update update) {
         final var user = getUserFromUpdate(update);
-        final var applicationId = getLongIdFromCallbackData(update);
+        final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
         final var applicationOptional = applicationService.getById(applicationId);
         if (applicationOptional.isPresent()) {

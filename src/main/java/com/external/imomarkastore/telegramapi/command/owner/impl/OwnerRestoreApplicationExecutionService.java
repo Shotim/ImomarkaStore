@@ -17,7 +17,7 @@ import static com.external.imomarkastore.constant.ApplicationStatus.FULLY_CREATE
 import static com.external.imomarkastore.constant.OwnerState.RESTORE_APPLICATION;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
 import static com.external.imomarkastore.util.UpdateUtils.getCallbackIdFromUpdate;
-import static com.external.imomarkastore.util.UpdateUtils.getLongIdFromCallbackData;
+import static com.external.imomarkastore.util.UpdateUtils.getLongIdFromCallbackDataFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Service
@@ -40,7 +40,7 @@ public class OwnerRestoreApplicationExecutionService implements OwnerActionExecu
     @SneakyThrows
     public void execute(Update update) {
         final var user = getUserFromUpdate(update);
-        final var applicationId = getLongIdFromCallbackData(update);
+        final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);
         final var applicationOptional = applicationService.getById(applicationId);
         if (applicationOptional.isPresent()) {

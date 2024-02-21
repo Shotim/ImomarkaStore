@@ -69,14 +69,18 @@ public class InomarkaStoreOwner {
         final var callbackState = data.contains(":") ?
                 data.substring(0, data.indexOf(":")) :
                 data;
-        final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
-        final var nextStates = ownerStateMatrix.get(currentOwnerState);
-        final var nextState = OwnerState.valueOf(callbackState);
-        if (!nextStates.contains(nextState)) {
-            throwException(update, nextStates);
+        if ("NEW_APPLICATION".equals(callbackState)) {
+            ownerActionExecutionServicesByStateName.get("NEW_APPLICATION").execute(update);
         } else {
-            final var ownerActionExecuteService = ownerActionExecutionServicesByStateName.get(nextState.name());
-            ownerActionExecuteService.execute(update);
+            final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
+            final var nextStates = ownerStateMatrix.get(currentOwnerState);
+            final var nextState = OwnerState.valueOf(callbackState);
+            if (!nextStates.contains(nextState)) {
+                throwException(update, nextStates);
+            } else {
+                final var ownerActionExecuteService = ownerActionExecutionServicesByStateName.get(nextState.name());
+                ownerActionExecuteService.execute(update);
+            }
         }
     }
 

@@ -42,13 +42,13 @@ public class OwnerGetBlackListExecutionService implements OwnerActionExecuteServ
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         final var activeClients = clientInfoService.getBlackListClients();
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
-        jsonDataObject.addProperty("receivedGetBlackListMessageId",messageIdFromUpdate);
+        jsonDataObject.addProperty("receivedGetBlackListMessageId", messageIdFromUpdate);
         if (activeClients.isEmpty()) {
             entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton(
-                    "owner.youDoNotHaveBlackListClients", user, jsonDataObject);
+                    "owner.youDoNotHaveBlackListClients", user.getId(), jsonDataObject);
         } else {
             entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton(
-                    "owner.yourBlackListClients", user, jsonDataObject);
+                    "owner.yourBlackListClients", user.getId(), jsonDataObject);
             for (ClientInfo clientInfo : activeClients) {
                 final var text = messageSource.getMessage("template.owner.clientInfo",
                         List.of(clientInfo.getName(), clientInfo.getPhoneNumber()).toArray());
