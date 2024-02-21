@@ -40,7 +40,7 @@ public class OwnerSaveNameExecutionService implements OwnerActionExecuteService 
         ownerInfoService.updateName(text);
         final var user = getUserFromUpdate(update);
         final var message = messageSource.getMessage("owner.editName.success");
-        final var textMessageForUser = createTextMessageForUser(user, message);
+        final var textMessageForUser = createTextMessageForUser(user.getId(), message);
         final var successfulNameSaveMessageId = inomarkaStore.execute(textMessageForUser).getMessageId();
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
@@ -48,7 +48,7 @@ public class OwnerSaveNameExecutionService implements OwnerActionExecuteService 
         jsonDataObject.add("successfulNameSaveMessageId", new JsonPrimitive(successfulNameSaveMessageId));
         ownerInfoService.updateJsonData(jsonDataObject.toString());
         ownerInfoService.updateState(GET_CONTACTS);
-        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonDataObject);
         ownerInfoService.updateJsonData(null);
         ownerGetContactsExecutionService.execute(update);
     }

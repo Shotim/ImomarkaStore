@@ -16,7 +16,6 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.List;
 
@@ -57,7 +56,7 @@ public class GetCarsExecutionService implements MessageExecutionService {
         final var user = getUserFromUpdate(update);
         if (!carDetailsList.isEmpty()) {
             final var carDetailsListText = messageSource.getMessage("carDetailsList");
-            final var message = createTextMessageWithButtonBackToMainMenuForClient(user, carDetailsListText);
+            final var message = createTextMessageWithButtonBackToMainMenuForClient(user.getId(), carDetailsListText);
             inomarkaStore.execute(message);
 
             final var jsonObject = new JsonObject();
@@ -67,13 +66,13 @@ public class GetCarsExecutionService implements MessageExecutionService {
                         applicationService.getNotArchivedApplicationsForCar(carDetails).isEmpty();
                 if (haveOnlyArchivedApplications) {
                     final var messageWithInlineButton =
-                            createTextMessageForUserWithInlineButton(user, carDetailsText,
+                            createTextMessageForUserWithInlineButton(user.getId(), carDetailsText,
                                     messageSource.getMessage("buttonName.client.deleteCar"),
                                     "%s:%s".formatted(DELETE_CAR.name(), carDetails.getId()));
                     final var executed = inomarkaStore.execute(messageWithInlineButton);
                     jsonObject.add(carDetails.getId().toString(), new JsonPrimitive(executed.getMessageId()));
                 } else {
-                    final var textMessageForUser = createTextMessageForUser(user, carDetailsText);
+                    final var textMessageForUser = createTextMessageForUser(user.getId(), carDetailsText);
                     inomarkaStore.execute(textMessageForUser);
                 }
             }
@@ -81,14 +80,14 @@ public class GetCarsExecutionService implements MessageExecutionService {
             clientInfoService.update(clientInfo);
         } else {
             final var text = messageSource.getMessage("noActiveCarDetailsFound");
-            final var message = createTextMessageWithButtonBackToMainMenuForClient(user, text);
+            final var message = createTextMessageWithButtonBackToMainMenuForClient(user.getId(), text);
             inomarkaStore.execute(message);
             clientInfoService.update(clientInfo);
         }
     }
 
-    private SendMessage createTextMessageWithButtonBackToMainMenuForClient(User user, String text) {
+    private SendMessage createTextMessageWithButtonBackToMainMenuForClient(Long telegramUserId, String text) {
         final var buttonNames = List.of(messageSource.getMessage("buttonName.client.backToMainMenu"));
-        return createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
+        return createTextMessageForUserWithReplyKeyBoardMarkup(telegramUserId, text, buttonNames);
     }
 }

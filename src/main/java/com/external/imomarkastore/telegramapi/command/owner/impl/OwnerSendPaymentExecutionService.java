@@ -66,7 +66,7 @@ public class OwnerSendPaymentExecutionService implements OwnerActionExecuteServi
                             messageSource.getMessage("buttonName.owner.backToApplications"),
                             messageSource.getMessage("buttonName.owner.backToMainMenu")
                     );
-                    final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, paymentSentMessage, buttonNames);
+                    final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), paymentSentMessage, buttonNames);
                     final var sentMessageId = inomarkaStore.execute(sendMessage).getMessageId();
                     jsonDataObject.addProperty("sentSendPaymentMessageId", sentMessageId);
                     applicationService.update(application);

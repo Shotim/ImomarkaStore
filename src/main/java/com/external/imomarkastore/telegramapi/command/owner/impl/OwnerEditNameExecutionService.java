@@ -39,7 +39,7 @@ public class OwnerEditNameExecutionService implements OwnerActionExecuteService 
 
         final var user = getUserFromUpdate(update);
         final var message = messageSource.getMessage("owner.editName");
-        final var textMessageForUser = createTextMessageForUser(user, message);
+        final var textMessageForUser = createTextMessageForUser(user.getId(), message);
         final var editNameMessageId = inomarkaStore.execute(textMessageForUser).getMessageId();
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         jsonDataObject.add("editNameMessageId", new JsonPrimitive(editNameMessageId));

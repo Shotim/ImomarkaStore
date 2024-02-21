@@ -52,7 +52,7 @@ public class OwnerGetContactsExecutionService implements OwnerActionExecuteServi
         );
         final var rootMessages = new JsonArray();
 
-        final var contactsPayloadMessage = createTextMessageForUserWithInlineButtons(user, text, buttonTextToCallbackData);
+        final var contactsPayloadMessage = createTextMessageForUserWithInlineButtons(user.getId(), text, buttonTextToCallbackData);
         final var contactsPayloadMessageId = inomarkaStore.execute(contactsPayloadMessage).getMessageId();
         rootMessages.add(contactsPayloadMessageId);
 
@@ -60,7 +60,7 @@ public class OwnerGetContactsExecutionService implements OwnerActionExecuteServi
         final var buttonNames = List.of(
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var additionalPayloadMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, additionalPayload, buttonNames);
+        final var additionalPayloadMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), additionalPayload, buttonNames);
         final var additionalPayloadMessageId = inomarkaStore.execute(additionalPayloadMessage).getMessageId();
         rootMessages.add(additionalPayloadMessageId);
 

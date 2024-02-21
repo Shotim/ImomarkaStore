@@ -46,18 +46,18 @@ public class OwnerSaveEmailExecutionService  implements OwnerActionExecuteServic
             final var email = formatAndValidateEmail(text);
             ownerInfoService.updateEmail(email);
             final var message = messageSource.getMessage("owner.editEmail.success");
-            final var textMessageForUser = createTextMessageForUser(user, message);
+            final var textMessageForUser = createTextMessageForUser(user.getId(), message);
             final var successfulEmailSaveMessageId = inomarkaStore.execute(textMessageForUser).getMessageId();
             jsonDataObject.add("receivedSaveEmailMessageId", new JsonPrimitive(messageIdFromUpdate));
             jsonDataObject.add("successfulEmailSaveMessageId", new JsonPrimitive(successfulEmailSaveMessageId));
             ownerInfoService.updateJsonData(jsonDataObject.toString());
             ownerInfoService.updateState(GET_CONTACTS);
-            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
+            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonDataObject);
             ownerInfoService.updateJsonData(null);
             ownerGetContactsExecutionService.execute(update);
         } catch (IllegalArgumentException exception) {
             final var errorText = messageSource.getMessage("error.wrongEmailFormat");
-            final var errorMessageForUser = createTextMessageForUser(user, errorText);
+            final var errorMessageForUser = createTextMessageForUser(user.getId(), errorText);
             final var errorMessageId = inomarkaStore.execute(errorMessageForUser).getMessageId();
             addMessageIdToPropertyOfJsonArray(jsonDataObject, errorMessageId, "emailErrorMessageIds");
             addMessageIdToPropertyOfJsonArray(jsonDataObject, messageIdFromUpdate, "receivedEmailErrorMessageIds");

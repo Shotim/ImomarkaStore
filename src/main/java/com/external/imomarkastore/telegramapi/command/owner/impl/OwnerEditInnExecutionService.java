@@ -39,7 +39,7 @@ public class OwnerEditInnExecutionService implements OwnerActionExecuteService {
 
         final var user = getUserFromUpdate(update);
         final var message = messageSource.getMessage("owner.editInn");
-        final var textMessageForUser = createTextMessageForUser(user, message);
+        final var textMessageForUser = createTextMessageForUser(user.getId(), message);
         final var editInnMessageId = inomarkaStore.execute(textMessageForUser).getMessageId();
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         jsonDataObject.add("editInnMessageId", new JsonPrimitive(editInnMessageId));

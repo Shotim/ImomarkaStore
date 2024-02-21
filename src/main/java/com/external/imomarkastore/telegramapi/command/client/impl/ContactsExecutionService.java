@@ -44,7 +44,7 @@ public class ContactsExecutionService extends StateMessagesExecutionService impl
     public void execute(Update update) {
         final var outputText = ownerInfoService.createContactsPayload();
         final var user = getUserFromUpdate(update);
-        final var outputMessage = createTextMessageForUser(user, outputText);
+        final var outputMessage = createTextMessageForUser(user.getId(), outputText);
         inomarkaStore.execute(outputMessage);
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
         super.sendMessages(update, clientInfoOptional.orElseGet(ClientInfo::new));

@@ -44,7 +44,7 @@ public class SaveNameExecutionService implements MessageExecutionService {
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = getUserFromUpdate(update);
         final var text = messageSource.getMessage("nameSavedSuccessfully");
-        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user.getId(), text);
         inomarkaStore.execute(message);
     }
 }

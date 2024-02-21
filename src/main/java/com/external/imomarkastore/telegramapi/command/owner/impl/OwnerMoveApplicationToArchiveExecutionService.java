@@ -54,7 +54,7 @@ public class OwnerMoveApplicationToArchiveExecutionService implements OwnerActio
             final var messageIdsToDelete = jsonDataObject.remove(applicationId.toString()).getAsJsonArray();
             for (JsonElement jsonElement : messageIdsToDelete) {
                 final var messageId = jsonElement.getAsInt();
-                deleteMessagesHelper.deleteMessageById(user, messageId);
+                deleteMessagesHelper.deleteMessageById(user.getId(), messageId);
             }
             ownerInfoService.updateJsonData(jsonDataObject.toString());
         }

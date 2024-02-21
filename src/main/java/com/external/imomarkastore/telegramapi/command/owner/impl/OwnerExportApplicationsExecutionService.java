@@ -71,12 +71,12 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
         final var user = getUserFromUpdate(update);
         if (applications.isEmpty()) {
             final var text = messageSource.getMessage("owner.noApplicationsToExport");
-            final var message = createTextMessageForUser(user, text);
+            final var message = createTextMessageForUser(user.getId(), text);
             final var messageId = inomarkaStore.execute(message).getMessageId();
             messageIds.add(messageId);
         } else {
             final var text = messageSource.getMessage("owner.exportedApplications");
-            final var message = createTextMessageForUser(user, text);
+            final var message = createTextMessageForUser(user.getId(), text);
             final var messageId = inomarkaStore.execute(message).getMessageId();
             messageIds.add(messageId);
             try (final var workbook = new XSSFWorkbook()) {
@@ -172,7 +172,7 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
                 }
                 final var file = getFile(filePath);
                 final var sendDocument = SendDocument.builder()
-                        .chatId(user.getId().toString())
+                        .chatId(user.getId())
                         .document(new InputFile(file, filePath))
                         .build();
                 final var exportFileMessageId = inomarkaStore.execute(sendDocument).getMessageId();

@@ -69,10 +69,10 @@ public class InsertCommentExecutionService implements MessageExecutionService {
         final var jsonDataString = clientInfo.getAdditionalJsonDataForNextOperations();
         final var jsonObject = new Gson().fromJson(jsonDataString, JsonObject.class);
         final var messageId = jsonObject.get("messageId").getAsInt();
-        final var deleteMessage = createDeleteMessageForUser(user, messageId);
+        final var deleteMessage = createDeleteMessageForUser(user.getId(), messageId);
         inomarkaStore.execute(deleteMessage);
         final var text = messageSource.getMessage("applicationCreated");
-        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user.getId(), text);
         inomarkaStore.execute(message);
 
         clientInfo.setAdditionalJsonDataForNextOperations(null);

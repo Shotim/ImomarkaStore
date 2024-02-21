@@ -43,7 +43,7 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
         final var user = getUserFromUpdate(update);
         final var applications = applicationService.getFullyCreatedApplications();
         final var jsonObject = ownerInfoService.getJsonDataObject();
-        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonObject);
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonObject);
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         jsonObject.add("receivedApplicationsMessageId", new JsonPrimitive(messageIdFromUpdate));
         if (applications.isEmpty()) {
@@ -64,7 +64,7 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
                 if (!application.isSentRequestForPayment() && nonNull(application.getTelegramUserId())) {
                     buttonNameToCallbackData.put(sendPaymentButtonName, sendPaymentCallbackData);
                 }
-                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, buttonNameToCallbackData);
+                entitiesSendHelper.createAndSendApplicationMessage(user.getId(), application, messageIds, buttonNameToCallbackData);
             }
         }
         ownerInfoService.updateState(GET_APPLICATIONS);

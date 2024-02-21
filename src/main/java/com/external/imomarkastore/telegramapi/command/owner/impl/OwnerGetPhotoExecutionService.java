@@ -51,7 +51,7 @@ public class OwnerGetPhotoExecutionService implements OwnerActionExecuteService 
             addMessageIdToPropertyOfJsonArray(jsonDataObject, messageWithPhotoId, "getPhotoMessageIds");
         } catch (TelegramApiException e) {
             final var errorText = messageSource.getMessage("error.wrongPhotoId");
-            final var errorMessage = createTextMessageForUser(user, errorText);
+            final var errorMessage = createTextMessageForUser(user.getId(), errorText);
             final var errorMessageId = inomarkaStore.execute(errorMessage).getMessageId();
             addMessageIdToPropertyOfJsonArray(jsonDataObject, errorMessageId, "getPhotoMessageIds");
         }

@@ -67,7 +67,7 @@ public class InsertVinNumberExecutionService implements MessageExecutionService 
         } catch (IllegalArgumentException exception) {
             final var user = getUserFromUpdate(update);
             final var text = messageSource.getMessage("error.wrongVinNumberFormat");
-            final var message = createTextMessageForUserWithRemoveKeyBoard(user, text);
+            final var message = createTextMessageForUserWithRemoveKeyBoard(user.getId(), text);
             inomarkaStore.execute(message);
         }
     }
@@ -77,7 +77,7 @@ public class InsertVinNumberExecutionService implements MessageExecutionService 
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var text = messageSource.getMessage("insertMainPurpose");
         final var user = getUserFromUpdate(update);
-        final var message = createTextMessageForUser(user, text);
+        final var message = createTextMessageForUser(user.getId(), text);
         inomarkaStore.execute(message);
     }
 }

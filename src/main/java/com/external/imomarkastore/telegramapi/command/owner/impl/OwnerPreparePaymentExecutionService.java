@@ -51,14 +51,14 @@ public class OwnerPreparePaymentExecutionService implements OwnerActionExecuteSe
             inomarkaStore.execute(answerCallbackQuery);
             final var application = applicationOptional.get();
             final var jsonDataObject = ownerInfoService.getJsonDataObject();
-            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
+            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonDataObject);
             final var applicationPayloadForOwner = applicationService.getApplicationPayloadForOwner(application);
             final var enterPaymentSumText = messageSource.getMessage("owner.enterPaymentSum");
             final var text = applicationPayloadForOwner + "\n\n" + enterPaymentSumText;
             final var buttonNames = List.of(
                     messageSource.getMessage("buttonName.owner.backToApplications")
             );
-            final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
+            final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), text, buttonNames);
             final var sendMessageId = inomarkaStore.execute(sendMessage).getMessageId();
             final var jsonObject = new JsonObject();
             jsonObject.addProperty("applicationIdToPay:%s".formatted(application.getId()), sendMessageId);

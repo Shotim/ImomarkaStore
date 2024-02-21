@@ -52,7 +52,7 @@ public class InitialSetPhoneNumberExecutionService implements MessageExecutionSe
         } catch (IllegalArgumentException exception) {
             final var user = getUserFromUpdate(update);
             final var text = messageSource.getMessage("error.wrongPhoneNumberFormat");
-            final var message = createTextMessageForUserWithRemoveKeyBoard(user, text);
+            final var message = createTextMessageForUserWithRemoveKeyBoard(user.getId(), text);
             inomarkaStore.execute(message);
         }
     }
@@ -65,10 +65,10 @@ public class InitialSetPhoneNumberExecutionService implements MessageExecutionSe
                 Stream.of(clientInfo.getName(), clientInfo.getPhoneNumber())
                         .map(string -> isBlank(string) ? EMPTY : string).toArray());
         final var user = getUserFromUpdate(update);
-        final var message = createTextMessageForUser(user, outputText);
+        final var message = createTextMessageForUser(user.getId(), outputText);
         inomarkaStore.execute(message);
         final var text = "Теперь Вы можете создать запрос, который Вас интересует.";
-        final var sendMessage = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var sendMessage = createClientTextMessageWithReplyKeyboardForMainMenu(user.getId(), text);
         inomarkaStore.execute(sendMessage);
     }
 }

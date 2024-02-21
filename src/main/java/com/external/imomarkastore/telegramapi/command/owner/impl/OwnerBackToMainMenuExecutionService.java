@@ -41,9 +41,9 @@ public class OwnerBackToMainMenuExecutionService implements OwnerActionExecuteSe
 
         final var jsonObject = ownerInfoService.getJsonDataObject();
         final var user = getUserFromUpdate(update);
-        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonObject);
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonObject);
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
-        final var deleteReceivedMessageForUser = createDeleteMessageForUser(user, messageIdFromUpdate);
+        final var deleteReceivedMessageForUser = createDeleteMessageForUser(user.getId(), messageIdFromUpdate);
         inomarkaStore.execute(deleteReceivedMessageForUser);
         final var text = messageSource.getMessage("youReturnedBackToMainMenu");
         final var buttonNames = List.of(
@@ -54,7 +54,7 @@ public class OwnerBackToMainMenuExecutionService implements OwnerActionExecuteSe
                 messageSource.getMessage("buttonName.owner.getContacts"),
                 messageSource.getMessage("buttonName.owner.getPhoto")
         );
-        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), text, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         ownerInfoService.updateState(MAIN_MENU);
         final var newJsonObject = new JsonObject();

@@ -46,18 +46,18 @@ public class OwnerSavePhoneNumberExecutionService implements OwnerActionExecuteS
             final var phoneNumber = formatAndValidatePhoneNumber(text);
             ownerInfoService.updatePhoneNumber(phoneNumber);
             final var message = messageSource.getMessage("owner.editPhoneNumber.success");
-            final var textMessageForUser = createTextMessageForUser(user, message);
+            final var textMessageForUser = createTextMessageForUser(user.getId(), message);
             final var successfulPhoneNumberSaveMessageId = inomarkaStore.execute(textMessageForUser).getMessageId();
             jsonDataObject.add("receivedSavePhoneNumberMessageId", new JsonPrimitive(messageIdFromUpdate));
             jsonDataObject.add("successfulPhoneNumberSaveMessageId", new JsonPrimitive(successfulPhoneNumberSaveMessageId));
             ownerInfoService.updateJsonData(jsonDataObject.toString());
             ownerInfoService.updateState(GET_CONTACTS);
-            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
+            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonDataObject);
             ownerInfoService.updateJsonData(null);
             ownerGetContactsExecutionService.execute(update);
         } catch (IllegalArgumentException exception) {
             final var errorText = messageSource.getMessage("error.wrongPhoneNumberFormat");
-            final var errorMessageForUser = createTextMessageForUser(user, errorText);
+            final var errorMessageForUser = createTextMessageForUser(user.getId(), errorText);
             final var errorMessageId = inomarkaStore.execute(errorMessageForUser).getMessageId();
             addMessageIdToPropertyOfJsonArray(jsonDataObject, errorMessageId, "phoneNumberErrorMessageIds");
             addMessageIdToPropertyOfJsonArray(jsonDataObject, messageIdFromUpdate, "receivedPhoneNumberErrorMessageIds");

@@ -37,7 +37,7 @@ public class OwnerStartExecutionService implements OwnerActionExecuteService {
         final var user = getUserFromUpdate(update);
 
         final var welcome = messageSource.getMessage("owner.welcome");
-        final var textMessageForUser = createTextMessageForUser(user, welcome);
+        final var textMessageForUser = createTextMessageForUser(user.getId(), welcome);
         inomarkaStore.execute(textMessageForUser);
 
         final var startWork = messageSource.getMessage("owner.startWork");
@@ -46,7 +46,7 @@ public class OwnerStartExecutionService implements OwnerActionExecuteService {
                 messageSource.getMessage("buttonName.owner.getArchivedApplications"),
                 messageSource.getMessage("buttonName.owner.getClients"),
                 messageSource.getMessage("buttonName.owner.getBlackList"));
-        final var startWorkMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, startWork, buttonNames);
+        final var startWorkMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), startWork, buttonNames);
         inomarkaStore.execute(startWorkMessage);
     }
 }

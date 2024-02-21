@@ -57,7 +57,7 @@ public class OwnerGetClientsExecutionService implements OwnerActionExecuteServic
                 final var callbackData = "%s:%s"
                         .formatted(MOVE_CLIENT_TO_BLACK_LIST.name(), clientInfoId);
                 final var clientInfoMessage = createTextMessageForUserWithInlineButton(
-                        user, text, buttonName, callbackData);
+                        user.getId(), text, buttonName, callbackData);
                 final var clientInfoMessageId = inomarkaStore.execute(clientInfoMessage).getMessageId();
                 jsonDataObject.addProperty(clientInfoId.toString(), clientInfoMessageId);
             }

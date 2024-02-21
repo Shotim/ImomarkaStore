@@ -57,7 +57,7 @@ public class InsertCarDetailsExecutionService implements MessageExecutionService
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var text = messageSource.getMessage("insertVinNumber");
         final var user = getUserFromUpdate(update);
-        final var message = createTextMessageForUser(user, text);
+        final var message = createTextMessageForUser(user.getId(), text);
         inomarkaStore.execute(message);
     }
 }

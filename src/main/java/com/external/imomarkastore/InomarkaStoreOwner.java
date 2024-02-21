@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.List;
 import java.util.Map;
@@ -107,10 +106,10 @@ public class InomarkaStoreOwner {
                 ownerActionExecuteService.execute(update);
             } else {
                 final var errorText = messageSource.getMessage("error.botConfig");
-                throwException(user, errorText);
+                throwException(user.getId(), errorText);
             }
         } else {
-            throwException(user, "Should not happen!");
+            throwException(user.getId(), "Should not happen!");
         }
     }
 
@@ -129,12 +128,12 @@ public class InomarkaStoreOwner {
         } else {
             final var errorText = messageSource.getMessage("error.botConfig");
             final var user = getUserFromUpdate(update);
-            throwException(user, errorText);
+            throwException(user.getId(), errorText);
         }
     }
 
-    private void throwException(User user, String errorText) {
-        final var errorMessage = createTextMessageForUser(user, errorText);
+    private void throwException(Long telegramUserId, String errorText) {
+        final var errorMessage = createTextMessageForUser(telegramUserId, errorText);
         throw new BotException(errorMessage);
     }
 
@@ -146,6 +145,6 @@ public class InomarkaStoreOwner {
                 .map(OwnerState::getOwnerStateText)
                 .collect(joining(", "));
         final var errorText = messageSource.getMessage("error.nextStates", List.of(availableStates).toArray());
-        throwException(user, errorText);
+        throwException(user.getId(), errorText);
     }
 }

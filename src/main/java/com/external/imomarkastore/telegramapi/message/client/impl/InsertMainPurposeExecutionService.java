@@ -64,7 +64,7 @@ public class InsertMainPurposeExecutionService implements MessageExecutionServic
         final var text = messageSource.getMessage("insertComment");
         final var application = applicationService
                 .getFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
-        final var message = createTextMessageForUserWithInlineButton(user, text,
+        final var message = createTextMessageForUserWithInlineButton(user.getId(), text,
                 messageSource.getMessage("buttonName.client.skipInsertComment"),
                 "%s:%s".formatted(INSERT_COMMENT.name(), application.getId()));
         final var messageId = inomarkaStore.execute(message).getMessageId();

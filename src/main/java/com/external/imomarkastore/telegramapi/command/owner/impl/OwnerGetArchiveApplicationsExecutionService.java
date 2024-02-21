@@ -56,7 +56,7 @@ public class OwnerGetArchiveApplicationsExecutionService implements OwnerActionE
                 final var deleteApplicationCallbackData = "%s:%s".formatted(DELETE_APPLICATION, application.getId());
                 final var buttonNameToCallbackData = Map.of(restoreApplicationButtonName, restoreApplicationCallbackData,
                         deleteApplicationButtonName, deleteApplicationCallbackData);
-                entitiesSendHelper.createAndSendApplicationMessage(user, application, messageIds, buttonNameToCallbackData);
+                entitiesSendHelper.createAndSendApplicationMessage(user.getId(), application, messageIds, buttonNameToCallbackData);
             }
         }
         ownerInfoService.updateState(GET_ARCHIVED_APPLICATIONS);

@@ -67,7 +67,7 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
             final var chooseCarMessageText = messageSource
                     .getMessage("youChooseThatCar", List.of(details).toArray());
 
-            final var chooseCarMessage = createTextMessageForUser(user, chooseCarMessageText);
+            final var chooseCarMessage = createTextMessageForUser(user.getId(), chooseCarMessageText);
             inomarkaStore.execute(chooseCarMessage);
 
             final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
@@ -82,13 +82,13 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
                 .map(JsonElement::getAsInt)
                 .toList();
         for (Integer messageId : messageIds) {
-            final var deleteMessage = createDeleteMessageForUser(user, messageId);
+            final var deleteMessage = createDeleteMessageForUser(user.getId(), messageId);
             inomarkaStore.execute(deleteMessage);
         }
         clientInfo.setAdditionalJsonDataForNextOperations(null);
         clientInfoService.update(clientInfo);
         final var text = messageSource.getMessage("describeMainPurpose");
-        final var message = createTextMessageForUser(user, text);
+        final var message = createTextMessageForUser(user.getId(), text);
         inomarkaStore.execute(message);
     }
 }

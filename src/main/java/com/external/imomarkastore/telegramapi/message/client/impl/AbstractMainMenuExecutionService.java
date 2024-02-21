@@ -33,7 +33,7 @@ public abstract class AbstractMainMenuExecutionService implements MessageExecuti
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = UpdateUtils.getUserFromUpdate(update);
         final var text = messageSource.getMessage("youReturnedBackToMainMenu");
-        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user.getId(), text);
         inomarkaStore.execute(message);
     }
 }

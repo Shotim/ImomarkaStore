@@ -57,7 +57,7 @@ public class SavePhoneNumberExecutionService implements MessageExecutionService 
         } catch (IllegalArgumentException exception) {
             final var user = getUserFromUpdate(update);
             final var text = messageSource.getMessage("error.wrongVinNumberFormat");
-            final var message = createTextMessageForUserWithRemoveKeyBoard(user, text);
+            final var message = createTextMessageForUserWithRemoveKeyBoard(user.getId(), text);
             inomarkaStore.execute(message);
         }
     }
@@ -67,7 +67,7 @@ public class SavePhoneNumberExecutionService implements MessageExecutionService 
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = getUserFromUpdate(update);
         final var text = messageSource.getMessage("phoneNumberSavedSuccessfully");
-        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user, text);
+        final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user.getId(), text);
         inomarkaStore.execute(message);
     }
 }

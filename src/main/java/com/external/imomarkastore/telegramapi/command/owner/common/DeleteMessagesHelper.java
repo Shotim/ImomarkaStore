@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
@@ -22,17 +21,17 @@ public class DeleteMessagesHelper {
 
     private final InomarkaStore inomarkaStore;
 
-    public void deleteAllMessagesFromJsonDataForUser(User user, JsonObject jsonDataObject) throws TelegramApiException {
+    public void deleteAllMessagesFromJsonDataForUser(Long telegramUserId, JsonObject jsonDataObject) throws TelegramApiException {
         final var messageIds = new ArrayList<Integer>();
         extractMessageIds(jsonDataObject, messageIds);
         for (Integer messageId : messageIds) {
-            deleteMessageById(user, messageId);
+            deleteMessageById(telegramUserId, messageId);
         }
     }
 
-    public void deleteMessageById(User user, Integer messageId) throws TelegramApiException {
+    public void deleteMessageById(Long telegramUserId, Integer messageId) throws TelegramApiException {
         try {
-            final var deleteMessage = createDeleteMessageForUser(user, messageId);
+            final var deleteMessage = createDeleteMessageForUser(telegramUserId, messageId);
             inomarkaStore.execute(deleteMessage);
         } catch (TelegramApiRequestException exception) {
             log.error("Tried to delete already deleted message.");

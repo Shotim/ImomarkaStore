@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -25,54 +24,50 @@ public class MessageUtils {
 
     private static final BotMessageSource MESSAGE_SOURCE = getBotMessageSource();
 
-    public static SendMessage createTextMessageForUser(User user, String text) {
-        return createTextMessageForUser(user.getId(), text);
-    }
-
     public static SendMessage createTextMessageForUser(Long telegramUserId, String text) {
         return SendMessage.builder()
-                .chatId(telegramUserId.toString())
+                .chatId(telegramUserId)
                 .text(text)
                 .build();
     }
 
-    public static SendMessage createTextMessageForUserWithRemoveKeyBoard(User user, String text) {
+    public static SendMessage createTextMessageForUserWithRemoveKeyBoard(Long telegramUserId, String text) {
         return SendMessage.builder()
-                .chatId(user.getId().toString())
+                .chatId(telegramUserId)
                 .text(text)
                 .replyMarkup(new ReplyKeyboardRemove(true))
                 .build();
     }
 
-    public static SendMessage createClientTextMessageWithReplyKeyboardForMainMenu(User user, String text) {
+    public static SendMessage createClientTextMessageWithReplyKeyboardForMainMenu(Long telegramUserId, String text) {
         final var buttonNames = List.of(
                 MESSAGE_SOURCE.getMessage("buttonName.client.newApplication"),
                 MESSAGE_SOURCE.getMessage("buttonName.client.editName"),
                 MESSAGE_SOURCE.getMessage("buttonName.client.editPhoneNumber"),
                 MESSAGE_SOURCE.getMessage("buttonName.client.getCars"));
-        return createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
+        return createTextMessageForUserWithReplyKeyBoardMarkup(telegramUserId, text, buttonNames);
     }
 
-    public static SendMessage createTextMessageForUserWithInlineButton(User user, String text, String buttonText, String buttonCallbackData) {
-        return createTextMessageForUserWithInlineButtons(user, text, Map.of(buttonText, buttonCallbackData));
+    public static SendMessage createTextMessageForUserWithInlineButton(Long telegramUserId, String text, String buttonText, String buttonCallbackData) {
+        return createTextMessageForUserWithInlineButtons(telegramUserId, text, Map.of(buttonText, buttonCallbackData));
     }
 
-    public static SendMessage createTextMessageForUserWithInlineButtons(User user, String text, Map<String, String> buttonTextToCallBackData) {
+    public static SendMessage createTextMessageForUserWithInlineButtons(Long telegramUserId, String text, Map<String, String> buttonTextToCallBackData) {
         final var inlineKeyBoardMarkup = createInlineKeyBoardMarkup(buttonTextToCallBackData);
         return SendMessage.builder()
                 .text(text)
                 .replyMarkup(inlineKeyBoardMarkup)
-                .chatId(user.getId().toString())
+                .chatId(telegramUserId)
                 .build();
     }
 
-    public static SendMessage createTextMessageForUserWithReplyKeyBoardMarkup(User user, String text, List<String> buttonNames) {
+    public static SendMessage createTextMessageForUserWithReplyKeyBoardMarkup(Long telegramUserId, String text, List<String> buttonNames) {
         final var replyKeyboardMarkup = new ReplyKeyboardMarkup();
         final var keyboardRows = buttonNames.stream().map(MessageUtils::createKeyBoardRowWithOneButton).toList();
         replyKeyboardMarkup.setKeyboard(keyboardRows);
         return SendMessage.builder()
                 .text(text)
-                .chatId(user.getId().toString())
+                .chatId(telegramUserId)
                 .replyMarkup(replyKeyboardMarkup)
                 .build();
     }
@@ -97,9 +92,9 @@ public class MessageUtils {
         return keyboardRow;
     }
 
-    public static DeleteMessage createDeleteMessageForUser(User user, Integer messageId) {
+    public static DeleteMessage createDeleteMessageForUser(Long telegramUserId, Integer messageId) {
         return DeleteMessage.builder()
-                .chatId(user.getId().toString())
+                .chatId(telegramUserId)
                 .messageId(messageId)
                 .build();
     }

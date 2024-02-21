@@ -37,7 +37,7 @@ public class EntitiesSendHelper {
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
 
-    public void createAndSendApplicationMessage(User user, Application application, JsonArray messageIds, Map<String, String> buttonNameToCallbackData) throws TelegramApiException {
+    public void createAndSendApplicationMessage(Long telegramUserId, Application application, JsonArray messageIds, Map<String, String> buttonNameToCallbackData) throws TelegramApiException {
         final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
         final var photoIds = Stream.of(
                         Optional.ofNullable(application.getMainPurposePhotoId()),
@@ -51,7 +51,7 @@ public class EntitiesSendHelper {
         if (photoIds.size() == 1) {
             final var sendPhoto = SendPhoto.builder()
                     .caption(text)
-                    .chatId(user.getId().toString())
+                    .chatId(telegramUserId)
                     .photo(new InputFile(photoIds.get(0)))
                     .replyMarkup(inlineKeyboardMarkup)
                     .build();
@@ -59,7 +59,7 @@ public class EntitiesSendHelper {
             messageIds.add(new JsonPrimitive(photoMessageId));
         } else {
             final var textMessageWithInlineButton = createTextMessageForUserWithInlineButtons(
-                    user, text, buttonNameToCallbackData);
+                    telegramUserId, text, buttonNameToCallbackData);
             final var applicationMessage = inomarkaStore.execute(textMessageWithInlineButton);
             messageIds.add(new JsonPrimitive(applicationMessage.getMessageId()));
             if (photoIds.size() > 1) {
@@ -68,7 +68,7 @@ public class EntitiesSendHelper {
                                 (InputMedia) new InputMediaPhoto(photoId))
                         .toList();
                 final var sendMediaGroup = SendMediaGroup.builder()
-                        .chatId(user.getId().toString())
+                        .chatId(telegramUserId)
                         .messageThreadId(applicationMessage.getMessageThreadId())
                         .replyToMessageId(applicationMessage.getMessageId())
                         .medias(inputMediaPhotos)
@@ -84,7 +84,7 @@ public class EntitiesSendHelper {
                 messageSource.getMessage("buttonName.owner.exportApplications"),
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, message, buttonNames);
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), message, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         jsonObject.add("root", new JsonPrimitive(messageId));
     }
@@ -94,7 +94,7 @@ public class EntitiesSendHelper {
         final var buttonNames = List.of(
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user, message, buttonNames);
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), message, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();
         jsonObject.add("root", new JsonPrimitive(messageId));
     }

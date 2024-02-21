@@ -49,7 +49,7 @@ public class OwnerBackFromBlackListExecutionService implements OwnerActionExecut
             inomarkaStore.execute(answerCallbackQuery);
             final var jsonDataObject = ownerInfoService.getJsonDataObject();
             final var clientInfoMessageId = jsonDataObject.remove(clientId.toString()).getAsInt();
-            deleteMessagesHelper.deleteMessageById(user, clientInfoMessageId);
+            deleteMessagesHelper.deleteMessageById(user.getId(), clientInfoMessageId);
             ownerInfoService.updateJsonData(jsonDataObject.toString());
             final var clientInfoTelegramUserId = clientInfo.getTelegramUserId();
             final var youActivatedText = messageSource.getMessage("youActivated");

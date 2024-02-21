@@ -41,7 +41,7 @@ public class OwnerPrepareGetPhotoExecutionService implements OwnerActionExecuteS
         final var buttonNames = List.of(
                 messageSource.getMessage("buttonName.owner.backToMainMenu")
         );
-        final var textMessageForUser = createTextMessageForUserWithReplyKeyBoardMarkup(user, text, buttonNames);
+        final var textMessageForUser = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), text, buttonNames);
         final var messageId = inomarkaStore.execute(textMessageForUser).getMessageId();
         jsonDataObject.addProperty("prepareGetPhotoMessageId", messageId);
         ownerInfoService.updateJsonData(jsonDataObject.toString());

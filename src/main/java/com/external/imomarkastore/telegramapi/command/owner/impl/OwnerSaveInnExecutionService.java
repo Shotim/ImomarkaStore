@@ -40,7 +40,7 @@ public class OwnerSaveInnExecutionService implements OwnerActionExecuteService {
         ownerInfoService.updateInn(text);
         final var user = getUserFromUpdate(update);
         final var message = messageSource.getMessage("owner.editInn.success");
-        final var textMessageForUser = createTextMessageForUser(user, message);
+        final var textMessageForUser = createTextMessageForUser(user.getId(), message);
         final var successfulInnSaveMessageId = inomarkaStore.execute(textMessageForUser).getMessageId();
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
@@ -48,7 +48,7 @@ public class OwnerSaveInnExecutionService implements OwnerActionExecuteService {
         jsonDataObject.add("successfulInnSaveMessageId", new JsonPrimitive(successfulInnSaveMessageId));
         ownerInfoService.updateJsonData(jsonDataObject.toString());
         ownerInfoService.updateState(GET_CONTACTS);
-        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user, jsonDataObject);
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonDataObject);
         ownerInfoService.updateJsonData(null);
         ownerGetContactsExecutionService.execute(update);
     }

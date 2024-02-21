@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -30,8 +29,8 @@ public class ApplicationsSendHelper {
     private final ApplicationService applicationService;
     private final CarDetailsService carDetailsService;
 
-    public void sendApplications(User user, List<Application> applications, String text) throws TelegramApiException {
-        final var outputMessage = createTextMessageForUserWithRemoveKeyBoard(user, text);
+    public void sendApplications(Long telegramUserId, List<Application> applications, String text) throws TelegramApiException {
+        final var outputMessage = createTextMessageForUserWithRemoveKeyBoard(telegramUserId, text);
         inomarkaStore.execute(outputMessage);
 
         if (!applications.isEmpty()) {
@@ -47,12 +46,12 @@ public class ApplicationsSendHelper {
                 if (photoIds.size() == 1) {
                     final var sendPhoto = SendPhoto.builder()
                             .caption(applicationPayload)
-                            .chatId(user.getId().toString())
+                            .chatId(telegramUserId)
                             .photo(new InputFile(photoIds.get(0)))
                             .build();
                     inomarkaStore.execute(sendPhoto);
                 } else {
-                    final var applicationText = createTextMessageForUser(user, applicationPayload);
+                    final var applicationText = createTextMessageForUser(telegramUserId, applicationPayload);
                     final var message = inomarkaStore.execute(applicationText);
                     if (photoIds.size() > 1) {
                         final var inputMediaPhotos = photoIds.stream()
@@ -60,7 +59,7 @@ public class ApplicationsSendHelper {
                                         (InputMedia) new InputMediaPhoto(photoId))
                                 .toList();
                         final var sendMediaGroup = SendMediaGroup.builder()
-                                .chatId(user.getId().toString())
+                                .chatId(telegramUserId)
                                 .messageThreadId(message.getMessageThreadId())
                                 .replyToMessageId(message.getMessageId())
                                 .medias(inputMediaPhotos)

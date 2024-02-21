@@ -39,7 +39,7 @@ public class OwnerEditPhoneNumberExecutionService implements OwnerActionExecuteS
 
         final var user = getUserFromUpdate(update);
         final var message = messageSource.getMessage("owner.editPhoneNumber");
-        final var textMessageForUser = createTextMessageForUser(user, message);
+        final var textMessageForUser = createTextMessageForUser(user.getId(), message);
         final var editPhoneNumberMessageId = inomarkaStore.execute(textMessageForUser).getMessageId();
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         jsonDataObject.add("editPhoneNumberMessageId", new JsonPrimitive(editPhoneNumberMessageId));

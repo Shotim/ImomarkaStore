@@ -77,7 +77,7 @@ public class InomarkaStoreClient {
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
         if (clientInfoOptional.isPresent() && TRUE.equals(clientInfoOptional.get().getIsInBlackList())) {
             final var text = messageSource.getMessage("youBlackListed");
-            throwException(user, text);
+            throwException(user.getId(), text);
         } else {
             if (update.hasCallbackQuery()) {
                 processClientCallBacks(update, clientInfoOptional);
@@ -117,11 +117,11 @@ public class InomarkaStoreClient {
                 messageExecutionService.execute(update, clientInfo);
             } else {
                 final var errorText = messageSource.getMessage("error.botConfig");
-                throwException(user, errorText);
+                throwException(user.getId(), errorText);
             }
         } else {
             final var errorText = messageSource.getMessage("error.noClientInfoForAction");
-            throwException(user, errorText);
+            throwException(user.getId(), errorText);
         }
     }
 
@@ -145,12 +145,12 @@ public class InomarkaStoreClient {
         } else {
             final var user = getUserFromUpdate(update);
             final var errorText = messageSource.getMessage("error.noClientInfoForAction");
-            throwException(user, errorText);
+            throwException(user.getId(), errorText);
         }
     }
 
-    private void throwException(User user, String errorText) {
-        final var errorMessage = createTextMessageForUser(user, errorText);
+    private void throwException(Long telegramUserId, String errorText) {
+        final var errorMessage = createTextMessageForUser(telegramUserId, errorText);
         throw new BotException(errorMessage);
     }
 
@@ -163,6 +163,6 @@ public class InomarkaStoreClient {
                 .map(ClientState::getClientStateText)
                 .collect(joining(", "));
         final var errorText = messageSource.getMessage("error.nextStates", List.of(availableStates).toArray());
-        throwException(user, errorText);
+        throwException(user.getId(), errorText);
     }
 }

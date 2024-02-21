@@ -66,7 +66,7 @@ public class DeleteCarExecutionService implements MessageExecutionService {
         final var messageId = jsonObject.remove(id.toString()).getAsInt();
         final var user = getUserFromUpdate(update);
 
-        final var deleteMessage = createDeleteMessageForUser(user, messageId);
+        final var deleteMessage = createDeleteMessageForUser(user.getId(), messageId);
         inomarkaStore.execute(deleteMessage);
     }
 }

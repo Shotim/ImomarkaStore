@@ -39,10 +39,10 @@ public class StartExecutionService implements CommandExecutionService {
         if (clientInfoOptional.isEmpty()) {
             clientInfoService.create(telegramUserId);
             final var welcomeText = messageSource.getMessage("welcomeMessage");
-            final var helloMessage = createTextMessageForUser(user, welcomeText);
+            final var helloMessage = createTextMessageForUser(user.getId(), welcomeText);
             inomarkaStore.execute(helloMessage);
             final var setNameText = messageSource.getMessage("setNameText");
-            final var setNameMessage = createTextMessageForUser(user, setNameText);
+            final var setNameMessage = createTextMessageForUser(user.getId(), setNameText);
             inomarkaStore.execute(setNameMessage);
         } else {
             final var clientInfo = clientInfoOptional.get();
@@ -52,7 +52,7 @@ public class StartExecutionService implements CommandExecutionService {
                     clientInfo.getName();
             final var welcomeText = messageSource.getMessage("repeatedWelcomeMessage",
                     List.of(clientName).toArray());
-            final var helloAgainMessage = createTextMessageForUser(user, welcomeText);
+            final var helloAgainMessage = createTextMessageForUser(user.getId(), welcomeText);
             inomarkaStore.execute(helloAgainMessage);
         }
     }

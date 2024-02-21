@@ -53,19 +53,19 @@ public class CreateApplicationExecutionService implements MessageExecutionServic
     public void sendMessages(Update update, ClientInfo clientInfo) {
         final var user = getUserFromUpdate(update);
         final var text = messageSource.getMessage("insertCarDetails");
-        final var message = createTextMessageForUserWithRemoveKeyBoard(user, text);
+        final var message = createTextMessageForUserWithRemoveKeyBoard(user.getId(), text);
         inomarkaStore.execute(message);
         final var carDetailsForClient = carDetailsService.getActiveCarDetailsForClient(clientInfo);
         if (!carDetailsForClient.isEmpty()) {
             final var chooseCarText = messageSource.getMessage("chooseSavedCar");
-            final var chooseCarMessage = createTextMessageForUserWithRemoveKeyBoard(user, chooseCarText);
+            final var chooseCarMessage = createTextMessageForUserWithRemoveKeyBoard(user.getId(), chooseCarText);
             final var rootMainMessage = inomarkaStore.execute(chooseCarMessage).getMessageId();
             final var messageIds = new JsonArray();
             messageIds.add(rootMainMessage);
             for (CarDetails carDetails : carDetailsForClient) {
                 final var carDetailsText = carDetailsService.getCarDetailsPayload(carDetails);
                 final var messageWithInlineButton = createTextMessageForUserWithInlineButton
-                        (user, carDetailsText,
+                        (user.getId(), carDetailsText,
                                 messageSource.getMessage("buttonName.client.chooseCarForApplication"),
                                 "%s:%s".formatted(CHOOSE_CAR_FOR_APPLICATION.name(), carDetails.getId()));
                 final var executed = inomarkaStore.execute(messageWithInlineButton);

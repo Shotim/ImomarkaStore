@@ -46,7 +46,7 @@ public class EditPhoneNumberExecutionService implements MessageExecutionService 
         clientInfo.setState(EDIT_PHONE_NUMBER);
         clientInfoService.update(clientInfo);
         final var user = getUserFromUpdate(update);
-        final var message = createTextMessageForUserWithRemoveKeyBoard(user, text);
+        final var message = createTextMessageForUserWithRemoveKeyBoard(user.getId(), text);
         inomarkaStore.execute(message);
     }
 }
