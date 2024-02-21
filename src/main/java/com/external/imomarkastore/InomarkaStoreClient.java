@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.external.imomarkastore.constant.ClientState.PAY_ORDER;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
@@ -75,15 +76,21 @@ public class InomarkaStoreClient {
 
     public void processAction(Update update, User user) {
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
-        if (clientInfoOptional.isPresent() && TRUE.equals(clientInfoOptional.get().getIsInBlackList())) {
-            final var text = messageSource.getMessage("youBlackListed");
-            throwException(user.getId(), text);
-        } else {
-            if (update.hasCallbackQuery()) {
-                processClientCallBacks(update, clientInfoOptional);
+        if (clientInfoOptional.isPresent()) {
+            final var clientInfo = clientInfoOptional.get();
+            if (PAY_ORDER.equals(clientInfo.getState())) {
+                messageExecutionServicesByClientState.get(PAY_ORDER).execute(update, clientInfo);
+            } else if (TRUE.equals(clientInfoOptional.get().getIsInBlackList())) {
+                final var text = messageSource.getMessage("youBlackListed");
+                throwException(user.getId(), text);
             } else {
-                processClientMessagesAndCommands(update, clientInfoOptional);
+                if (update.hasCallbackQuery()) {
+                    processClientCallBacks(update, clientInfoOptional);
+                } else {
+                    processClientMessagesAndCommands(update, clientInfoOptional);
+                }
             }
+
         }
     }
 

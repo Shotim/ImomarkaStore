@@ -16,9 +16,13 @@ import static lombok.AccessLevel.PRIVATE;
 public class UpdateUtils {
 
     public static User getUserFromUpdate(Update update) {
-        return update.hasCallbackQuery() ?
-                update.getCallbackQuery().getFrom() :
-                update.getMessage().getFrom();
+        if (update.hasCallbackQuery()) {
+            return update.getCallbackQuery().getFrom();
+        } else if (update.hasPreCheckoutQuery()) {
+            return update.getPreCheckoutQuery().getFrom();
+        } else {
+            return update.getMessage().getFrom();
+        }
     }
 
     public static String getTextFromUpdate(Update update) {

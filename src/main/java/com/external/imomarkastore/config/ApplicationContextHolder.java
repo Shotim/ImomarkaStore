@@ -1,6 +1,5 @@
 package com.external.imomarkastore.config;
 
-import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.util.BotMessageSource;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +20,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         return appContext.getBean(BotMessageSource.class);
     }
 
-    public static InomarkaStore getInomarkaStore() {
-        return appContext.getBean(InomarkaStore.class);
+    public static String getBotPaymentToken() {
+        return appContext.getEnvironment().getProperty("bot.payment_token");
     }
 }

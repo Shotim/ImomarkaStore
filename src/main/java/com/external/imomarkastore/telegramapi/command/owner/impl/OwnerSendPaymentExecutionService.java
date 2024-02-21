@@ -2,9 +2,12 @@ package com.external.imomarkastore.telegramapi.command.owner.impl;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.service.ApplicationService;
+import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.util.BotMessageSource;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -12,17 +15,21 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
+import static com.external.imomarkastore.constant.ClientState.PAY_ORDER;
 import static com.external.imomarkastore.constant.OwnerState.SEND_PAYMENT;
+import static com.external.imomarkastore.util.MessageUtils.createSendInvoice;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
 public class OwnerSendPaymentExecutionService implements OwnerActionExecuteService {
     private final OwnerInfoService ownerInfoService;
+    private final ClientInfoService clientInfoService;
     private final ApplicationService applicationService;
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
@@ -51,27 +58,38 @@ public class OwnerSendPaymentExecutionService implements OwnerActionExecuteServi
                 final var application = applicationOptional.get();
                 final var telegramUserId = application.getTelegramUserId();
                 if (nonNull(telegramUserId)) {
-                    jsonDataObject.addProperty("receivedSendPaymentMessageId", messageIdFromUpdate);
-                    application.setSentRequestForPayment(true);
-                    final var title = messageSource.getMessage("owner.paymentTitle");
-                    final var description = messageSource.getMessage("owner.paymentDescription", List.of(applicationId).toArray());
-                    final var priceAsDouble = Double.parseDouble(text);
-                    final var priceValue = Double.valueOf(priceAsDouble * 100).intValue();
-                    final var priceLabel = "1";
-                    //TODO
-//                    final var sendInvoice = createSendInvoice(telegramUserId, title, description, priceValue, priceLabel);
-//                    inomarkaStore.execute(sendInvoice);
-                    final var paymentSentMessage = messageSource.getMessage("owner.paymentSent");
-                    final var buttonNames = List.of(
-                            messageSource.getMessage("buttonName.owner.backToApplications"),
-                            messageSource.getMessage("buttonName.owner.backToMainMenu")
-                    );
-                    final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), paymentSentMessage, buttonNames);
-                    final var sentMessageId = inomarkaStore.execute(sendMessage).getMessageId();
-                    jsonDataObject.addProperty("sentSendPaymentMessageId", sentMessageId);
-                    applicationService.update(application);
-                    ownerInfoService.updateState(SEND_PAYMENT);
-                    ownerInfoService.updateJsonData(jsonDataObject.toString());
+                    final var clientInfoOptional = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
+                    if (clientInfoOptional.isPresent()) {
+                        jsonDataObject.addProperty("receivedSendPaymentMessageId", messageIdFromUpdate);
+                        application.setSentRequestForPayment(true);
+                        final var title = messageSource.getMessage("owner.paymentTitle");
+                        final var description = messageSource.getMessage("owner.paymentDescription", List.of(applicationId).toArray());
+                        final var priceAsDouble = Double.parseDouble(text);
+                        final var priceValue = Double.valueOf(priceAsDouble * 100).intValue();
+                        final var sendInvoice = createSendInvoice(telegramUserId, title, description, priceValue, applicationId.toString());
+                        inomarkaStore.execute(sendInvoice);
+                        final var paymentSentMessage = messageSource.getMessage("owner.paymentSent");
+                        final var buttonNames = List.of(
+                                messageSource.getMessage("buttonName.owner.backToApplications"),
+                                messageSource.getMessage("buttonName.owner.backToMainMenu")
+                        );
+                        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), paymentSentMessage, buttonNames);
+                        final var sentMessageId = inomarkaStore.execute(sendMessage).getMessageId();
+                        jsonDataObject.addProperty("sentSendPaymentMessageId", sentMessageId);
+                        applicationService.update(application);
+                        ownerInfoService.updateState(SEND_PAYMENT);
+                        ownerInfoService.updateJsonData(jsonDataObject.toString());
+                        final var clientInfo = clientInfoOptional.get();
+                        final var prevClientState = clientInfo.getState();
+                        final var additionalJsonDataForNextOperations = clientInfo.getAdditionalJsonDataForNextOperations();
+                        final var jsonObject = isBlank(additionalJsonDataForNextOperations) ?
+                                new JsonObject() :
+                                new Gson().fromJson(additionalJsonDataForNextOperations, JsonObject.class);
+                        jsonObject.addProperty("prevState", prevClientState.name());
+                        clientInfo.setAdditionalJsonDataForNextOperations(jsonObject.toString());
+                        clientInfo.setState(PAY_ORDER);
+                        clientInfoService.update(clientInfo);
+                    }
                 }
             }
         }

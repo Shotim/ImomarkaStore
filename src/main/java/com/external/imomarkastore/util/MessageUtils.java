@@ -17,12 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 import static com.external.imomarkastore.config.ApplicationContextHolder.getBotMessageSource;
+import static com.external.imomarkastore.config.ApplicationContextHolder.getBotPaymentToken;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
 public class MessageUtils {
 
     private static final BotMessageSource MESSAGE_SOURCE = getBotMessageSource();
+    private static final String BOT_PAYMENT_TOKEN = getBotPaymentToken();
 
     public static SendMessage createTextMessageForUser(Long telegramUserId, String text) {
         return SendMessage.builder()
@@ -106,10 +108,10 @@ public class MessageUtils {
                 .build();
     }
 
-    public static SendInvoice createSendInvoice(Long telegramUserId, String title, String description, Integer priceValue, String priceLabel) {
+    public static SendInvoice createSendInvoice(Long telegramUserId, String title, String description, Integer priceValue, String payload) {
         final var price = new LabeledPrice();
         price.setAmount(priceValue);
-        price.setLabel(priceLabel);
+        price.setLabel(description);
         return SendInvoice.builder()
                 .chatId(telegramUserId)
                 .title(title)
@@ -120,6 +122,8 @@ public class MessageUtils {
                 .needEmail(true)
                 .needPhoneNumber(true)
                 .protectContent(true)
+                .providerToken(BOT_PAYMENT_TOKEN)
+                .payload(payload)
                 .build();
     }
 }

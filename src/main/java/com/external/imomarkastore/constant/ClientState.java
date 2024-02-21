@@ -20,7 +20,8 @@ public enum ClientState {
     SAVE_PHONE_NUMBER("Ввод и сохранение номера телефона"),
     GET_CARS("Вывод автомобилей"),
     DELETE_CAR("Удаление автомобиля"),
-    BACK_TO_MAIN_MENU("Возврат к главному меню");
+    BACK_TO_MAIN_MENU("Возврат к главному меню"),
+    PAY_ORDER("Оплата заявки");
 
     @Getter
     private final String clientStateText;

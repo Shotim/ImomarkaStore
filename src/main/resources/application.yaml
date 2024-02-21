@@ -1,6 +1,7 @@
 bot:
   name: Магазин автозапчастей «Иномарка» г. Костомукша
   token: 6313061261:AAGfXDn13s9-cnpvzDzAKVAhiz4obPXjlyo
+  payment_token: 401643678:TEST:5c405cbc-a0f1-43ed-afbd-fa814755e662
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
