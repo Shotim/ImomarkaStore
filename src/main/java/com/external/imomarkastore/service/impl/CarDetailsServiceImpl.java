@@ -45,7 +45,8 @@ public class CarDetailsServiceImpl implements CarDetailsService {
 
     @Override
     public List<CarDetails> getActiveCarDetailsForClient(ClientInfo clientInfo) {
-        return repository.findByTelegramUserIdOrPhoneNumberAndCarState(clientInfo.getTelegramUserId(), clientInfo.getPhoneNumber(), ACTIVE);
+        return repository.findByTelegramUserIdOrPhoneNumberAndCarState(
+                clientInfo.getTelegramUserId(), clientInfo.getPhoneNumber(), ACTIVE);
     }
 
     @Override

@@ -19,7 +19,6 @@ import static jakarta.persistence.EnumType.STRING;
 @NoArgsConstructor
 @Getter
 public class CarDetails {
-
     @Id
     @Setter
     private UUID id;

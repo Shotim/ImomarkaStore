@@ -4,7 +4,6 @@ import com.external.imomarkastore.constant.OwnerState;
 import com.google.gson.JsonObject;
 
 public interface OwnerInfoService {
-
     boolean isOwner(Long telegramUserId);
 
     void updateState(OwnerState state);

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApplicationService {
-
     Application create(Long telegramUserId, String phoneNumber);
 
     Optional<Application> getById(Long id);
@@ -16,7 +15,9 @@ public interface ApplicationService {
     Application update(Application application);
 
     List<Application> getFullyCreatedApplicationsForClient(ClientInfo clientInfo);
+
     List<Application> getFullyCreatedApplications();
+
     List<Application> getArchivedApplications();
 
     List<Application> getArchivedApplicationsForClient(ClientInfo clientInfo);
@@ -26,10 +27,12 @@ public interface ApplicationService {
     Application getFirstInProgressByTelegramUserId(Long telegramUserId);
 
     String getApplicationPayloadForClient(Application application);
+
     String getApplicationPayloadForOwner(Application application);
 
     List<Application> updateAll(List<Application> applications);
 
     List<Application> getNotArchivedApplicationsForCar(CarDetails carDetails);
+
     void deleteById(Long id);
 }

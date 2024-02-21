@@ -1,6 +1,7 @@
 package com.external.imomarkastore.telegramapi.command.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
+import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -35,25 +37,31 @@ public class StartExecutionService implements CommandExecutionService {
         final var user = getUserFromUpdate(update);
         final var telegramUserId = user.getId();
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(telegramUserId);
-
         if (clientInfoOptional.isEmpty()) {
             clientInfoService.create(telegramUserId);
-            final var welcomeText = messageSource.getMessage("welcomeMessage");
-            final var helloMessage = createTextMessageForUser(user.getId(), welcomeText);
-            inomarkaStore.execute(helloMessage);
-            final var setNameText = messageSource.getMessage("setNameText");
-            final var setNameMessage = createTextMessageForUser(user.getId(), setNameText);
-            inomarkaStore.execute(setNameMessage);
+            sendStartMessages(telegramUserId);
         } else {
-            final var clientInfo = clientInfoOptional.get();
-            clientInfo.setState(REPEATED_START);
-            final var clientName = isBlank(clientInfo.getName()) ?
-                    messageSource.getMessage("nameReplacement") :
-                    clientInfo.getName();
-            final var welcomeText = messageSource.getMessage("repeatedWelcomeMessage",
-                    List.of(clientName).toArray());
-            final var helloAgainMessage = createTextMessageForUser(user.getId(), welcomeText);
-            inomarkaStore.execute(helloAgainMessage);
+            sendRepeatedStartMessages(clientInfoOptional.get());
         }
+    }
+
+    private void sendRepeatedStartMessages(ClientInfo clientInfo) throws TelegramApiException {
+        clientInfo.setState(REPEATED_START);
+        final var clientName = isBlank(clientInfo.getName()) ?
+                messageSource.getMessage("nameReplacement") :
+                clientInfo.getName();
+        final var welcomeText = messageSource.getMessage("repeatedWelcomeMessage",
+                List.of(clientName).toArray());
+        final var helloAgainMessage = createTextMessageForUser(clientInfo.getTelegramUserId(), welcomeText);
+        inomarkaStore.execute(helloAgainMessage);
+    }
+
+    private void sendStartMessages(Long telegramUserId) throws TelegramApiException {
+        final var welcomeText = messageSource.getMessage("welcomeMessage");
+        final var helloMessage = createTextMessageForUser(telegramUserId, welcomeText);
+        inomarkaStore.execute(helloMessage);
+        final var setNameText = messageSource.getMessage("setNameText");
+        final var setNameMessage = createTextMessageForUser(telegramUserId, setNameText);
+        inomarkaStore.execute(setNameMessage);
     }
 }

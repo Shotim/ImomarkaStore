@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CarDetailsService {
-
     CarDetails create();
 
     CarDetails update(CarDetails carDetails);

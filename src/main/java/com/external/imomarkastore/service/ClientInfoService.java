@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ClientInfoService {
-
     Optional<ClientInfo> getById(UUID id);
 
     Optional<ClientInfo> getByTelegramUserId(Long telegramUserId);

@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.external.imomarkastore.constant.ClientState.PAY_ORDER;
 import static com.external.imomarkastore.constant.OwnerState.SEND_PAYMENT;
-import static com.external.imomarkastore.util.MessageUtils.createSendInvoice;
+import static com.external.imomarkastore.util.MessageUtils.createSendInvoiceForUser;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
@@ -66,7 +66,7 @@ public class OwnerSendPaymentExecutionService implements OwnerActionExecuteServi
                         final var description = messageSource.getMessage("owner.paymentDescription", List.of(applicationId).toArray());
                         final var priceAsDouble = Double.parseDouble(text);
                         final var priceValue = Double.valueOf(priceAsDouble * 100).intValue();
-                        final var sendInvoice = createSendInvoice(telegramUserId, title, description, priceValue, applicationId.toString());
+                        final var sendInvoice = createSendInvoiceForUser(telegramUserId, title, description, priceValue, applicationId.toString());
                         inomarkaStore.execute(sendInvoice);
                         final var paymentSentMessage = messageSource.getMessage("owner.paymentSent");
                         final var buttonNames = List.of(

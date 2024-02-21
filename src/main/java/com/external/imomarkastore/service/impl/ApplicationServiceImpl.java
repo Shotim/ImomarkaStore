@@ -64,13 +64,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getArchivedApplications() {
-
         return repository.findByStatusOrderByCreatedAtDesc(ARCHIVED);
     }
 
     @Override
     public List<Application> getArchivedApplicationsForClient(ClientInfo clientInfo) {
-
         return repository.findByStatusAndTelegramUserIdOrPhoneNumber(
                 ARCHIVED, clientInfo.getTelegramUserId(), clientInfo.getPhoneNumber());
     }
@@ -84,14 +82,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application getFirstInProgressByTelegramUserId(Long telegramUserId) {
         return repository.findTopByTelegramUserIdAndStatusOrderByCreatedAtDesc(
-                telegramUserId, CREATION_IN_PROGRESS).orElseThrow(IllegalArgumentException::new);
+                        telegramUserId, CREATION_IN_PROGRESS)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public String getApplicationPayloadForClient(Application application) {
         final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
         final var carDetails = carDetailsOptional
                 .map(CarDetails::getDetails).orElse(EMPTY);
-        final var vinNumber = carDetailsOptional.map(CarDetails::getVinNumber).orElse(EMPTY);
+        final var vinNumber = carDetailsOptional
+                .map(CarDetails::getVinNumber).orElse(EMPTY);
         return messageSource.getMessage("template.client.application", Stream.of(
                         application.getId().toString(),
                         carDetails,
@@ -106,23 +106,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public String getApplicationPayloadForOwner(Application application) {
         final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
-        final var carDetails = carDetailsOptional
-                .map(CarDetails::getDetails).orElse(EMPTY);
+        final var carDetails = carDetailsOptional.map(CarDetails::getDetails).orElse(EMPTY);
         final var vinNumber = carDetailsOptional.map(CarDetails::getVinNumber).orElse(EMPTY);
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
         final var clientName = clientInfoOptional.map(ClientInfo::getName).orElse(EMPTY);
         final var clientPhoneNumber = clientInfoOptional.map(ClientInfo::getPhoneNumber).orElse(EMPTY);
-        return messageSource.getMessage("template.owner.application", Stream.of(
-                        application.getId().toString(),
-                        carDetails,
-                        vinNumber,
-                        application.getMainPurpose(),
-                        application.getComment(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()),
-                        clientName,
-                        clientPhoneNumber)
-                .map(string -> isBlank(string) ? EMPTY : string)
-                .toArray());
+        return messageSource.getMessage("template.owner.application", Stream.of(application.getId().toString(), carDetails, vinNumber, application.getMainPurpose(), application.getComment(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()), clientName, clientPhoneNumber).map(string -> isBlank(string) ? EMPTY : string).toArray());
     }
 
     @Override

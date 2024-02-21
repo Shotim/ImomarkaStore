@@ -10,8 +10,8 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -149,13 +149,14 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     }
 
     private String getPayload(OwnerInfo ownerInfo) {
-        return messageSource.getMessage("shopInfo", List.of(
-                isBlank(ownerInfo.getOwnerName()) ? EMPTY : ownerInfo.getOwnerName(),
-                isBlank(ownerInfo.getPhoneNumber()) ? EMPTY : ownerInfo.getPhoneNumber(),
-                isBlank(ownerInfo.getAddress()) ? EMPTY : ownerInfo.getAddress(),
-                isBlank(ownerInfo.getEmail()) ? EMPTY : ownerInfo.getEmail(),
-                isBlank(ownerInfo.getInn()) ? EMPTY : ownerInfo.getInn()
-        ).toArray());
+        return messageSource.getMessage("shopInfo", Stream.of(
+                        ownerInfo.getOwnerName(),
+                        ownerInfo.getPhoneNumber(),
+                        ownerInfo.getAddress(),
+                        ownerInfo.getEmail(),
+                        ownerInfo.getInn())
+                .map(string -> isBlank(string) ? EMPTY : string)
+                .toArray());
     }
 
     private Optional<OwnerInfo> getOwnerInfoOptional() {

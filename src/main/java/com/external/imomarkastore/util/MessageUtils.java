@@ -3,8 +3,13 @@ package com.external.imomarkastore.util;
 import lombok.NoArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
+import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -108,7 +113,7 @@ public class MessageUtils {
                 .build();
     }
 
-    public static SendInvoice createSendInvoice(Long telegramUserId, String title, String description, Integer priceValue, String payload) {
+    public static SendInvoice createSendInvoiceForUser(Long telegramUserId, String title, String description, Integer priceValue, String payload) {
         final var price = new LabeledPrice();
         price.setAmount(priceValue);
         price.setLabel(description);
@@ -124,6 +129,36 @@ public class MessageUtils {
                 .protectContent(true)
                 .providerToken(BOT_PAYMENT_TOKEN)
                 .payload(payload)
+                .build();
+    }
+
+    public static SendPhoto createSendPhotoForUser(Long telegramUserId, String text, String photoId) {
+        return SendPhoto.builder()
+                .caption(text)
+                .chatId(telegramUserId)
+                .photo(new InputFile(photoId))
+                .build();
+    }
+
+    public static SendPhoto createSendPhotoForUserWithInlineKeyboard(Long telegramUserId, String text, String photoId, Map<String,String> buttonTextToCallbackData){
+        final var inlineKeyBoardMarkup = createInlineKeyBoardMarkup(buttonTextToCallbackData);
+        return SendPhoto.builder()
+                .caption(text)
+                .chatId(telegramUserId)
+                .replyMarkup(inlineKeyBoardMarkup)
+                .photo(new InputFile(photoId))
+                .build();
+    }
+
+    public static SendMediaGroup createSendPhotoGroupForUser(Long telegramUserId, Integer replyMessageId, List<String> photoIds) {
+        final var inputMediaPhotos = photoIds.stream()
+                .map(photoId ->
+                        (InputMedia) new InputMediaPhoto(photoId))
+                .toList();
+        return SendMediaGroup.builder()
+                .chatId(telegramUserId)
+                .replyToMessageId(replyMessageId)
+                .medias(inputMediaPhotos)
                 .build();
     }
 }
