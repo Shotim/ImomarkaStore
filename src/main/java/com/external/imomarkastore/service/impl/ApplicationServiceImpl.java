@@ -38,6 +38,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setPhoneNumber(phoneNumber);
         application.setStatus(CREATION_IN_PROGRESS);
         application.setSentRequestForPayment(false);
+        application.setPaid(false);
         return repository.save(application);
     }
 
@@ -92,15 +93,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .map(CarDetails::getDetails).orElse(EMPTY);
         final var vinNumber = carDetailsOptional
                 .map(CarDetails::getVinNumber).orElse(EMPTY);
-        return messageSource.getMessage("template.client.application", Stream.of(
-                        application.getId().toString(),
-                        carDetails,
-                        vinNumber,
-                        application.getMainPurpose(),
-                        application.getComment(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()))
-                .map(string -> isBlank(string) ? EMPTY : string)
-                .toArray());
+        return messageSource.getMessage("template.client.application",
+                Stream.of(
+                                application.getId().toString(),
+                                carDetails,
+                                vinNumber,
+                                application.getMainPurpose(),
+                                application.getComment(),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()),
+                                application.isPaid() ? "+" : "-")
+                        .map(string -> isBlank(string) ? EMPTY : string)
+                        .toArray());
     }
 
     @Override
@@ -111,7 +114,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
         final var clientName = clientInfoOptional.map(ClientInfo::getName).orElse(EMPTY);
         final var clientPhoneNumber = clientInfoOptional.map(ClientInfo::getPhoneNumber).orElse(EMPTY);
-        return messageSource.getMessage("template.owner.application", Stream.of(application.getId().toString(), carDetails, vinNumber, application.getMainPurpose(), application.getComment(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()), clientName, clientPhoneNumber).map(string -> isBlank(string) ? EMPTY : string).toArray());
+        return messageSource.getMessage("template.owner.application",
+                Stream.of(
+                                application.getId().toString(),
+                                carDetails,
+                                vinNumber,
+                                application.getMainPurpose(),
+                                application.getComment(),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()),
+                                clientName,
+                                clientPhoneNumber,
+                                application.isPaid() ? "+" : "-")
+                        .map(string -> isBlank(string) ? EMPTY : string).toArray());
     }
 
     @Override

@@ -104,6 +104,7 @@ public class PayOrderExecutionService implements MessageExecutionService {
 
     private void moveApplicationToArchive(Application application) {
         application.setStatus(ARCHIVED);
+        application.setPaid(true);
         applicationService.update(application);
     }
 
