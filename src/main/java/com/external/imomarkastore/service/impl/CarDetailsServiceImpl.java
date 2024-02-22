@@ -1,5 +1,6 @@
 package com.external.imomarkastore.service.impl;
 
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.model.CarDetails;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.repository.CarDetailsRepository;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -39,8 +39,10 @@ public class CarDetailsServiceImpl implements CarDetailsService {
     }
 
     @Override
-    public Optional<CarDetails> getById(UUID id) {
-        return repository.findById(id);
+    public CarDetails getById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new BusinessLogicException("Could not find car by id: %s".formatted(id)));
     }
 
     @Override
@@ -50,13 +52,8 @@ public class CarDetailsServiceImpl implements CarDetailsService {
     }
 
     @Override
-    public List<CarDetails> updateAll(List<CarDetails> carDetailsList) {
-        return repository.saveAll(carDetailsList);
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        repository.deleteById(id);
+    public void updateAll(List<CarDetails> carDetailsList) {
+        repository.saveAll(carDetailsList);
     }
 
     @Override

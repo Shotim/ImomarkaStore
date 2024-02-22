@@ -44,25 +44,20 @@ public class InsertVinNumberExecutionService implements MessageExecutionService 
     public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         try {
             final var application = applicationService.getFirstInProgressByTelegramUserId(clientInfo.getTelegramUserId());
-            final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
-            if (carDetailsOptional.isEmpty()) {
-                log.error("CarDetails not found");
+            final var carDetails = carDetailsService.getById(application.getCarDetailsId());
+            final var photoOptional = getPhotoFromUpdate(update);
+            if (photoOptional.isPresent()) {
+                carDetails.setVinNumber(messageSource.getMessage("onPhoto"));
+                carDetails.setVinNumberPhotoId(photoOptional.get().getFileId());
             } else {
-                final var carDetails = carDetailsOptional.get();
-                final var photoOptional = getPhotoFromUpdate(update);
-                if (photoOptional.isPresent()) {
-                    carDetails.setVinNumber(messageSource.getMessage("onPhoto"));
-                    carDetails.setVinNumberPhotoId(photoOptional.get().getFileId());
-                } else {
-                    final var text = getTextFromUpdate(update);
-                    final var vinNumber = formatAndValidateVinNumber(text);
-                    carDetails.setVinNumber(vinNumber);
-                }
-                clientInfo.setState(INSERT_VIN_NUMBER);
-                clientInfoService.update(clientInfo);
-                carDetailsService.update(carDetails);
-                sendMessages(update, clientInfo);
+                final var text = getTextFromUpdate(update);
+                final var vinNumber = formatAndValidateVinNumber(text);
+                carDetails.setVinNumber(vinNumber);
             }
+            clientInfo.setState(INSERT_VIN_NUMBER);
+            clientInfoService.update(clientInfo);
+            carDetailsService.update(carDetails);
+            sendMessages(update, clientInfo);
         } catch (IllegalArgumentException exception) {
             final var user = getUserFromUpdate(update);
             final var text = messageSource.getMessage("error.wrongVinNumberFormat");

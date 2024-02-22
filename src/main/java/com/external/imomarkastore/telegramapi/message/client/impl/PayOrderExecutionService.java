@@ -50,20 +50,16 @@ public class PayOrderExecutionService implements MessageExecutionService {
             final var preCheckoutQuery = update.getPreCheckoutQuery();
             final var invoicePayload = preCheckoutQuery.getInvoicePayload();
             final var applicationId = Long.valueOf(invoicePayload);
-            final var applicationOptional = applicationService.getById(applicationId);
-            if (applicationOptional.isPresent()) {
-                answerPreCheckoutQuery(preCheckoutQuery);
-            }
+            applicationService.getById(applicationId);
+            answerPreCheckoutQuery(preCheckoutQuery);
         } else if (update.getMessage().hasSuccessfulPayment()) {
             final var successfulPayment = update.getMessage().getSuccessfulPayment();
             final var invoicePayload = successfulPayment.getInvoicePayload();
             final var applicationId = Long.valueOf(invoicePayload);
-            final var applicationOptional = applicationService.getById(applicationId);
-            if (applicationOptional.isPresent()) {
-                updateClientInfoWithPrevState(clientInfo);
-                moveApplicationToArchive(applicationOptional.get());
-                sendMessageToOwner(clientInfo, applicationId);
-            }
+            final var application = applicationService.getById(applicationId);
+            updateClientInfoWithPrevState(clientInfo);
+            moveApplicationToArchive(application);
+            sendMessageToOwner(clientInfo, applicationId);
         } else {
             final var user = getUserFromUpdate(update);
             final var text = messageSource.getMessage("haveToPay");

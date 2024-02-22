@@ -43,26 +43,23 @@ public class OwnerPreparePaymentExecutionService implements OwnerActionExecuteSe
         final var user = getUserFromUpdate(update);
         final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
-        final var applicationOptional = applicationService.getById(applicationId);
-        if (applicationOptional.isPresent()) {
-            final var callbackText = messageSource.getMessage("owner.callback.preparePayment");
-            final var answerCallbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, callbackText);
-            inomarkaStore.execute(answerCallbackQuery);
-            final var application = applicationOptional.get();
-            final var jsonDataObject = ownerInfoService.getJsonDataObject();
-            deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonDataObject);
-            final var applicationPayloadForOwner = applicationService.getApplicationPayloadForOwner(application);
-            final var enterPaymentSumText = messageSource.getMessage("owner.enterPaymentSum");
-            final var text = applicationPayloadForOwner + "\n\n" + enterPaymentSumText;
-            final var buttonNames = List.of(
-                    messageSource.getMessage("buttonName.owner.backToApplications")
-            );
-            final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), text, buttonNames);
-            final var sendMessageId = inomarkaStore.execute(sendMessage).getMessageId();
-            final var jsonObject = new JsonObject();
-            jsonObject.addProperty("applicationIdToPay:%s".formatted(application.getId()), sendMessageId);
-            ownerInfoService.updateJsonData(jsonObject.toString());
-            ownerInfoService.updateState(PREPARE_PAYMENT);
-        }
+        final var application = applicationService.getById(applicationId);
+        final var callbackText = messageSource.getMessage("owner.callback.preparePayment");
+        final var answerCallbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, callbackText);
+        inomarkaStore.execute(answerCallbackQuery);
+        final var jsonDataObject = ownerInfoService.getJsonDataObject();
+        deleteMessagesHelper.deleteAllMessagesFromJsonDataForUser(user.getId(), jsonDataObject);
+        final var applicationPayloadForOwner = applicationService.getApplicationPayloadForOwner(application);
+        final var enterPaymentSumText = messageSource.getMessage("owner.enterPaymentSum");
+        final var text = applicationPayloadForOwner + "\n\n" + enterPaymentSumText;
+        final var buttonNames = List.of(
+                messageSource.getMessage("buttonName.owner.backToApplications")
+        );
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), text, buttonNames);
+        final var sendMessageId = inomarkaStore.execute(sendMessage).getMessageId();
+        final var jsonObject = new JsonObject();
+        jsonObject.addProperty("applicationIdToPay:%s".formatted(application.getId()), sendMessageId);
+        ownerInfoService.updateJsonData(jsonObject.toString());
+        ownerInfoService.updateState(PREPARE_PAYMENT);
     }
 }

@@ -5,12 +5,11 @@ import com.external.imomarkastore.model.CarDetails;
 import com.external.imomarkastore.model.ClientInfo;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ApplicationService {
     Application create(Long telegramUserId, String phoneNumber);
 
-    Optional<Application> getById(Long id);
+    Application getById(Long id);
 
     Application update(Application application);
 
@@ -30,7 +29,7 @@ public interface ApplicationService {
 
     String getApplicationPayloadForOwner(Application application);
 
-    List<Application> updateAll(List<Application> applications);
+    void updateAll(List<Application> applications);
 
     List<Application> getNotArchivedApplicationsForCar(CarDetails carDetails);
 

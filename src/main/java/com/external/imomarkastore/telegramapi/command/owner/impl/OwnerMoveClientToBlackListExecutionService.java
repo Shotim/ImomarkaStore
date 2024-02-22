@@ -38,22 +38,19 @@ public class OwnerMoveClientToBlackListExecutionService implements OwnerActionEx
         final var user = getUserFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);
         final var clientId = getUUIDIdFromCallbackDataFromUpdate(update);
-        final var clientInfoOptional = clientInfoService.getById(clientId);
-        if (clientInfoOptional.isPresent()) {
-            final var clientInfo = clientInfoOptional.get();
-            clientInfo.setIsInBlackList(true);
-            clientInfoService.update(clientInfo);
-            final var text = messageSource.getMessage("owner.callback.moveClientToBlackList");
-            final var answerCallbackQuery = createAnswerCallbackQuery(callbackId, text);
-            inomarkaStore.execute(answerCallbackQuery);
-            final var jsonDataObject = ownerInfoService.getJsonDataObject();
-            final var clientInfoMessageId = jsonDataObject.remove(clientId.toString()).getAsInt();
-            deleteMessagesHelper.deleteMessageById(user.getId(), clientInfoMessageId);
-            ownerInfoService.updateJsonData(jsonDataObject.toString());
-            final var clientInfoTelegramUserId = clientInfo.getTelegramUserId();
-            final var youBlackListedText = messageSource.getMessage("youBlackListed");
-            final var textMessageForClient = createTextMessageForUser(clientInfoTelegramUserId, youBlackListedText);
-            inomarkaStore.execute(textMessageForClient);
-        }
+        final var clientInfo = clientInfoService.getById(clientId);
+        clientInfo.setIsInBlackList(true);
+        clientInfoService.update(clientInfo);
+        final var text = messageSource.getMessage("owner.callback.moveClientToBlackList");
+        final var answerCallbackQuery = createAnswerCallbackQuery(callbackId, text);
+        inomarkaStore.execute(answerCallbackQuery);
+        final var jsonDataObject = ownerInfoService.getJsonDataObject();
+        final var clientInfoMessageId = jsonDataObject.remove(clientId.toString()).getAsInt();
+        deleteMessagesHelper.deleteMessageById(user.getId(), clientInfoMessageId);
+        ownerInfoService.updateJsonData(jsonDataObject.toString());
+        final var clientInfoTelegramUserId = clientInfo.getTelegramUserId();
+        final var youBlackListedText = messageSource.getMessage("youBlackListed");
+        final var textMessageForClient = createTextMessageForUser(clientInfoTelegramUserId, youBlackListedText);
+        inomarkaStore.execute(textMessageForClient);
     }
 }

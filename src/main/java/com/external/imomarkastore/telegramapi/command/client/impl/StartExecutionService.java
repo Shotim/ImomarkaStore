@@ -1,6 +1,7 @@
 package com.external.imomarkastore.telegramapi.command.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
@@ -34,12 +35,12 @@ public class StartExecutionService implements CommandExecutionService {
     public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var telegramUserId = user.getId();
-        final var clientInfoOptional = clientInfoService.getByTelegramUserId(telegramUserId);
-        if (clientInfoOptional.isEmpty()) {
+        try {
+            final var clientInfo = clientInfoService.getByTelegramUserId(telegramUserId);
+            sendRepeatedStartMessages(clientInfo);
+        } catch (BusinessLogicException exception) {
             clientInfoService.create(telegramUserId);
             sendStartMessages(telegramUserId);
-        } else {
-            sendRepeatedStartMessages(clientInfoOptional.get());
         }
     }
 

@@ -40,19 +40,16 @@ public class OwnerDeleteApplicationExecutionService implements OwnerActionExecut
         final var user = getUserFromUpdate(update);
         final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);
-        final var applicationOptional = applicationService.getById(applicationId);
-        if (applicationOptional.isPresent()) {
-            applicationService.deleteById(applicationId);
-            final var text = messageSource.getMessage("owner.callback.deleteApplication");
-            final var answerCallbackQuery = createAnswerCallbackQuery(callbackId, text);
-            inomarkaStore.execute(answerCallbackQuery);
-            final var jsonDataObject = ownerInfoService.getJsonDataObject();
-            final var messageIdsToDelete = jsonDataObject.remove(applicationId.toString()).getAsJsonArray();
-            for (JsonElement jsonElement : messageIdsToDelete) {
-                final var messageId = jsonElement.getAsInt();
-                deleteMessagesHelper.deleteMessageById(user.getId(), messageId);
-            }
-            ownerInfoService.updateJsonData(jsonDataObject.toString());
+        applicationService.deleteById(applicationId);
+        final var text = messageSource.getMessage("owner.callback.deleteApplication");
+        final var answerCallbackQuery = createAnswerCallbackQuery(callbackId, text);
+        inomarkaStore.execute(answerCallbackQuery);
+        final var jsonDataObject = ownerInfoService.getJsonDataObject();
+        final var messageIdsToDelete = jsonDataObject.remove(applicationId.toString()).getAsJsonArray();
+        for (JsonElement jsonElement : messageIdsToDelete) {
+            final var messageId = jsonElement.getAsInt();
+            deleteMessagesHelper.deleteMessageById(user.getId(), messageId);
         }
+        ownerInfoService.updateJsonData(jsonDataObject.toString());
     }
 }

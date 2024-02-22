@@ -40,11 +40,9 @@ public class DeleteCarExecutionService implements MessageExecutionService {
     @Override
     public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final UUID uuid = getUUIDIdFromCallbackDataFromUpdate(update);
-        final var carDetailsOptional = carDetailsService.getById(uuid);
-        carDetailsOptional.ifPresent(carDetails -> {
-            carDetails.setCarState(ARCHIVED);
-            carDetailsService.update(carDetails);
-        });
+        final var carDetails = carDetailsService.getById(uuid);
+        carDetails.setCarState(ARCHIVED);
+        carDetailsService.update(carDetails);
         sendMessages(update, clientInfo);
     }
 

@@ -44,8 +44,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Optional<Application> getById(Long id) {
-        return repository.findById(id);
+    public Application getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new BusinessLogicException("Could not find application by id: %s".formatted(id)));
     }
 
     @Override
@@ -89,15 +91,15 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     public String getApplicationPayloadForClient(Application application) {
-        final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
-        final var carDetails = carDetailsOptional
-                .map(CarDetails::getDetails).orElse(EMPTY);
-        final var vinNumber = carDetailsOptional
-                .map(CarDetails::getVinNumber).orElse(EMPTY);
+        final var carDetails = carDetailsService.getById(application.getCarDetailsId());
+        final var details = Optional.ofNullable(carDetails.getDetails())
+                .orElse(EMPTY);
+        final var vinNumber = Optional.ofNullable(carDetails.getVinNumber())
+                .orElse(EMPTY);
         return messageSource.getMessage("template.client.application",
                 Stream.of(
                                 application.getId().toString(),
-                                carDetails,
+                                details,
                                 vinNumber,
                                 application.getMainPurpose(),
                                 application.getComment(),
@@ -109,16 +111,18 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public String getApplicationPayloadForOwner(Application application) {
-        final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
-        final var carDetails = carDetailsOptional.map(CarDetails::getDetails).orElse(EMPTY);
-        final var vinNumber = carDetailsOptional.map(CarDetails::getVinNumber).orElse(EMPTY);
-        final var clientInfoOptional = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
-        final var clientName = clientInfoOptional.map(ClientInfo::getName).orElse(EMPTY);
-        final var clientPhoneNumber = clientInfoOptional.map(ClientInfo::getPhoneNumber).orElse(EMPTY);
+        final var carDetails = carDetailsService.getById(application.getCarDetailsId());
+        final var details = Optional.ofNullable(carDetails.getDetails())
+                .orElse(EMPTY);
+        final var vinNumber = Optional.ofNullable(carDetails.getVinNumber())
+                .orElse(EMPTY);
+        final var clientInfo = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
+        final var clientName = Optional.ofNullable(clientInfo.getName()).orElse(EMPTY);
+        final var clientPhoneNumber = Optional.ofNullable(clientInfo.getPhoneNumber()).orElse(EMPTY);
         return messageSource.getMessage("template.owner.application",
                 Stream.of(
                                 application.getId().toString(),
-                                carDetails,
+                                details,
                                 vinNumber,
                                 application.getMainPurpose(),
                                 application.getComment(),
@@ -130,8 +134,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> updateAll(List<Application> applications) {
-        return repository.saveAll(applications);
+    public void updateAll(List<Application> applications) {
+        repository.saveAll(applications);
     }
 
     @Override

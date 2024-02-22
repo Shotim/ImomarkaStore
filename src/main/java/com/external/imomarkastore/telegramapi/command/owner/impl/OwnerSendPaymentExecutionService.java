@@ -53,32 +53,26 @@ public class OwnerSendPaymentExecutionService implements OwnerActionExecuteServi
         if (applicationIdToPayOptional.isPresent()) {
             final var applicationIdString = applicationIdToPayOptional.get();
             final var applicationId = Long.valueOf(applicationIdString.substring(applicationIdString.indexOf(":") + 1));
-            final var applicationOptional = applicationService.getById(applicationId);
-            if (applicationOptional.isPresent()) {
-                final var application = applicationOptional.get();
-                final var telegramUserId = application.getTelegramUserId();
-                if (nonNull(telegramUserId)) {
-                    final var clientInfoOptional = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
-                    if (clientInfoOptional.isPresent()) {
-                        jsonDataObject.addProperty("receivedSendPaymentMessageId", messageIdFromUpdate);
-                        application.setSentRequestForPayment(true);
-                        final var clientInfo = clientInfoOptional.get();
-                        final var prevClientState = clientInfo.getState();
-                        final var additionalJsonDataForNextOperations = clientInfo.getAdditionalJsonDataForNextOperations();
-                        final var jsonObject = isBlank(additionalJsonDataForNextOperations) ?
-                                new JsonObject() :
-                                new Gson().fromJson(additionalJsonDataForNextOperations, JsonObject.class);
-                        jsonObject.addProperty("prevState", prevClientState.name());
-                        clientInfo.setAdditionalJsonDataForNextOperations(jsonObject.toString());
-                        clientInfo.setState(PAY_ORDER);
-                        sendInvoiveMessage(text, applicationId, telegramUserId);
-                        sendPaymentSentMessage(user, jsonDataObject);
-                        clientInfoService.update(clientInfo);
-                        applicationService.update(application);
-                        ownerInfoService.updateState(SEND_PAYMENT);
-                        ownerInfoService.updateJsonData(jsonDataObject.toString());
-                    }
-                }
+            final var application = applicationService.getById(applicationId);
+            final var telegramUserId = application.getTelegramUserId();
+            if (nonNull(telegramUserId)) {
+                final var clientInfo = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
+                jsonDataObject.addProperty("receivedSendPaymentMessageId", messageIdFromUpdate);
+                application.setSentRequestForPayment(true);
+                final var prevClientState = clientInfo.getState();
+                final var additionalJsonDataForNextOperations = clientInfo.getAdditionalJsonDataForNextOperations();
+                final var jsonObject = isBlank(additionalJsonDataForNextOperations) ?
+                        new JsonObject() :
+                        new Gson().fromJson(additionalJsonDataForNextOperations, JsonObject.class);
+                jsonObject.addProperty("prevState", prevClientState.name());
+                clientInfo.setAdditionalJsonDataForNextOperations(jsonObject.toString());
+                clientInfo.setState(PAY_ORDER);
+                sendInvoiveMessage(text, applicationId, telegramUserId);
+                sendPaymentSentMessage(user, jsonDataObject);
+                clientInfoService.update(clientInfo);
+                applicationService.update(application);
+                ownerInfoService.updateState(SEND_PAYMENT);
+                ownerInfoService.updateJsonData(jsonDataObject.toString());
             }
         }
     }

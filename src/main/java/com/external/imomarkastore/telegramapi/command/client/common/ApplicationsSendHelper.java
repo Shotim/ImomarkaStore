@@ -32,8 +32,8 @@ public class ApplicationsSendHelper {
         if (!applications.isEmpty()) {
             for (Application application : applications) {
                 final var applicationPayload = applicationService.getApplicationPayloadForClient(application);
-                final var carDetailsOptional = carDetailsService.getById(application.getCarDetailsId());
-                final var photoIds = getPhotoIds(application, carDetailsOptional);
+                final var carDetails = carDetailsService.getById(application.getCarDetailsId());
+                final var photoIds = getPhotoIds(application, carDetails);
                 if (photoIds.size() == 1) {
                     final var sendPhotoForUser = createSendPhotoForUser(
                             telegramUserId, applicationPayload, photoIds.get(0));

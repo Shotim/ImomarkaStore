@@ -1,8 +1,7 @@
 package com.external.imomarkastore.telegramapi.command.client.impl;
 
 import com.external.imomarkastore.constant.ClientState;
-import com.external.imomarkastore.model.Application;
-import com.external.imomarkastore.model.ClientInfo;
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.service.ApplicationService;
 import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
@@ -50,16 +48,15 @@ public class ApplicationsArchiveExecutionService extends StateMessagesExecutionS
     @Override
     public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
-        final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
-        final List<Application> applications = clientInfoOptional.isEmpty() ?
-                emptyList() :
-                applicationService.getArchivedApplicationsForClient(clientInfoOptional.get());
-
-        final var applicationsEmpty = applications.isEmpty();
-        final var text = messageSource.getMessage(applicationsEmpty ?
-                "client.youDoNotHaveArchiveApplications" :
-                "client.yourArchiveApplications");
-        applicationsSendHelper.sendApplications(user.getId(), applications, text);
-        super.sendMessages(update, clientInfoOptional.orElseGet(ClientInfo::new));
+        try {
+            final var clientInfo = clientInfoService.getByTelegramUserId(user.getId());
+            final var applications = applicationService.getArchivedApplicationsForClient(clientInfo);
+            final var text = messageSource.getMessage("client.yourArchiveApplications");
+            applicationsSendHelper.sendApplications(user.getId(), applications, text);
+            super.sendMessages(update, clientInfo);
+        } catch (BusinessLogicException exception) {
+            final var text = messageSource.getMessage("client.youDoNotHaveArchiveApplications");
+            applicationsSendHelper.sendApplications(user.getId(), emptyList(), text);
+        }
     }
 }

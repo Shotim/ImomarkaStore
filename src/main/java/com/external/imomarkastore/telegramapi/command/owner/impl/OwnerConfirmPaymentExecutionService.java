@@ -49,23 +49,20 @@ public class OwnerConfirmPaymentExecutionService implements OwnerActionExecuteSe
         if (applicationIdToPayOptional.isPresent()) {
             final var applicationIdString = applicationIdToPayOptional.get();
             final var applicationId = Long.valueOf(applicationIdString.substring(applicationIdString.indexOf(":") + 1));
-            final var applicationOptional = applicationService.getById(applicationId);
-            if (applicationOptional.isPresent()) {
-                final var application = applicationOptional.get();
-                setMessageId(messageIdFromUpdate, jsonDataObject);
-                if ("Оплата".equalsIgnoreCase(text)) {
-                    sendPaymentSetMessage(user, jsonDataObject);
-                    application.setPaid(true);
-                    application.setSentRequestForPayment(true);
-                    applicationService.update(application);
-                    ownerInfoService.updateState(CONFIRM_PAYMENT);
-                    ownerInfoService.updateJsonData(jsonDataObject.toString());
-                } else {
-                    final var errorText = messageSource.getMessage("error.wrongConfirm");
-                    final var errorMessage = createTextMessageForUser(user.getId(), errorText);
-                    final var errorMessageId = inomarkaStore.execute(errorMessage).getMessageId();
-                    setMessageId(errorMessageId, jsonDataObject);
-                }
+            final var application = applicationService.getById(applicationId);
+            setMessageId(messageIdFromUpdate, jsonDataObject);
+            if ("Оплата".equalsIgnoreCase(text)) {
+                sendPaymentSetMessage(user, jsonDataObject);
+                application.setPaid(true);
+                application.setSentRequestForPayment(true);
+                applicationService.update(application);
+                ownerInfoService.updateState(CONFIRM_PAYMENT);
+                ownerInfoService.updateJsonData(jsonDataObject.toString());
+            } else {
+                final var errorText = messageSource.getMessage("error.wrongConfirm");
+                final var errorMessage = createTextMessageForUser(user.getId(), errorText);
+                final var errorMessageId = inomarkaStore.execute(errorMessage).getMessageId();
+                setMessageId(errorMessageId, jsonDataObject);
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.external.imomarkastore;
 
 import com.external.imomarkastore.exception.BotException;
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.service.OwnerInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
 @Slf4j
@@ -39,8 +41,16 @@ public class InomarkaStore extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             executeReceivedUpdate(update);
-        } catch (TelegramApiException e) {
-            log.error(e.getMessage());
+        } catch (TelegramApiException exception) {
+            log.error(exception.getMessage());
+        } catch (BusinessLogicException exception) {
+            final var user = getUserFromUpdate(update);
+            final var sendMessage = createTextMessageForUser(user.getId(), exception.getMessage());
+            try {
+                this.execute(sendMessage);
+            } catch (TelegramApiException e) {
+                log.error(exception.getMessage());
+            }
         }
     }
 

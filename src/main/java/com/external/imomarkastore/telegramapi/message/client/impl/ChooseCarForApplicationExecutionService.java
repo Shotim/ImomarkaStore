@@ -59,20 +59,17 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
     public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var carDetailsId = getUUIDIdFromCallbackDataFromUpdate(update);
-        final var carDetailsOptional = carDetailsService.getById(carDetailsId);
-        if (carDetailsOptional.isPresent()) {
-            final var carDetails = carDetailsOptional.get();
-            final var details = isBlank(carDetails.getDetails()) ? EMPTY : carDetails.getDetails();
-            final var chooseCarMessageText = messageSource
-                    .getMessage("youChooseThatCar", List.of(details).toArray());
+        final var carDetails = carDetailsService.getById(carDetailsId);
+        final var details = isBlank(carDetails.getDetails()) ? EMPTY : carDetails.getDetails();
+        final var chooseCarMessageText = messageSource
+                .getMessage("youChooseThatCar", List.of(details).toArray());
 
-            final var chooseCarMessage = createTextMessageForUser(user.getId(), chooseCarMessageText);
-            inomarkaStore.execute(chooseCarMessage);
+        final var chooseCarMessage = createTextMessageForUser(user.getId(), chooseCarMessageText);
+        inomarkaStore.execute(chooseCarMessage);
 
-            final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
-            final var callbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, chooseCarMessageText);
-            inomarkaStore.execute(callbackQuery);
-        }
+        final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
+        final var callbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, chooseCarMessageText);
+        inomarkaStore.execute(callbackQuery);
         final var jsonString = clientInfo.getAdditionalJsonDataForNextOperations();
         final var jsonObject = new Gson().fromJson(jsonString, JsonObject.class);
         final var messageIds = jsonObject.get("messageIds")

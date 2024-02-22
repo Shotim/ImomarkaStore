@@ -2,6 +2,7 @@ package com.external.imomarkastore.telegramapi.command.client.impl;
 
 import com.external.imomarkastore.InomarkaStore;
 import com.external.imomarkastore.constant.ClientState;
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.service.OwnerInfoService;
@@ -45,7 +46,11 @@ public class ContactsExecutionService extends StateMessagesExecutionService impl
         final var user = getUserFromUpdate(update);
         final var outputMessage = createTextMessageForUser(user.getId(), outputText);
         inomarkaStore.execute(outputMessage);
-        final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
-        super.sendMessages(update, clientInfoOptional.orElseGet(ClientInfo::new));
+        try {
+            final var clientInfo = clientInfoService.getByTelegramUserId(user.getId());
+            super.sendMessages(update, clientInfo);
+        } catch (BusinessLogicException exception) {
+            super.sendMessages(update, new ClientInfo());
+        }
     }
 }

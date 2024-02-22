@@ -19,7 +19,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.external.imomarkastore.constant.ClientState.PAY_ORDER;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
@@ -76,84 +75,68 @@ public class InomarkaStoreClient {
     }
 
     public void processAction(Update update, User user) throws TelegramApiException {
-        final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
-        if (clientInfoOptional.isPresent()) {
-            final var clientInfo = clientInfoOptional.get();
-            if (PAY_ORDER.equals(clientInfo.getState())) {
-                messageExecutionServicesByClientState.get(PAY_ORDER).execute(update, clientInfo);
-            } else if (TRUE.equals(clientInfoOptional.get().getIsInBlackList())) {
-                final var text = messageSource.getMessage("youBlackListed");
-                throwException(user.getId(), text);
+        final var clientInfo = clientInfoService.getByTelegramUserId(user.getId());
+        if (PAY_ORDER.equals(clientInfo.getState())) {
+            messageExecutionServicesByClientState.get(PAY_ORDER).execute(update, clientInfo);
+        } else if (TRUE.equals(clientInfo.getIsInBlackList())) {
+            final var text = messageSource.getMessage("youBlackListed");
+            throwException(user.getId(), text);
+        } else {
+            if (update.hasCallbackQuery()) {
+                processClientCallBacks(update, clientInfo);
             } else {
-                if (update.hasCallbackQuery()) {
-                    processClientCallBacks(update, clientInfoOptional);
-                } else {
-                    processClientMessagesAndCommands(update, clientInfoOptional);
-                }
+                processClientMessagesAndCommands(update, clientInfo);
             }
-
         }
+
     }
 
-    private void processClientMessagesAndCommands(Update update, Optional<ClientInfo> clientInfoOptional) throws TelegramApiException {
+    private void processClientMessagesAndCommands(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var text = getTextFromUpdate(update);
         final var commandExecutionService = clientCommandExecutionServicesByCommands.get(text);
         if (nonNull(commandExecutionService)) {
             commandExecutionService.execute(update);
         } else {
-            processClientMessages(update, clientInfoOptional, text);
+            processClientMessages(update, clientInfo, text);
         }
     }
 
-    private void processClientMessages(Update update, Optional<ClientInfo> clientInfoOptional, String text) throws TelegramApiException {
+    private void processClientMessages(Update update, ClientInfo clientInfo, String text) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
-        if (clientInfoOptional.isPresent()) {
-            final var clientInfo = clientInfoOptional.get();
-            final var clientInfoState = clientInfo.getState();
-            final var nextStates = clientStateMatrix.get(clientInfoState);
-            final var messageNextStates = nextStates.stream()
-                    .filter(messageExecutionClientStates::contains).toList();
-            final var buttonState = isNotBlank(text) ? buttonClientToStateMatrix.get(text) : null;
-            if (nonNull(buttonState) && !messageNextStates.contains(buttonState)) {
-                throwException(update, nextStates);
-            }
-            final var clientState = isNotEmpty(messageNextStates) && messageNextStates.size() == 1 ?
-                    messageNextStates.get(0) :
-                    buttonState;
-            final var messageExecutionService = messageExecutionServicesByClientState.get(clientState);
-            if (nonNull(messageExecutionService)) {
-                messageExecutionService.execute(update, clientInfo);
-            } else {
-                final var errorText = messageSource.getMessage("error.botConfig");
-                throwException(user.getId(), errorText);
-            }
+        final var clientInfoState = clientInfo.getState();
+        final var nextStates = clientStateMatrix.get(clientInfoState);
+        final var messageNextStates = nextStates.stream()
+                .filter(messageExecutionClientStates::contains).toList();
+        final var buttonState = isNotBlank(text) ? buttonClientToStateMatrix.get(text) : null;
+        if (nonNull(buttonState) && !messageNextStates.contains(buttonState)) {
+            throwException(update, nextStates);
+        }
+        final var clientState = isNotEmpty(messageNextStates) && messageNextStates.size() == 1 ?
+                messageNextStates.get(0) :
+                buttonState;
+        final var messageExecutionService = messageExecutionServicesByClientState.get(clientState);
+        if (nonNull(messageExecutionService)) {
+            messageExecutionService.execute(update, clientInfo);
         } else {
-            final var errorText = messageSource.getMessage("error.noClientInfoForAction");
+            final var errorText = messageSource.getMessage("error.botConfig");
             throwException(user.getId(), errorText);
         }
     }
 
-    private void processClientCallBacks(Update update, Optional<ClientInfo> clientInfoOptional) throws TelegramApiException {
+    private void processClientCallBacks(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var data = update.getCallbackQuery().getData();
         final var callbackState = data.substring(0, data.indexOf(":"));
-        if (clientInfoOptional.isPresent()) {
-            final var clientInfo = clientInfoOptional.get();
-            final var clientInfoState = clientInfo.getState();
-            final var nextStates = clientStateMatrix.get(clientInfoState);
-            final var callbackNextStates = nextStates.stream()
-                    .filter(callbackExecutionClientStates::contains)
-                    .toList();
-            final var nextState = ClientState.valueOf(callbackState);
-            if (!callbackNextStates.contains(nextState)) {
-                throwException(update, nextStates);
-            } else {
-                final var messageExecutionService = messageExecutionServicesByClientState.get(nextState);
-                messageExecutionService.execute(update, clientInfo);
-            }
+        final var clientInfoState = clientInfo.getState();
+        final var nextStates = clientStateMatrix.get(clientInfoState);
+        final var callbackNextStates = nextStates.stream()
+                .filter(callbackExecutionClientStates::contains)
+                .toList();
+        final var nextState = ClientState.valueOf(callbackState);
+        if (!callbackNextStates.contains(nextState)) {
+            throwException(update, nextStates);
         } else {
-            final var user = getUserFromUpdate(update);
-            final var errorText = messageSource.getMessage("error.noClientInfoForAction");
-            throwException(user.getId(), errorText);
+            final var messageExecutionService = messageExecutionServicesByClientState.get(nextState);
+            messageExecutionService.execute(update, clientInfo);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.external.imomarkastore.service.impl;
 
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.repository.ClientInfoRepository;
 import com.external.imomarkastore.service.ClientInfoService;
@@ -7,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.external.imomarkastore.constant.ClientState.INITIAL_START;
@@ -20,13 +20,17 @@ public class ClientInfoServiceImpl implements ClientInfoService {
     private final ClientInfoRepository repository;
 
     @Override
-    public Optional<ClientInfo> getById(UUID id) {
-        return repository.findById(id);
+    public ClientInfo getById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new BusinessLogicException("Could not find client by id: %s".formatted(id)));
     }
 
     @Override
-    public Optional<ClientInfo> getByTelegramUserId(Long telegramUserId) {
-        return repository.findByTelegramUserId(telegramUserId);
+    public ClientInfo getByTelegramUserId(Long telegramUserId) {
+        return repository.findByTelegramUserId(telegramUserId)
+                .orElseThrow(() ->
+                        new BusinessLogicException("Could not find client by id: %s".formatted(telegramUserId)));
     }
 
     @Override

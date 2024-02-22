@@ -13,10 +13,10 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public class EntitiesSendHelperUtils {
 
-    public static List<String> getPhotoIds(Application application, Optional<CarDetails> carDetailsOptional) {
+    public static List<String> getPhotoIds(Application application, CarDetails carDetails) {
         return Stream.of(
                         Optional.ofNullable(application.getMainPurposePhotoId()),
-                        carDetailsOptional.map(CarDetails::getVinNumberPhotoId))
+                        Optional.ofNullable(carDetails.getVinNumberPhotoId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
