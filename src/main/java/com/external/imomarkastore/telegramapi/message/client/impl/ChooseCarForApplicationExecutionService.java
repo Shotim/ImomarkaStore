@@ -12,9 +12,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
     }
 
     @Override
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var carDetailsId = getUUIDIdFromCallbackDataFromUpdate(update);
         final var user = getUserFromUpdate(update);
         final var application = applicationService.getFirstInProgressByTelegramUserId(user.getId());
@@ -56,8 +56,7 @@ public class ChooseCarForApplicationExecutionService implements MessageExecution
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var carDetailsId = getUUIDIdFromCallbackDataFromUpdate(update);
         final var carDetailsOptional = carDetailsService.getById(carDetailsId);

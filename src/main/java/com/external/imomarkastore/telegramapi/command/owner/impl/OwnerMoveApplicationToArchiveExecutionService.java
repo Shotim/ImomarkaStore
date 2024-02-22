@@ -8,10 +8,10 @@ import com.external.imomarkastore.telegramapi.command.owner.common.DeleteMessage
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonElement;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.ApplicationStatus.ARCHIVED;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
@@ -37,8 +37,7 @@ public class OwnerMoveApplicationToArchiveExecutionService implements OwnerActio
 
     @Override
     @Transactional
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);

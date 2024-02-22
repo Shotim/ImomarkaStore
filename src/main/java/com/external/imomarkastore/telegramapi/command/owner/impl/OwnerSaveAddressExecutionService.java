@@ -7,9 +7,9 @@ import com.external.imomarkastore.telegramapi.command.owner.common.DeleteMessage
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_ADDRESS;
@@ -33,8 +33,7 @@ public class OwnerSaveAddressExecutionService implements OwnerActionExecuteServi
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var text = getTextFromUpdate(update);
         ownerInfoService.updateAddress(text);
         final var user = getUserFromUpdate(update);

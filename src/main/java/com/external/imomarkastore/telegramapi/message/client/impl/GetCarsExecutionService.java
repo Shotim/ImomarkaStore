@@ -12,10 +12,10 @@ import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -37,21 +37,19 @@ public class GetCarsExecutionService implements MessageExecutionService {
     private final BotMessageSource messageSource;
 
     @Override
-
     public ClientState getState() {
         return GET_CARS;
     }
 
     @Override
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         clientInfo.setState(GET_CARS);
         clientInfoService.update(clientInfo);
         sendMessages(update, clientInfo);
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var carDetailsList = carDetailsService.getActiveCarDetailsForClient(clientInfo);
         final var user = getUserFromUpdate(update);
         if (!carDetailsList.isEmpty()) {

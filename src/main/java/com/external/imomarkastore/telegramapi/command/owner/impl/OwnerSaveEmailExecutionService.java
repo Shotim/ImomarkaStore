@@ -9,9 +9,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_EMAIL;
@@ -23,7 +23,7 @@ import static com.external.imomarkastore.util.ValidationUtils.formatAndValidateE
 
 @Service
 @RequiredArgsConstructor
-public class OwnerSaveEmailExecutionService  implements OwnerActionExecuteService {
+public class OwnerSaveEmailExecutionService implements OwnerActionExecuteService {
     private final OwnerInfoService ownerInfoService;
     private final InomarkaStore inomarkaStore;
     private final BotMessageSource messageSource;
@@ -36,8 +36,7 @@ public class OwnerSaveEmailExecutionService  implements OwnerActionExecuteServic
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         final var user = getUserFromUpdate(update);
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);

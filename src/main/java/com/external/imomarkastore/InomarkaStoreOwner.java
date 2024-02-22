@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class InomarkaStoreOwner {
         this.ownerActionExecutionServicesByStateName = ownerActionExecutionServicesByStateName;
     }
 
-    public void processAction(Update update) {
+    public void processAction(Update update) throws TelegramApiException {
         if (update.hasCallbackQuery()) {
             processCallbacks(update);
         } else {
@@ -64,7 +65,7 @@ public class InomarkaStoreOwner {
         }
     }
 
-    private void processCallbacks(Update update) {
+    private void processCallbacks(Update update) throws TelegramApiException {
         final var data = update.getCallbackQuery().getData();
         final var callbackState = data.contains(":") ?
                 data.substring(0, data.indexOf(":")) :
@@ -84,7 +85,7 @@ public class InomarkaStoreOwner {
         }
     }
 
-    private void processCommandsAndMessages(Update update) {
+    private void processCommandsAndMessages(Update update) throws TelegramApiException {
         final var text = getTextFromUpdate(update);
         final var ownerState = commandToOwnerStateMatrix.get(text);
         if (nonNull(ownerState)) {
@@ -94,7 +95,7 @@ public class InomarkaStoreOwner {
         }
     }
 
-    private void processMessages(Update update, String text) {
+    private void processMessages(Update update, String text) throws TelegramApiException {
         final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
         final var nextStates = ownerStateMatrix.get(currentOwnerState);
         final var buttonState = isNotBlank(text) ? buttonToOwnerStateMatrix.get(text) : null;
@@ -125,7 +126,7 @@ public class InomarkaStoreOwner {
                         .findFirst().orElse(null);
     }
 
-    private void processOwnerCommand(Update update, OwnerState ownerState) {
+    private void processOwnerCommand(Update update, OwnerState ownerState) throws TelegramApiException {
         final var ownerActionExecuteService = ownerActionExecutionServicesByStateName.get(ownerState.name());
         if (nonNull(ownerActionExecuteService)) {
             ownerActionExecuteService.execute(update);

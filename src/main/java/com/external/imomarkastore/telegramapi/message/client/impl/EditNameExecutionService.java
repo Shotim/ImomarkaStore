@@ -7,9 +7,9 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -33,13 +33,12 @@ public class EditNameExecutionService implements MessageExecutionService {
     }
 
     @Override
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         sendMessages(update, clientInfo);
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var clientInfoName = isBlank(clientInfo.getName()) ? EMPTY : clientInfo.getName();
         final var text = messageSource.getMessage("changeName",
                 List.of(clientInfoName).toArray());

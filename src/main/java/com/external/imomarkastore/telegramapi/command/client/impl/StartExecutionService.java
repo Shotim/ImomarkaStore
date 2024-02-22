@@ -6,7 +6,6 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -32,8 +31,7 @@ public class StartExecutionService implements CommandExecutionService {
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var telegramUserId = user.getId();
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(telegramUserId);

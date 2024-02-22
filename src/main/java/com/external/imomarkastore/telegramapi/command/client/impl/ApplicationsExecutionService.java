@@ -9,10 +9,10 @@ import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
 import com.external.imomarkastore.telegramapi.command.client.common.ApplicationsSendHelper;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Map;
@@ -48,8 +48,7 @@ public class ApplicationsExecutionService extends StateMessagesExecutionService 
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
         final List<Application> applications = clientInfoOptional.isEmpty() ?

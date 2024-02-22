@@ -10,9 +10,9 @@ import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ public class DeleteCarExecutionService implements MessageExecutionService {
     }
 
     @Override
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final UUID uuid = getUUIDIdFromCallbackDataFromUpdate(update);
         final var carDetailsOptional = carDetailsService.getById(uuid);
         carDetailsOptional.ifPresent(carDetails -> {
@@ -49,8 +49,8 @@ public class DeleteCarExecutionService implements MessageExecutionService {
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
 
         final var text = messageSource.getMessage("carDeleted");
         final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);

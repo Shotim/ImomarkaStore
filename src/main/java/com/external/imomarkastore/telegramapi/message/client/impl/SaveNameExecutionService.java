@@ -7,9 +7,9 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
 import static com.external.imomarkastore.constant.ClientState.SAVE_NAME;
@@ -31,7 +31,7 @@ public class SaveNameExecutionService implements MessageExecutionService {
     }
 
     @Override
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var text = getTextFromUpdate(update);
         clientInfo.setName(text);
         clientInfo.setState(MAIN_MENU);
@@ -40,8 +40,7 @@ public class SaveNameExecutionService implements MessageExecutionService {
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var text = messageSource.getMessage("nameSavedSuccessfully");
         final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user.getId(), text);

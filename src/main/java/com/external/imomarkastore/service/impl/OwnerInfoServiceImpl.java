@@ -1,6 +1,7 @@
 package com.external.imomarkastore.service.impl;
 
 import com.external.imomarkastore.constant.OwnerState;
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.model.OwnerInfo;
 import com.external.imomarkastore.repository.OwnerInfoRepository;
 import com.external.imomarkastore.service.OwnerInfoService;
@@ -20,6 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @RequiredArgsConstructor
 public class OwnerInfoServiceImpl implements OwnerInfoService {
 
+    private static final String COULD_NOT_FIND_OWNER_ENTITY_IN_DB = "Could not find owner entity in db";
     private final OwnerInfoRepository repository;
     private final BotMessageSource messageSource;
 
@@ -31,7 +33,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                             ownerInfo.setOwnerState(state);
                             repository.save(ownerInfo);
                         }, () -> {
-                            throw new InternalError();
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
                         });
     }
 
@@ -43,7 +45,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                             ownerInfo.setOwnerName(name);
                             repository.save(ownerInfo);
                         }, () -> {
-                            throw new InternalError();
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
                         });
     }
 
@@ -55,7 +57,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                             ownerInfo.setPhoneNumber(phoneNumber);
                             repository.save(ownerInfo);
                         }, () -> {
-                            throw new InternalError();
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
                         });
     }
 
@@ -67,7 +69,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                             ownerInfo.setAddress(address);
                             repository.save(ownerInfo);
                         }, () -> {
-                            throw new InternalError();
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
                         });
     }
 
@@ -79,7 +81,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                             ownerInfo.setEmail(email);
                             repository.save(ownerInfo);
                         }, () -> {
-                            throw new InternalError();
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
                         });
     }
 
@@ -91,7 +93,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                             ownerInfo.setInn(inn);
                             repository.save(ownerInfo);
                         }, () -> {
-                            throw new InternalError();
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
                         });
     }
 
@@ -104,14 +106,14 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     public OwnerState getCurrentOwnerState() {
         return getOwnerInfoOptional()
                 .map(OwnerInfo::getOwnerState)
-                .orElseThrow(InternalError::new);
+                .orElseThrow(() -> new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB));
     }
 
     @Override
     public Long getTelegramUserId() {
         return getOwnerInfoOptional()
                 .map(OwnerInfo::getTelegramUserId)
-                .orElseThrow(InternalError::new);
+                .orElseThrow(() -> new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB));
     }
 
     @Override
@@ -122,7 +124,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                             ownerInfo.setJsonData(jsonData);
                             repository.save(ownerInfo);
                         }, () -> {
-                            throw new InternalError();
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
                         });
     }
 
@@ -145,7 +147,7 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     public String createContactsPayload() {
         return getOwnerInfoOptional()
                 .map(this::getPayload)
-                .orElseThrow(InternalError::new);
+                .orElseThrow(() -> new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB));
     }
 
     private String getPayload(OwnerInfo ownerInfo) {

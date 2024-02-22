@@ -6,9 +6,9 @@ import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteSe
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.OwnerState.EDIT_PHONE_NUMBER;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
@@ -30,8 +30,7 @@ public class OwnerEditPhoneNumberExecutionService implements OwnerActionExecuteS
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);
         final var text = messageSource.getMessage("owner.callback.editPhoneNumber");
         final var answerCallbackQuery = createAnswerCallbackQuery(callbackIdFromUpdate, text);

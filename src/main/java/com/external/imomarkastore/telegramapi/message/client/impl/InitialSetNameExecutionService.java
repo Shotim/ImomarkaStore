@@ -7,10 +7,10 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.ClientState.INITIAL_SET_NAME;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
@@ -32,7 +32,7 @@ public class InitialSetNameExecutionService implements MessageExecutionService {
     }
 
     @Override
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var text = getTextFromUpdate(update);
         clientInfo.setName(text);
         clientInfo.setState(INITIAL_SET_NAME);
@@ -41,8 +41,7 @@ public class InitialSetNameExecutionService implements MessageExecutionService {
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var text = messageSource.getMessage("initialSetPhoneNumber");
         final var user = getUserFromUpdate(update);
         final var message = createTextMessageForUser(user.getId(), text);

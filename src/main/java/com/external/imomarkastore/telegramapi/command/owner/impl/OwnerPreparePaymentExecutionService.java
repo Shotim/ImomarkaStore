@@ -8,10 +8,10 @@ import com.external.imomarkastore.telegramapi.command.owner.common.DeleteMessage
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -39,8 +39,7 @@ public class OwnerPreparePaymentExecutionService implements OwnerActionExecuteSe
 
     @Override
     @Transactional
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackIdFromUpdate = getCallbackIdFromUpdate(update);

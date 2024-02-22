@@ -8,7 +8,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -35,8 +34,7 @@ public class OwnerGetPhotoExecutionService implements OwnerActionExecuteService 
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         final var user = getUserFromUpdate(update);
         final var text = getTextFromUpdate(update);

@@ -7,10 +7,10 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.stream.Stream;
 
@@ -39,9 +39,8 @@ public class InitialSetPhoneNumberExecutionService implements MessageExecutionSe
     }
 
     @Override
-    @SneakyThrows
     @Transactional
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         try {
             final var text = getTextFromUpdate(update);
             final String formattedPhoneNumber = formatAndValidatePhoneNumber(text);
@@ -58,8 +57,7 @@ public class InitialSetPhoneNumberExecutionService implements MessageExecutionSe
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
 
         final var outputText = messageSource.getMessage("template.client.clientInfo",
                 Stream.of(clientInfo.getName(), clientInfo.getPhoneNumber())

@@ -5,9 +5,9 @@ import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteService;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -31,8 +31,7 @@ public class OwnerStartExecutionService implements OwnerActionExecuteService {
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         ownerInfoService.updateState(MAIN_MENU);
         final var user = getUserFromUpdate(update);
 

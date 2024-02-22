@@ -7,10 +7,10 @@ import com.external.imomarkastore.service.ClientInfoService;
 import com.external.imomarkastore.service.OwnerInfoService;
 import com.external.imomarkastore.telegramapi.command.CommandExecutionService;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Map;
 
@@ -40,8 +40,7 @@ public class ContactsExecutionService extends StateMessagesExecutionService impl
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var outputText = ownerInfoService.createContactsPayload();
         final var user = getUserFromUpdate(update);
         final var outputMessage = createTextMessageForUser(user.getId(), outputText);

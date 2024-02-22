@@ -7,9 +7,9 @@ import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteSe
 import com.external.imomarkastore.telegramapi.command.owner.common.DeleteMessagesHelper;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.OwnerState.BACK_FROM_BLACK_LIST;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
@@ -34,8 +34,7 @@ public class OwnerBackFromBlackListExecutionService implements OwnerActionExecut
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);
         final var clientId = getUUIDIdFromCallbackDataFromUpdate(update);

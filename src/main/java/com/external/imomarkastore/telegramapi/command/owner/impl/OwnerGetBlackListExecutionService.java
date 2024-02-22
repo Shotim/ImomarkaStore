@@ -8,9 +8,9 @@ import com.external.imomarkastore.telegramapi.command.owner.OwnerActionExecuteSe
 import com.external.imomarkastore.telegramapi.command.owner.common.EntitiesSendHelper;
 import com.external.imomarkastore.util.BotMessageSource;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -36,8 +36,7 @@ public class OwnerGetBlackListExecutionService implements OwnerActionExecuteServ
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
         final var activeClients = clientInfoService.getBlackListClients();

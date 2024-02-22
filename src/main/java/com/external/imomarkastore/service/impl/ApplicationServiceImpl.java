@@ -1,5 +1,6 @@
 package com.external.imomarkastore.service.impl;
 
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.model.Application;
 import com.external.imomarkastore.model.CarDetails;
 import com.external.imomarkastore.model.ClientInfo;
@@ -84,7 +85,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Application getFirstInProgressByTelegramUserId(Long telegramUserId) {
         return repository.findTopByTelegramUserIdAndStatusOrderByCreatedAtDesc(
                         telegramUserId, CREATION_IN_PROGRESS)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BusinessLogicException("Could not find application in status 'creation in progress' for this user"));
     }
 
     public String getApplicationPayloadForClient(Application application) {

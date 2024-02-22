@@ -2,12 +2,12 @@ package com.external.imomarkastore;
 
 import com.external.imomarkastore.exception.BotException;
 import com.external.imomarkastore.service.OwnerInfoService;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 
@@ -36,8 +36,15 @@ public class InomarkaStore extends TelegramLongPollingBot {
     }
 
     @Override
-    @SneakyThrows
     public void onUpdateReceived(Update update) {
+        try {
+            executeReceivedUpdate(update);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void executeReceivedUpdate(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         try {
             if (ownerInfoService.isOwner(user.getId())) {

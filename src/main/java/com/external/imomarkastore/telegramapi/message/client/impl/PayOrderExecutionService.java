@@ -12,7 +12,6 @@ import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,9 +44,8 @@ public class PayOrderExecutionService implements MessageExecutionService {
     }
 
     @Override
-    @SneakyThrows
     @Transactional
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         if (update.hasPreCheckoutQuery()) {
             final var preCheckoutQuery = update.getPreCheckoutQuery();
             final var invoicePayload = preCheckoutQuery.getInvoicePayload();

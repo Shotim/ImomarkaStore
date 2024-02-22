@@ -1,6 +1,7 @@
 package com.external.imomarkastore.telegramapi.command.owner.impl;
 
 import com.external.imomarkastore.InomarkaStore;
+import com.external.imomarkastore.exception.BusinessLogicException;
 import com.external.imomarkastore.model.Application;
 import com.external.imomarkastore.model.CarDetails;
 import com.external.imomarkastore.model.ClientInfo;
@@ -13,14 +14,15 @@ import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -54,8 +56,7 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var currentOwnerState = ownerInfoService.getCurrentOwnerState();
 
         final List<Application> applications = switch (currentOwnerState) {
@@ -178,6 +179,8 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
                 final var exportFileMessageId = inomarkaStore.execute(sendDocument).getMessageId();
                 messageIds.add(exportFileMessageId);
                 delete(file.toPath());
+            } catch (IOException e) {
+                throw new BusinessLogicException("An error occured while creating Excel document: " + e.getMessage());
             }
         }
         ownerInfoService.updateJsonData(jsonObject.toString());

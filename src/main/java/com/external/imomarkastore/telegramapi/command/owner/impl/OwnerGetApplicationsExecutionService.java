@@ -10,9 +10,9 @@ import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.HashMap;
 
@@ -38,8 +38,7 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
     }
 
     @Override
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var applications = applicationService.getFullyCreatedApplications();
         final var jsonObject = ownerInfoService.getJsonDataObject();

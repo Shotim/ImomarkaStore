@@ -7,8 +7,8 @@ import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import com.external.imomarkastore.util.BotMessageSource;
 import com.external.imomarkastore.util.UpdateUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.ClientState.MAIN_MENU;
 import static com.external.imomarkastore.util.MessageUtils.createClientTextMessageWithReplyKeyboardForMainMenu;
@@ -21,7 +21,7 @@ public abstract class AbstractMainMenuExecutionService implements MessageExecuti
     private final BotMessageSource messageSource;
 
     @Override
-    public void execute(Update update, ClientInfo clientInfo) {
+    public void execute(Update update, ClientInfo clientInfo) throws TelegramApiException {
         clientInfo.setState(MAIN_MENU);
         clientInfo.setAdditionalJsonDataForNextOperations(null);
         clientInfoService.update(clientInfo);
@@ -29,8 +29,7 @@ public abstract class AbstractMainMenuExecutionService implements MessageExecuti
     }
 
     @Override
-    @SneakyThrows
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var user = UpdateUtils.getUserFromUpdate(update);
         final var text = messageSource.getMessage("youReturnedBackToMainMenu");
         final var message = createClientTextMessageWithReplyKeyboardForMainMenu(user.getId(), text);

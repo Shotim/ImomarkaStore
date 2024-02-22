@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class InomarkaStoreClient {
         this.messageExecutionServicesByClientState = messageExecutionServicesByClientState;
     }
 
-    public void processAction(Update update, User user) {
+    public void processAction(Update update, User user) throws TelegramApiException {
         final var clientInfoOptional = clientInfoService.getByTelegramUserId(user.getId());
         if (clientInfoOptional.isPresent()) {
             final var clientInfo = clientInfoOptional.get();
@@ -94,7 +95,7 @@ public class InomarkaStoreClient {
         }
     }
 
-    private void processClientMessagesAndCommands(Update update, Optional<ClientInfo> clientInfoOptional) {
+    private void processClientMessagesAndCommands(Update update, Optional<ClientInfo> clientInfoOptional) throws TelegramApiException {
         final var text = getTextFromUpdate(update);
         final var commandExecutionService = clientCommandExecutionServicesByCommands.get(text);
         if (nonNull(commandExecutionService)) {
@@ -104,7 +105,7 @@ public class InomarkaStoreClient {
         }
     }
 
-    private void processClientMessages(Update update, Optional<ClientInfo> clientInfoOptional, String text) {
+    private void processClientMessages(Update update, Optional<ClientInfo> clientInfoOptional, String text) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         if (clientInfoOptional.isPresent()) {
             final var clientInfo = clientInfoOptional.get();
@@ -132,7 +133,7 @@ public class InomarkaStoreClient {
         }
     }
 
-    private void processClientCallBacks(Update update, Optional<ClientInfo> clientInfoOptional) {
+    private void processClientCallBacks(Update update, Optional<ClientInfo> clientInfoOptional) throws TelegramApiException {
         final var data = update.getCallbackQuery().getData();
         final var callbackState = data.substring(0, data.indexOf(":"));
         if (clientInfoOptional.isPresent()) {

@@ -8,10 +8,10 @@ import com.external.imomarkastore.telegramapi.command.owner.common.DeleteMessage
 import com.external.imomarkastore.util.BotMessageSource;
 import com.google.gson.JsonElement;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.external.imomarkastore.constant.OwnerState.DELETE_APPLICATION;
 import static com.external.imomarkastore.util.MessageUtils.createAnswerCallbackQuery;
@@ -36,8 +36,7 @@ public class OwnerDeleteApplicationExecutionService implements OwnerActionExecut
 
     @Override
     @Transactional
-    @SneakyThrows
-    public void execute(Update update) {
+    public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var applicationId = getLongIdFromCallbackDataFromUpdate(update);
         final var callbackId = getCallbackIdFromUpdate(update);

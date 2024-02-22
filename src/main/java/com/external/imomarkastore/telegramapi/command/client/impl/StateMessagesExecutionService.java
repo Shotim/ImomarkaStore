@@ -4,6 +4,7 @@ import com.external.imomarkastore.constant.ClientState;
 import com.external.imomarkastore.model.ClientInfo;
 import com.external.imomarkastore.telegramapi.message.MessageExecutionService;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public abstract class StateMessagesExecutionService {
         this.messageExecutionServicesByClientState = messageExecutionServicesByClientState;
     }
 
-    public void sendMessages(Update update, ClientInfo clientInfo) {
+    public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
         final var state = clientInfo.getState();
         final var messageExecutionService = messageExecutionServicesByClientState.get(state);
         if (nonNull(messageExecutionService)) {
