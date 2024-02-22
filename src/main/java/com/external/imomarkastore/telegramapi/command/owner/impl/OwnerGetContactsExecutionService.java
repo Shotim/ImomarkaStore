@@ -19,6 +19,7 @@ import static com.external.imomarkastore.constant.OwnerState.EDIT_EMAIL;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_INN;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_NAME;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_PHONE_NUMBER;
+import static com.external.imomarkastore.constant.OwnerState.EDIT_WORKING_HOURS;
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButtons;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithReplyKeyBoardMarkup;
@@ -47,7 +48,8 @@ public class OwnerGetContactsExecutionService implements OwnerActionExecuteServi
                 messageSource.getMessage("buttonName.owner.editPhoneNumber"), EDIT_PHONE_NUMBER.name(),
                 messageSource.getMessage("buttonName.owner.editAddress"), EDIT_ADDRESS.name(),
                 messageSource.getMessage("buttonName.owner.editInn"), EDIT_INN.name(),
-                messageSource.getMessage("buttonName.owner.editEmail"), EDIT_EMAIL.name()
+                messageSource.getMessage("buttonName.owner.editEmail"), EDIT_EMAIL.name(),
+                messageSource.getMessage("buttonName.owner.editWorkingHours"), EDIT_WORKING_HOURS.name()
         );
         final var rootMessages = new JsonArray();
 

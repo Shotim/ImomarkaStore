@@ -18,6 +18,8 @@ public interface OwnerInfoService {
 
     void updateInn(String inn);
 
+    void updateWorkingHours(String workingHours);
+
     OwnerState getCurrentOwnerState();
 
     void updateJsonData(String jsonData);

@@ -25,4 +25,5 @@ public class OwnerInfo {
     private String address;
     private String email;
     private String inn;
+    private String workingHours;
 }

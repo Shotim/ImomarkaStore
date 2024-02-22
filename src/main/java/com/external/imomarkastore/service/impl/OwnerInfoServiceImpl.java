@@ -98,6 +98,18 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
     }
 
     @Override
+    public void updateWorkingHours(String workingHours) {
+        getOwnerInfoOptional()
+                .ifPresentOrElse(
+                        ownerInfo -> {
+                            ownerInfo.setWorkingHours(workingHours);
+                            repository.save(ownerInfo);
+                        }, () -> {
+                            throw new BusinessLogicException(COULD_NOT_FIND_OWNER_ENTITY_IN_DB);
+                        });
+    }
+
+    @Override
     public boolean isOwner(Long telegramUserId) {
         return repository.findById(telegramUserId).isPresent();
     }
@@ -156,7 +168,8 @@ public class OwnerInfoServiceImpl implements OwnerInfoService {
                         ownerInfo.getPhoneNumber(),
                         ownerInfo.getAddress(),
                         ownerInfo.getEmail(),
-                        ownerInfo.getInn())
+                        ownerInfo.getInn(),
+                        ownerInfo.getWorkingHours())
                 .map(string -> isBlank(string) ? EMPTY : string)
                 .toArray());
     }

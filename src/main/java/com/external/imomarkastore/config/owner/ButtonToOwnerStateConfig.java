@@ -13,6 +13,7 @@ import static com.external.imomarkastore.constant.OwnerState.EDIT_EMAIL;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_INN;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_NAME;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_PHONE_NUMBER;
+import static com.external.imomarkastore.constant.OwnerState.EDIT_WORKING_HOURS;
 import static com.external.imomarkastore.constant.OwnerState.EXPORT_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLICATIONS;
@@ -44,6 +45,7 @@ public class ButtonToOwnerStateConfig {
                 entry(messageSource.getMessage("buttonName.owner.editAddress"), EDIT_EMAIL),
                 entry(messageSource.getMessage("buttonName.owner.editInn"), EDIT_INN),
                 entry(messageSource.getMessage("buttonName.owner.editEmail"), EDIT_EMAIL),
+                entry(messageSource.getMessage("buttonName.owner.editWorkingHours"), EDIT_WORKING_HOURS),
                 entry(messageSource.getMessage("buttonName.owner.getPhoto"), PREPARE_GET_PHOTO),
                 entry(messageSource.getMessage("buttonName.owner.backToApplications"), GET_APPLICATIONS),
                 entry(messageSource.getMessage("buttonName.owner.setPayment"), SET_PAYMENT)

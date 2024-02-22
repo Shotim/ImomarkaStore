@@ -16,6 +16,7 @@ import static com.external.imomarkastore.constant.OwnerState.EDIT_EMAIL;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_INN;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_NAME;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_PHONE_NUMBER;
+import static com.external.imomarkastore.constant.OwnerState.EDIT_WORKING_HOURS;
 import static com.external.imomarkastore.constant.OwnerState.EXPORT_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLICATIONS;
@@ -34,6 +35,7 @@ import static com.external.imomarkastore.constant.OwnerState.SAVE_EMAIL;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_INN;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_NAME;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_PHONE_NUMBER;
+import static com.external.imomarkastore.constant.OwnerState.SAVE_WORKING_HOURS;
 import static com.external.imomarkastore.constant.OwnerState.SEND_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.SET_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.START;
@@ -59,7 +61,7 @@ public class OwnerStateMatrixConfig {
                 entry(GET_BLACK_LIST,
                         List.of(BACK_FROM_BLACK_LIST, BACK_TO_MAIN_MENU)),
                 entry(GET_CONTACTS,
-                        List.of(EDIT_NAME, EDIT_PHONE_NUMBER, EDIT_ADDRESS, EDIT_INN, EDIT_EMAIL, BACK_TO_MAIN_MENU)),
+                        List.of(EDIT_NAME, EDIT_PHONE_NUMBER, EDIT_ADDRESS, EDIT_INN, EDIT_EMAIL, EDIT_WORKING_HOURS, BACK_TO_MAIN_MENU)),
                 entry(EDIT_NAME,
                         List.of(SAVE_NAME)),
                 entry(EDIT_PHONE_NUMBER,
@@ -70,11 +72,14 @@ public class OwnerStateMatrixConfig {
                         List.of(SAVE_INN)),
                 entry(EDIT_EMAIL,
                         List.of(SAVE_EMAIL)),
+                entry(EDIT_WORKING_HOURS,
+                        List.of(SAVE_WORKING_HOURS)),
                 entry(SAVE_NAME, List.of(GET_CONTACTS)),
                 entry(SAVE_PHONE_NUMBER, List.of(GET_CONTACTS)),
                 entry(SAVE_ADDRESS, List.of(GET_CONTACTS)),
                 entry(SAVE_INN, List.of(GET_CONTACTS)),
                 entry(SAVE_EMAIL, List.of(GET_CONTACTS)),
+                entry(SAVE_WORKING_HOURS, List.of(GET_CONTACTS)),
                 entry(PREPARE_PAYMENT, List.of(SEND_PAYMENT, GET_APPLICATIONS)),
                 entry(SEND_PAYMENT, List.of(GET_APPLICATIONS, BACK_TO_MAIN_MENU)),
                 entry(PREPARE_GET_PHOTO, List.of(GET_PHOTO, BACK_TO_MAIN_MENU)),
