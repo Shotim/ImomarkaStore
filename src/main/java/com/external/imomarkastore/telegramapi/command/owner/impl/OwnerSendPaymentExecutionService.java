@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
@@ -61,23 +62,6 @@ public class OwnerSendPaymentExecutionService implements OwnerActionExecuteServi
                     if (clientInfoOptional.isPresent()) {
                         jsonDataObject.addProperty("receivedSendPaymentMessageId", messageIdFromUpdate);
                         application.setSentRequestForPayment(true);
-                        final var title = messageSource.getMessage("owner.paymentTitle");
-                        final var description = messageSource.getMessage("owner.paymentDescription", List.of(applicationId).toArray());
-                        final var priceAsDouble = Double.parseDouble(text);
-                        final var priceValue = Double.valueOf(priceAsDouble * 100).intValue();
-                        final var sendInvoice = createSendInvoiceForUser(telegramUserId, title, description, priceValue, applicationId.toString());
-                        inomarkaStore.execute(sendInvoice);
-                        final var paymentSentMessage = messageSource.getMessage("owner.paymentSent");
-                        final var buttonNames = List.of(
-                                messageSource.getMessage("buttonName.owner.backToApplications"),
-                                messageSource.getMessage("buttonName.owner.backToMainMenu")
-                        );
-                        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), paymentSentMessage, buttonNames);
-                        final var sentMessageId = inomarkaStore.execute(sendMessage).getMessageId();
-                        jsonDataObject.addProperty("sentSendPaymentMessageId", sentMessageId);
-                        applicationService.update(application);
-                        ownerInfoService.updateState(SEND_PAYMENT);
-                        ownerInfoService.updateJsonData(jsonDataObject.toString());
                         final var clientInfo = clientInfoOptional.get();
                         final var prevClientState = clientInfo.getState();
                         final var additionalJsonDataForNextOperations = clientInfo.getAdditionalJsonDataForNextOperations();
@@ -87,10 +71,35 @@ public class OwnerSendPaymentExecutionService implements OwnerActionExecuteServi
                         jsonObject.addProperty("prevState", prevClientState.name());
                         clientInfo.setAdditionalJsonDataForNextOperations(jsonObject.toString());
                         clientInfo.setState(PAY_ORDER);
+                        sendInvoiveMessage(text, applicationId, telegramUserId);
+                        sendPaymentSentMessage(user, jsonDataObject);
                         clientInfoService.update(clientInfo);
+                        applicationService.update(application);
+                        ownerInfoService.updateState(SEND_PAYMENT);
+                        ownerInfoService.updateJsonData(jsonDataObject.toString());
                     }
                 }
             }
         }
+    }
+
+    private void sendInvoiveMessage(String text, Long applicationId, Long telegramUserId) throws TelegramApiException {
+        final var title = messageSource.getMessage("owner.paymentTitle");
+        final var description = messageSource.getMessage("owner.paymentDescription", List.of(applicationId).toArray());
+        final var priceAsDouble = Double.parseDouble(text);
+        final var priceValue = Double.valueOf(priceAsDouble * 100).intValue();
+        final var sendInvoice = createSendInvoiceForUser(telegramUserId, title, description, priceValue, applicationId.toString());
+        inomarkaStore.execute(sendInvoice);
+    }
+
+    private void sendPaymentSentMessage(User user, JsonObject jsonDataObject) throws TelegramApiException {
+        final var paymentSentMessage = messageSource.getMessage("owner.paymentSent");
+        final var buttonNames = List.of(
+                messageSource.getMessage("buttonName.owner.backToApplications"),
+                messageSource.getMessage("buttonName.owner.backToMainMenu")
+        );
+        final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), paymentSentMessage, buttonNames);
+        final var sentMessageId = inomarkaStore.execute(sendMessage).getMessageId();
+        jsonDataObject.addProperty("sentSendPaymentMessageId", sentMessageId);
     }
 }

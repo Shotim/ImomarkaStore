@@ -19,6 +19,7 @@ import java.util.HashMap;
 import static com.external.imomarkastore.constant.OwnerState.GET_APPLICATIONS;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
 import static com.external.imomarkastore.constant.OwnerState.PREPARE_PAYMENT;
+import static com.external.imomarkastore.constant.OwnerState.SET_PAYMENT;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
 import static java.util.Objects.nonNull;
@@ -26,6 +27,7 @@ import static java.util.Objects.nonNull;
 @Service
 @RequiredArgsConstructor
 public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteService {
+    private static final String CALLBACK_DATA_TEMPLATE = "%s:%s";
     private final ApplicationService applicationService;
     private final OwnerInfoService ownerInfoService;
     private final BotMessageSource messageSource;
@@ -52,16 +54,22 @@ public class OwnerGetApplicationsExecutionService implements OwnerActionExecuteS
             for (Application application : applications) {
                 final var messageIds = new JsonArray();
                 jsonObject.add(application.getId().toString(), messageIds);
+
                 final var archiveApplicationButtonName =
                         messageSource.getMessage("buttonName.owner.archiveApplication");
-                final var archiveApplicationCallbackData = "%s:%s".formatted(MOVE_APPLICATION_TO_ARCHIVE, application.getId());
-                final var sendPaymentButtonName = messageSource.getMessage("buttonName.owner.sendPayment");
-                final var sendPaymentCallbackData = "%s:%s".formatted(PREPARE_PAYMENT, application.getId());
-
+                final var archiveApplicationCallbackData = CALLBACK_DATA_TEMPLATE.formatted(MOVE_APPLICATION_TO_ARCHIVE, application.getId());
                 final var buttonNameToCallbackData = new HashMap<String, String>();
                 buttonNameToCallbackData.put(archiveApplicationButtonName, archiveApplicationCallbackData);
+
                 if (!application.isSentRequestForPayment() && nonNull(application.getTelegramUserId())) {
+                    final var sendPaymentButtonName = messageSource.getMessage("buttonName.owner.sendPayment");
+                    final var sendPaymentCallbackData = CALLBACK_DATA_TEMPLATE.formatted(PREPARE_PAYMENT, application.getId());
                     buttonNameToCallbackData.put(sendPaymentButtonName, sendPaymentCallbackData);
+                }
+                if (!application.isPaid()) {
+                    final var setPaymentButtonName = messageSource.getMessage("buttonName.owner.setPayment");
+                    final var setPaymentCallbackData = CALLBACK_DATA_TEMPLATE.formatted(SET_PAYMENT, application.getId());
+                    buttonNameToCallbackData.put(setPaymentButtonName, setPaymentCallbackData);
                 }
                 entitiesSendHelper.createAndSendApplicationMessage(user.getId(), application, messageIds, buttonNameToCallbackData);
             }

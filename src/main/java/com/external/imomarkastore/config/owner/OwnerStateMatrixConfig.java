@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static com.external.imomarkastore.constant.OwnerState.BACK_FROM_BLACK_LIST;
 import static com.external.imomarkastore.constant.OwnerState.BACK_TO_MAIN_MENU;
+import static com.external.imomarkastore.constant.OwnerState.CONFIRM_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.DELETE_APPLICATION;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_ADDRESS;
 import static com.external.imomarkastore.constant.OwnerState.EDIT_EMAIL;
@@ -34,6 +35,7 @@ import static com.external.imomarkastore.constant.OwnerState.SAVE_INN;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_NAME;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_PHONE_NUMBER;
 import static com.external.imomarkastore.constant.OwnerState.SEND_PAYMENT;
+import static com.external.imomarkastore.constant.OwnerState.SET_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.START;
 import static java.util.Map.entry;
 
@@ -49,7 +51,7 @@ public class OwnerStateMatrixConfig {
                         List.of(GET_APPLICATIONS, GET_ARCHIVED_APPLICATIONS, GET_CLIENTS,
                                 GET_BLACK_LIST, GET_CONTACTS, PREPARE_PAYMENT, PREPARE_GET_PHOTO)),
                 entry(GET_APPLICATIONS,
-                        List.of(EXPORT_APPLICATIONS, MOVE_APPLICATION_TO_ARCHIVE, BACK_TO_MAIN_MENU, PREPARE_PAYMENT)),
+                        List.of(EXPORT_APPLICATIONS, MOVE_APPLICATION_TO_ARCHIVE, BACK_TO_MAIN_MENU, PREPARE_PAYMENT, SET_PAYMENT)),
                 entry(GET_ARCHIVED_APPLICATIONS,
                         List.of(EXPORT_APPLICATIONS, DELETE_APPLICATION, RESTORE_APPLICATION, BACK_TO_MAIN_MENU)),
                 entry(GET_CLIENTS,
@@ -74,8 +76,10 @@ public class OwnerStateMatrixConfig {
                 entry(SAVE_INN, List.of(GET_CONTACTS)),
                 entry(SAVE_EMAIL, List.of(GET_CONTACTS)),
                 entry(PREPARE_PAYMENT, List.of(SEND_PAYMENT, GET_APPLICATIONS)),
-                entry(SEND_PAYMENT,List.of(GET_APPLICATIONS,BACK_TO_MAIN_MENU)),
-                entry(PREPARE_GET_PHOTO, List.of(GET_PHOTO, BACK_TO_MAIN_MENU))
+                entry(SEND_PAYMENT, List.of(GET_APPLICATIONS, BACK_TO_MAIN_MENU)),
+                entry(PREPARE_GET_PHOTO, List.of(GET_PHOTO, BACK_TO_MAIN_MENU)),
+                entry(SET_PAYMENT, List.of(CONFIRM_PAYMENT, GET_APPLICATIONS)),
+                entry(CONFIRM_PAYMENT, List.of(GET_APPLICATIONS, BACK_TO_MAIN_MENU))
         );
     }
 }
