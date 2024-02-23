@@ -16,4 +16,7 @@ public interface ClientInfoRepository extends JpaRepository<ClientInfo, UUID> {
 
     @Query("SELECT ci FROM ClientInfo as ci WHERE ci.isInBlackList = true")
     List<ClientInfo> findBlackListedClients();
+
+    @Query("SELECT DISTINCT ci.telegramUserId FROM ClientInfo AS ci WHERE ci.telegramUserId IS NOT NULL")
+    List<Long> findTelegramUserIds();
 }

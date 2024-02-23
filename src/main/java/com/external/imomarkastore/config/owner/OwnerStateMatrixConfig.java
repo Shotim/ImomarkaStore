@@ -27,6 +27,7 @@ import static com.external.imomarkastore.constant.OwnerState.GET_PHOTO;
 import static com.external.imomarkastore.constant.OwnerState.MAIN_MENU;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_APPLICATION_TO_ARCHIVE;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_CLIENT_TO_BLACK_LIST;
+import static com.external.imomarkastore.constant.OwnerState.PREPARE_DISTRIBUTION;
 import static com.external.imomarkastore.constant.OwnerState.PREPARE_GET_PHOTO;
 import static com.external.imomarkastore.constant.OwnerState.PREPARE_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.RESTORE_APPLICATION;
@@ -36,6 +37,7 @@ import static com.external.imomarkastore.constant.OwnerState.SAVE_INN;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_NAME;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_PHONE_NUMBER;
 import static com.external.imomarkastore.constant.OwnerState.SAVE_WORKING_HOURS;
+import static com.external.imomarkastore.constant.OwnerState.SEND_DISTRIBUTION;
 import static com.external.imomarkastore.constant.OwnerState.SEND_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.SET_PAYMENT;
 import static com.external.imomarkastore.constant.OwnerState.START;
@@ -51,7 +53,7 @@ public class OwnerStateMatrixConfig {
                         List.of(MAIN_MENU)),
                 entry(MAIN_MENU,
                         List.of(GET_APPLICATIONS, GET_ARCHIVED_APPLICATIONS, GET_CLIENTS,
-                                GET_BLACK_LIST, GET_CONTACTS, PREPARE_PAYMENT, PREPARE_GET_PHOTO)),
+                                GET_BLACK_LIST, GET_CONTACTS, PREPARE_PAYMENT, PREPARE_GET_PHOTO, PREPARE_DISTRIBUTION)),
                 entry(GET_APPLICATIONS,
                         List.of(EXPORT_APPLICATIONS, MOVE_APPLICATION_TO_ARCHIVE, BACK_TO_MAIN_MENU, PREPARE_PAYMENT, SET_PAYMENT)),
                 entry(GET_ARCHIVED_APPLICATIONS,
@@ -84,7 +86,9 @@ public class OwnerStateMatrixConfig {
                 entry(SEND_PAYMENT, List.of(GET_APPLICATIONS, BACK_TO_MAIN_MENU)),
                 entry(PREPARE_GET_PHOTO, List.of(GET_PHOTO, BACK_TO_MAIN_MENU)),
                 entry(SET_PAYMENT, List.of(CONFIRM_PAYMENT, GET_APPLICATIONS)),
-                entry(CONFIRM_PAYMENT, List.of(GET_APPLICATIONS, BACK_TO_MAIN_MENU))
+                entry(CONFIRM_PAYMENT, List.of(GET_APPLICATIONS, BACK_TO_MAIN_MENU)),
+                entry(PREPARE_DISTRIBUTION, List.of(SEND_DISTRIBUTION, BACK_TO_MAIN_MENU)),
+                entry(SEND_DISTRIBUTION, List.of(SEND_DISTRIBUTION, BACK_TO_MAIN_MENU))
         );
     }
 }

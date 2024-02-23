@@ -11,6 +11,7 @@ import java.util.UUID;
 import static java.util.Comparator.comparingInt;
 import static java.util.Objects.isNull;
 import static lombok.AccessLevel.PRIVATE;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @NoArgsConstructor(access = PRIVATE)
 public class UpdateUtils {
@@ -26,7 +27,8 @@ public class UpdateUtils {
     }
 
     public static String getTextFromUpdate(Update update) {
-        return update.getMessage().getText();
+        final var text = update.getMessage().getText();
+        return isNull(text) ? EMPTY : text;
     }
 
     public static UUID getUUIDIdFromCallbackDataFromUpdate(Update update) {

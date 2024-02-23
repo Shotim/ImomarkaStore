@@ -51,7 +51,8 @@ public class OwnerBackToMainMenuExecutionService implements OwnerActionExecuteSe
                 messageSource.getMessage("buttonName.owner.getClients"),
                 messageSource.getMessage("buttonName.owner.getBlackList"),
                 messageSource.getMessage("buttonName.owner.getContacts"),
-                messageSource.getMessage("buttonName.owner.getPhoto")
+                messageSource.getMessage("buttonName.owner.getPhoto"),
+                messageSource.getMessage("buttonName.owner.prepareDistribution")
         );
         final var sendMessage = createTextMessageForUserWithReplyKeyBoardMarkup(user.getId(), text, buttonNames);
         final var messageId = inomarkaStore.execute(sendMessage).getMessageId();

@@ -35,7 +35,9 @@ public enum OwnerState {
     PREPARE_GET_PHOTO("Поиск фото по идентификатору"),
     GET_PHOTO("Получение фото по идентификатору"),
     SET_PAYMENT("Пометка заявки как оплаченной"),
-    CONFIRM_PAYMENT("Подтверждение оплаты заявки");
+    CONFIRM_PAYMENT("Подтверждение оплаты заявки"),
+    PREPARE_DISTRIBUTION("Подготовка к отправке рассылки"),
+    SEND_DISTRIBUTION("Отправка рассылки");
 
     @Getter
     private final String ownerStateText;

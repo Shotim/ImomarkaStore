@@ -17,4 +17,6 @@ public interface ClientInfoService {
     List<ClientInfo> getActiveClients();
 
     List<ClientInfo> getBlackListClients();
+
+    List<Long> getTelegramUserIds();
 }

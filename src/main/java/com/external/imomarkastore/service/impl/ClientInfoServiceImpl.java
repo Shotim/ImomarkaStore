@@ -57,4 +57,9 @@ public class ClientInfoServiceImpl implements ClientInfoService {
     public List<ClientInfo> getBlackListClients() {
         return repository.findBlackListedClients();
     }
+
+    @Override
+    public List<Long> getTelegramUserIds() {
+        return repository.findTelegramUserIds();
+    }
 }

@@ -20,6 +20,7 @@ import static com.external.imomarkastore.constant.OwnerState.GET_ARCHIVED_APPLIC
 import static com.external.imomarkastore.constant.OwnerState.GET_BLACK_LIST;
 import static com.external.imomarkastore.constant.OwnerState.GET_CLIENTS;
 import static com.external.imomarkastore.constant.OwnerState.GET_CONTACTS;
+import static com.external.imomarkastore.constant.OwnerState.PREPARE_DISTRIBUTION;
 import static com.external.imomarkastore.constant.OwnerState.PREPARE_GET_PHOTO;
 import static com.external.imomarkastore.constant.OwnerState.SET_PAYMENT;
 import static java.util.Map.entry;
@@ -48,7 +49,8 @@ public class ButtonToOwnerStateConfig {
                 entry(messageSource.getMessage("buttonName.owner.editWorkingHours"), EDIT_WORKING_HOURS),
                 entry(messageSource.getMessage("buttonName.owner.getPhoto"), PREPARE_GET_PHOTO),
                 entry(messageSource.getMessage("buttonName.owner.backToApplications"), GET_APPLICATIONS),
-                entry(messageSource.getMessage("buttonName.owner.setPayment"), SET_PAYMENT)
+                entry(messageSource.getMessage("buttonName.owner.setPayment"), SET_PAYMENT),
+                entry(messageSource.getMessage("buttonName.owner.prepareDistribution"), PREPARE_DISTRIBUTION)
         );
     }
 }
