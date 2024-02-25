@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.external.imomarkastore.constant.ClientState.INITIAL_START;
 import static com.external.imomarkastore.constant.ClientState.PAY_ORDER;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.imomarkastore.util.UpdateUtils.getTextFromUpdate;
@@ -75,20 +76,24 @@ public class InomarkaStoreClient {
     }
 
     public void processAction(Update update, User user) throws TelegramApiException {
-        final var clientInfo = clientInfoService.getByTelegramUserId(user.getId());
-        if (PAY_ORDER.equals(clientInfo.getState())) {
-            messageExecutionServicesByClientState.get(PAY_ORDER).execute(update, clientInfo);
-        } else if (TRUE.equals(clientInfo.getIsInBlackList())) {
-            final var text = messageSource.getMessage("youBlackListed");
-            throwException(user.getId(), text);
-        } else {
-            if (update.hasCallbackQuery()) {
-                processClientCallBacks(update, clientInfo);
+        final var clientInfoOptional = clientInfoService.getByTelegramUserIdOpt(user.getId());
+        if (clientInfoOptional.isPresent()) {
+            final var clientInfo = clientInfoOptional.get();
+            if (PAY_ORDER.equals(clientInfo.getState())) {
+                messageExecutionServicesByClientState.get(PAY_ORDER).execute(update, clientInfo);
+            } else if (TRUE.equals(clientInfoOptional.get().getIsInBlackList())) {
+                final var text = messageSource.getMessage("youBlackListed");
+                throwException(user.getId(), text);
             } else {
-                processClientMessagesAndCommands(update, clientInfo);
+                if (update.hasCallbackQuery()) {
+                    processClientCallBacks(update, clientInfoOptional.get());
+                } else {
+                    processClientMessagesAndCommands(update, clientInfoOptional.get());
+                }
             }
+        } else {
+            processClientCommands(update);
         }
-
     }
 
     private void processClientMessagesAndCommands(Update update, ClientInfo clientInfo) throws TelegramApiException {
@@ -98,6 +103,16 @@ public class InomarkaStoreClient {
             commandExecutionService.execute(update);
         } else {
             processClientMessages(update, clientInfo, text);
+        }
+    }
+
+    private void processClientCommands(Update update) throws TelegramApiException {
+        final var text = getTextFromUpdate(update);
+        final var commandExecutionService = clientCommandExecutionServicesByCommands.get(text);
+        if (nonNull(commandExecutionService)) {
+            commandExecutionService.execute(update);
+        } else {
+            throwException(update, List.of(INITIAL_START));
         }
     }
 

@@ -47,7 +47,6 @@ public class DeleteCarExecutionService implements MessageExecutionService {
     }
 
     @Override
-
     public void sendMessages(Update update, ClientInfo clientInfo) throws TelegramApiException {
 
         final var text = messageSource.getMessage("carDeleted");

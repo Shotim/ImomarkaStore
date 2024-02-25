@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.external.imomarkastore.constant.ClientState.INITIAL_START;
@@ -34,9 +35,15 @@ public class ClientInfoServiceImpl implements ClientInfoService {
     }
 
     @Override
-    public ClientInfo create(Long telegramUserId) {
+    public Optional<ClientInfo> getByTelegramUserIdOpt(Long telegramUserId) {
+        return repository.findByTelegramUserId(telegramUserId);
+    }
+
+    @Override
+    public ClientInfo create(Long telegramUserId, String telegramUserName) {
         final var clientInfo = new ClientInfo();
         clientInfo.setTelegramUserId(telegramUserId);
+        clientInfo.setTelegramUserName("@" + telegramUserName);
         clientInfo.setId(randomUUID());
         clientInfo.setState(INITIAL_START);
         clientInfo.setIsInBlackList(false);

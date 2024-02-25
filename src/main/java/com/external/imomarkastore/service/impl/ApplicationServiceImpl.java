@@ -119,6 +119,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         final var clientInfo = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
         final var clientName = Optional.ofNullable(clientInfo.getName()).orElse(EMPTY);
         final var clientPhoneNumber = Optional.ofNullable(clientInfo.getPhoneNumber()).orElse(EMPTY);
+        final var clientTelegramNickname = Optional.ofNullable(clientInfo.getTelegramUserName()).orElse(EMPTY);
         return messageSource.getMessage("template.owner.application",
                 Stream.of(
                                 application.getId().toString(),
@@ -129,6 +130,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(application.getCreatedAt()),
                                 clientName,
                                 clientPhoneNumber,
+                                clientTelegramNickname,
                                 application.isPaid() ? "+" : "-")
                         .map(string -> isBlank(string) ? EMPTY : string).toArray());
     }

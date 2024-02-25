@@ -39,7 +39,7 @@ public class StartExecutionService implements CommandExecutionService {
             final var clientInfo = clientInfoService.getByTelegramUserId(telegramUserId);
             sendRepeatedStartMessages(clientInfo);
         } catch (BusinessLogicException exception) {
-            clientInfoService.create(telegramUserId);
+            clientInfoService.create(telegramUserId, user.getUserName());
             sendStartMessages(telegramUserId);
         }
     }

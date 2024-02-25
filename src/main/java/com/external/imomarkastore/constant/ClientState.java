@@ -3,8 +3,8 @@ package com.external.imomarkastore.constant;
 import lombok.Getter;
 
 public enum ClientState {
-    INITIAL_START("Первое включение"),
-    REPEATED_START("Повторное включение"),
+    INITIAL_START("Первое включение '/start'"),
+    REPEATED_START("Повторное включение '/start'"),
     MAIN_MENU("Главное меню"),
     INITIAL_SET_NAME("Ввод имени"),
     INITIAL_SET_PHONE_NUMBER("Ввод номера телефона"),

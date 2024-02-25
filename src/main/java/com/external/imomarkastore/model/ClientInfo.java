@@ -35,6 +35,8 @@ public class ClientInfo {
     private String additionalJsonDataForNextOperations;
     @Setter
     private Boolean isInBlackList;
+    @Setter
+    private String telegramUserName;
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = scaleString(phoneNumber);

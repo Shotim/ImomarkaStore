@@ -12,13 +12,15 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import static com.external.imomarkastore.constant.OwnerState.BACK_FROM_BLACK_LIST;
 import static com.external.imomarkastore.constant.OwnerState.GET_BLACK_LIST;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -39,18 +41,20 @@ public class OwnerGetBlackListExecutionService implements OwnerActionExecuteServ
     public void execute(Update update) throws TelegramApiException {
         final var user = getUserFromUpdate(update);
         final var messageIdFromUpdate = getMessageIdFromUpdate(update);
-        final var activeClients = clientInfoService.getBlackListClients();
+        final var blackListClients = clientInfoService.getBlackListClients();
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         jsonDataObject.addProperty("receivedGetBlackListMessageId", messageIdFromUpdate);
-        if (activeClients.isEmpty()) {
+        if (blackListClients.isEmpty()) {
             entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton(
                     "owner.youDoNotHaveBlackListClients", user.getId(), jsonDataObject);
         } else {
             entitiesSendHelper.sendMessageForOwnerWithBackToMainMenuButton(
                     "owner.yourBlackListClients", user.getId(), jsonDataObject);
-            for (ClientInfo clientInfo : activeClients) {
+            for (ClientInfo clientInfo : blackListClients) {
                 final var text = messageSource.getMessage("template.owner.clientInfo",
-                        List.of(clientInfo.getName(), clientInfo.getPhoneNumber()).toArray());
+                        Stream.of(clientInfo.getName(), clientInfo.getPhoneNumber(), clientInfo.getTelegramUserName())
+                                .map(string -> isBlank(string) ? EMPTY : string)
+                                .toArray());
                 final var buttonName = messageSource.getMessage("buttonName.owner.returnFromBlackList");
                 final var clientInfoId = clientInfo.getId();
                 final var callbackData = "%s:%s"

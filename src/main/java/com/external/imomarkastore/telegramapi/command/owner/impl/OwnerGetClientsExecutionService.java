@@ -12,13 +12,15 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import static com.external.imomarkastore.constant.OwnerState.GET_CLIENTS;
 import static com.external.imomarkastore.constant.OwnerState.MOVE_CLIENT_TO_BLACK_LIST;
 import static com.external.imomarkastore.util.MessageUtils.createTextMessageForUserWithInlineButton;
 import static com.external.imomarkastore.util.UpdateUtils.getMessageIdFromUpdate;
 import static com.external.imomarkastore.util.UpdateUtils.getUserFromUpdate;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +52,9 @@ public class OwnerGetClientsExecutionService implements OwnerActionExecuteServic
                     "owner.yourActiveClients", user.getId(), jsonDataObject);
             for (ClientInfo clientInfo : activeClients) {
                 final var text = messageSource.getMessage("template.owner.clientInfo",
-                        List.of(clientInfo.getName(), clientInfo.getPhoneNumber()).toArray());
+                        Stream.of(clientInfo.getName(), clientInfo.getPhoneNumber(), clientInfo.getTelegramUserName())
+                                .map(string -> isBlank(string) ? EMPTY : string)
+                                .toArray());
                 final var buttonName = messageSource.getMessage("buttonName.owner.moveToBlackList");
                 final var clientInfoId = clientInfo.getId();
                 final var callbackData = "%s:%s"
