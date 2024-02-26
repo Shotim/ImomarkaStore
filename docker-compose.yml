@@ -1,0 +1,16 @@
+version: '3'
+services:
+  postgresql:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  java-application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgresql

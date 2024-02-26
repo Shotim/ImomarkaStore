@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.external</groupId>
-    <artifactId>ImomarkaStore</artifactId>
+    <artifactId>InomarkaStore</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ImomarkaStore</name>
-    <description>ImomarkaStore</description>
+    <name>InomarkaStore</name>
+    <description>InomarkaStore</description>
     <properties>
         <java.version>17</java.version>
     </properties>

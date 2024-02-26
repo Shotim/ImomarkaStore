@@ -13,3 +13,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+#bot:
+#  name: Магазин автозапчастей «Иномарка» г. Костомукша
+#  token: ${BOT_TOKEN}
+#  payment_token: ${BOT_PAYMENT_TOKEN}
+#  owner:
+#    telegram_id: ${BOT_OWNER_TELEGRAM_ID}
+#spring:
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    password: ${POSTGRES_PASSWORD}
+#    username: ${POSTGRES_USER}
+#    url: ${POSTGRES_URL}
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
