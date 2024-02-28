@@ -36,7 +36,7 @@ public class OwnerNewApplicationExecutionService implements OwnerActionExecuteSe
         final var callbackId = getCallbackIdFromUpdate(update);
         final var jsonDataObject = ownerInfoService.getJsonDataObject();
         if (jsonDataObject.has(callbackData)) {
-            for (JsonElement messageId : jsonDataObject.remove(callbackId).getAsJsonArray()) {
+            for (JsonElement messageId : jsonDataObject.remove(callbackData).getAsJsonArray()) {
                 final var messageIdAsInt = messageId.getAsInt();
                 deleteMessagesHelper.deleteMessageById(user.getId(), messageIdAsInt);
             }

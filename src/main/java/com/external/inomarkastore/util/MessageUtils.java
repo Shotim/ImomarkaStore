@@ -18,11 +18,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import static com.external.inomarkastore.config.ApplicationContextHolder.getBotMessageSource;
 import static com.external.inomarkastore.config.ApplicationContextHolder.getBotPaymentToken;
+import static java.util.UUID.randomUUID;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -140,7 +142,7 @@ public class MessageUtils {
                 .build();
     }
 
-    public static SendPhoto createSendPhotoForUserWithInlineKeyboard(Long telegramUserId, String text, String photoId, Map<String,String> buttonTextToCallbackData){
+    public static SendPhoto createSendPhotoForUserWithInlineKeyboard(Long telegramUserId, String text, String photoId, Map<String, String> buttonTextToCallbackData) {
         final var inlineKeyBoardMarkup = createInlineKeyBoardMarkup(buttonTextToCallbackData);
         return SendPhoto.builder()
                 .caption(text)
@@ -150,10 +152,36 @@ public class MessageUtils {
                 .build();
     }
 
-    public static SendMediaGroup createSendPhotoGroupForUser(Long telegramUserId, Integer replyMessageId, List<String> photoIds) {
+    public static SendPhoto createSendPhotoForUserWithInlineKeyboard(Long telegramUserId, String text, InputStream photo, Map<String, String> buttonTextToCallbackData) {
+        final var inlineKeyBoardMarkup = createInlineKeyBoardMarkup(buttonTextToCallbackData);
+        return SendPhoto.builder()
+                .caption(text)
+                .chatId(telegramUserId)
+                .replyMarkup(inlineKeyBoardMarkup)
+                .photo(new InputFile(photo, randomUUID().toString()))
+                .build();
+    }
+
+    public static SendMediaGroup createSendPhotoGroupForUserPhotoIds(Long telegramUserId, Integer replyMessageId, List<String> photoIds) {
         final var inputMediaPhotos = photoIds.stream()
                 .map(photoId ->
                         (InputMedia) new InputMediaPhoto(photoId))
+                .toList();
+        return SendMediaGroup.builder()
+                .chatId(telegramUserId)
+                .replyToMessageId(replyMessageId)
+                .medias(inputMediaPhotos)
+                .build();
+    }
+
+    public static SendMediaGroup createSendPhotoGroupForUserFiles(Long telegramUserId, Integer replyMessageId, List<InputStream> photos) {
+        final var inputMediaPhotos = photos.stream()
+                .map(photo ->
+                {
+                    final var inputMedia = new InputMediaPhoto();
+                    inputMedia.setMedia(photo, randomUUID().toString());
+                    return (InputMedia) inputMedia;
+                })
                 .toList();
         return SendMediaGroup.builder()
                 .chatId(telegramUserId)

@@ -44,6 +44,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public Application create(String phoneNumber) {
+        final var application = new Application();
+        application.setPhoneNumber(phoneNumber);
+        application.setStatus(CREATION_IN_PROGRESS);
+        application.setSentRequestForPayment(false);
+        application.setPaid(false);
+        return repository.save(application);
+    }
+
+    @Override
     public Application getById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() ->
@@ -116,7 +126,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .orElse(EMPTY);
         final var vinNumber = Optional.ofNullable(carDetails.getVinNumber())
                 .orElse(EMPTY);
-        final var clientInfo = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
+        final var clientInfo = clientInfoService.getByTelegramUserIdOrPhoneNumber(application.getTelegramUserId(), application.getPhoneNumber());
         final var clientName = Optional.ofNullable(clientInfo.getName()).orElse(EMPTY);
         final var clientPhoneNumber = Optional.ofNullable(clientInfo.getPhoneNumber()).orElse(EMPTY);
         final var clientTelegramNickname = Optional.ofNullable(clientInfo.getTelegramUserName()).orElse(EMPTY);

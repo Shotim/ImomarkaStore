@@ -44,8 +44,20 @@ public class InitialSetPhoneNumberExecutionService implements MessageExecutionSe
         try {
             final var text = getTextFromUpdate(update);
             final String formattedPhoneNumber = formatAndValidatePhoneNumber(text);
-            clientInfo.setPhoneNumber(formattedPhoneNumber);
-            clientInfo.setState(MAIN_MENU);
+            final var clientInfoOptional = clientInfoService.getByPhoneNumberOpt(formattedPhoneNumber);
+            if (clientInfoOptional.isPresent()) {
+                final var recentClientInfo = clientInfoOptional.get();
+                recentClientInfo.setName(clientInfo.getName());
+                recentClientInfo.setTelegramUserName(clientInfo.getTelegramUserName());
+                recentClientInfo.setTelegramUserId(clientInfo.getTelegramUserId());
+                recentClientInfo.setState(MAIN_MENU);
+                clientInfoService.update(recentClientInfo);
+                clientInfoService.deleteById(clientInfo.getId());
+            } else {
+                clientInfo.setPhoneNumber(formattedPhoneNumber);
+                clientInfo.setState(MAIN_MENU);
+                clientInfoService.update(clientInfo);
+            }
             final var updatedClientInfo = clientInfoService.update(clientInfo);
             sendMessages(update, updatedClientInfo);
         } catch (IllegalArgumentException exception) {

@@ -122,7 +122,7 @@ public class OwnerExportApplicationsExecutionService implements OwnerActionExecu
                 var rowNumber = 1;
                 for (Application application : applications) {
                     final var carDetails = carDetailsService.getById(application.getCarDetailsId());
-                    final var clientInfo = clientInfoService.getByTelegramUserId(application.getTelegramUserId());
+                    final var clientInfo = clientInfoService.getByTelegramUserIdOrPhoneNumber(application.getTelegramUserId(), application.getPhoneNumber());
                     final var row = sheet.createRow(rowNumber++);
                     final var cell0 = row.createCell(0);
                     cell0.setCellValue(application.getId());

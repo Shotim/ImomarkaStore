@@ -3,12 +3,16 @@ package com.external.inomarkastore.util;
 import lombok.NoArgsConstructor;
 
 import static lombok.AccessLevel.PRIVATE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ValidationUtils {
 
     public static String formatAndValidatePhoneNumber(String data) {
+        if (isBlank(data)) {
+            throw new IllegalArgumentException("Wrong phone number!");
+        }
         data = data.trim();
         if (data.startsWith("8")) {
             data = data.replaceFirst("8", "+7");

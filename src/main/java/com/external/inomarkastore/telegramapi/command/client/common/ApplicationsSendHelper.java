@@ -4,6 +4,7 @@ import com.external.inomarkastore.InomarkaStore;
 import com.external.inomarkastore.model.Application;
 import com.external.inomarkastore.service.ApplicationService;
 import com.external.inomarkastore.service.CarDetailsService;
+import com.external.inomarkastore.util.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -12,7 +13,6 @@ import java.util.List;
 
 import static com.external.inomarkastore.telegramapi.command.util.EntitiesSendHelperUtils.getPhotoIds;
 import static com.external.inomarkastore.util.MessageUtils.createSendPhotoForUser;
-import static com.external.inomarkastore.util.MessageUtils.createSendPhotoGroupForUser;
 import static com.external.inomarkastore.util.MessageUtils.createTextMessageForUser;
 import static com.external.inomarkastore.util.MessageUtils.createTextMessageForUserWithRemoveKeyBoard;
 
@@ -42,7 +42,7 @@ public class ApplicationsSendHelper {
                     final var applicationText = createTextMessageForUser(telegramUserId, applicationPayload);
                     final var message = inomarkaStore.execute(applicationText);
                     if (photoIds.size() > 1) {
-                        final var sendMediaGroup = createSendPhotoGroupForUser(
+                        final var sendMediaGroup = MessageUtils.createSendPhotoGroupForUserPhotoIds(
                                 telegramUserId, message.getMessageId(), photoIds);
                         inomarkaStore.execute(sendMediaGroup);
                     }

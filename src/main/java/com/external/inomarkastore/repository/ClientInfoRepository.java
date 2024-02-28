@@ -9,7 +9,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ClientInfoRepository extends JpaRepository<ClientInfo, UUID> {
+    Optional<ClientInfo> findByTelegramUserIdOrPhoneNumber(Long telegramUserId, String phoneNumber);
+
     Optional<ClientInfo> findByTelegramUserId(Long telegramUserId);
+
+    Optional<ClientInfo> findByPhoneNumber(String phoneNumber);
 
     @Query("SELECT ci FROM ClientInfo as ci WHERE ci.isInBlackList = false or ci.isInBlackList is null")
     List<ClientInfo> findActiveClients();

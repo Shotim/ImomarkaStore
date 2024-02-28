@@ -1,6 +1,7 @@
 package com.external.inomarkastore.util;
 
 import lombok.NoArgsConstructor;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -49,6 +50,15 @@ public class UpdateUtils {
 
     public static Optional<PhotoSize> getPhotoFromUpdate(Update update) {
         final var photoSizes = update.getMessage().getPhoto();
+        return isNull(photoSizes) ?
+                Optional.empty() :
+                photoSizes
+                        .stream()
+                        .max(comparingInt(PhotoSize::getFileSize));
+    }
+
+    public static Optional<PhotoSize> getPhotoFromMessage(Message message) {
+        final var photoSizes = message.getPhoto();
         return isNull(photoSizes) ?
                 Optional.empty() :
                 photoSizes

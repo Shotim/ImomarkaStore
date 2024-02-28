@@ -31,7 +31,14 @@ public class ClientInfoServiceImpl implements ClientInfoService {
     public ClientInfo getByTelegramUserId(Long telegramUserId) {
         return repository.findByTelegramUserId(telegramUserId)
                 .orElseThrow(() ->
-                        new BusinessLogicException("Could not find client by id: %s".formatted(telegramUserId)));
+                        new BusinessLogicException("Could not find client by telegram user id: %s".formatted(telegramUserId)));
+    }
+
+    @Override
+    public ClientInfo getByTelegramUserIdOrPhoneNumber(Long telegramUserId, String phoneNumber) {
+        return repository.findByTelegramUserIdOrPhoneNumber(telegramUserId, phoneNumber)
+                .orElseThrow(() ->
+                        new BusinessLogicException("Could not find client by telegram user id: %s or phoneNumber: %s".formatted(telegramUserId, phoneNumber)));
     }
 
     @Override
@@ -40,11 +47,27 @@ public class ClientInfoServiceImpl implements ClientInfoService {
     }
 
     @Override
+    public Optional<ClientInfo> getByPhoneNumberOpt(String phoneNumber) {
+        return repository.findByPhoneNumber(phoneNumber);
+    }
+
+    @Override
     public ClientInfo create(Long telegramUserId, String telegramUserName) {
         final var clientInfo = new ClientInfo();
         clientInfo.setTelegramUserId(telegramUserId);
         clientInfo.setTelegramUserName("@" + telegramUserName);
         clientInfo.setId(randomUUID());
+        clientInfo.setState(INITIAL_START);
+        clientInfo.setIsInBlackList(false);
+        return repository.save(clientInfo);
+    }
+
+    @Override
+    public ClientInfo create(String name, String phoneNumber) {
+        final var clientInfo = new ClientInfo();
+        clientInfo.setId(randomUUID());
+        clientInfo.setName(name);
+        clientInfo.setPhoneNumber(phoneNumber);
         clientInfo.setState(INITIAL_START);
         clientInfo.setIsInBlackList(false);
         return repository.save(clientInfo);
@@ -68,5 +91,10 @@ public class ClientInfoServiceImpl implements ClientInfoService {
     @Override
     public List<Long> getTelegramUserIds() {
         return repository.findTelegramUserIds();
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        repository.deleteById(id);
     }
 }

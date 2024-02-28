@@ -9,6 +9,8 @@ import java.util.List;
 public interface ApplicationService {
     Application create(Long telegramUserId, String phoneNumber);
 
+    Application create(String phoneNumber);
+
     Application getById(Long id);
 
     Application update(Application application);
