@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-alpine
+FROM openjdk:17-oracle
 MAINTAINER shostkotimofei@gmail.com
 COPY .mvn .mvn
 COPY src src
