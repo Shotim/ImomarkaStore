@@ -11,6 +11,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   java-application:
+    ports:
+      - "8080:8080"
     build:
       context: .
       dockerfile: Dockerfile
