@@ -140,7 +140,7 @@ public class MessageUtils {
                 .build();
     }
 
-    public static SendPhoto createSendPhotoForUserWithInlineKeyboard(Long telegramUserId, String text, String photoId, Map<String,String> buttonTextToCallbackData){
+    public static SendPhoto createSendPhotoForUserWithInlineKeyboard(Long telegramUserId, String text, String photoId, Map<String, String> buttonTextToCallbackData) {
         final var inlineKeyBoardMarkup = createInlineKeyBoardMarkup(buttonTextToCallbackData);
         return SendPhoto.builder()
                 .caption(text)
