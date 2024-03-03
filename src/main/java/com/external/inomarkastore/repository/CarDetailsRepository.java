@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface CarDetailsRepository extends JpaRepository<CarDetails, UUID> {
     @Query("SELECT car FROM CarDetails car WHERE (car.telegramUserId=?1 or car.phoneNumber=?2) AND car.carState=?3")
     List<CarDetails> findByTelegramUserIdOrPhoneNumberAndCarState(Long telegramUserId, String phoneNumber, CarState carState);
+
+    List<CarDetails> findByPhoneNumberAndCarState(String phoneNumber, CarState carState);
 }

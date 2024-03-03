@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.external.inomarkastore.constant.CarState.ACTIVE;
+import static java.util.Objects.isNull;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -47,8 +48,12 @@ public class CarDetailsServiceImpl implements CarDetailsService {
 
     @Override
     public List<CarDetails> getActiveCarDetailsForClient(ClientInfo clientInfo) {
-        return repository.findByTelegramUserIdOrPhoneNumberAndCarState(
-                clientInfo.getTelegramUserId(), clientInfo.getPhoneNumber(), ACTIVE);
+        final var telegramUserId = clientInfo.getTelegramUserId();
+        final var phoneNumber = clientInfo.getPhoneNumber();
+        return isNull(telegramUserId) ?
+                repository.findByPhoneNumberAndCarState(phoneNumber, ACTIVE) :
+                repository.findByTelegramUserIdOrPhoneNumberAndCarState(
+                        telegramUserId, phoneNumber, ACTIVE);
     }
 
     @Override

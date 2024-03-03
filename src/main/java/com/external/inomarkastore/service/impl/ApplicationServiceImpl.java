@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import static com.external.inomarkastore.constant.ApplicationStatus.ARCHIVED;
 import static com.external.inomarkastore.constant.ApplicationStatus.CREATION_IN_PROGRESS;
 import static com.external.inomarkastore.constant.ApplicationStatus.FULLY_CREATED;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -67,8 +68,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getFullyCreatedApplicationsForClient(ClientInfo clientInfo) {
-        return repository.findByStatusAndTelegramUserIdOrPhoneNumber(
-                FULLY_CREATED, clientInfo.getTelegramUserId(), clientInfo.getPhoneNumber());
+        final var telegramUserId = clientInfo.getTelegramUserId();
+        final var phoneNumber = clientInfo.getPhoneNumber();
+        return isNull(telegramUserId) ?
+                repository.findByStatusAndPhoneNumber(FULLY_CREATED, phoneNumber) :
+                repository.findByStatusAndTelegramUserIdOrPhoneNumber(
+                        FULLY_CREATED, telegramUserId, phoneNumber);
     }
 
     @Override
@@ -83,8 +88,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getArchivedApplicationsForClient(ClientInfo clientInfo) {
-        return repository.findByStatusAndTelegramUserIdOrPhoneNumber(
-                ARCHIVED, clientInfo.getTelegramUserId(), clientInfo.getPhoneNumber());
+        final var telegramUserId = clientInfo.getTelegramUserId();
+        final var phoneNumber = clientInfo.getPhoneNumber();
+        return isNull(telegramUserId) ?
+                repository.findByStatusAndPhoneNumber(ARCHIVED, phoneNumber) :
+                repository.findByStatusAndTelegramUserIdOrPhoneNumber(
+                        ARCHIVED, telegramUserId, phoneNumber);
     }
 
     @Override

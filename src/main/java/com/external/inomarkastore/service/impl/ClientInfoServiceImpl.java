@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.external.inomarkastore.constant.ClientState.INITIAL_START;
+import static java.util.Objects.isNull;
 import static java.util.UUID.randomUUID;
 
 @Service
@@ -36,7 +37,9 @@ public class ClientInfoServiceImpl implements ClientInfoService {
 
     @Override
     public ClientInfo getByTelegramUserIdOrPhoneNumber(Long telegramUserId, String phoneNumber) {
-        return repository.findByTelegramUserIdOrPhoneNumber(telegramUserId, phoneNumber)
+        final var clientInfoOptional = isNull(telegramUserId) ? repository.findByPhoneNumber(phoneNumber) :
+                repository.findByTelegramUserIdOrPhoneNumber(telegramUserId, phoneNumber);
+        return clientInfoOptional
                 .orElseThrow(() ->
                         new BusinessLogicException("Could not find client by telegram user id: %s or phoneNumber: %s".formatted(telegramUserId, phoneNumber)));
     }
