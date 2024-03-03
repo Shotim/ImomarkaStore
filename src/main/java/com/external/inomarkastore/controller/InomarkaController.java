@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,39 +55,6 @@ public class InomarkaController {
     private final BotMessageSource messageSource;
     private final EntitiesSendHelper entitiesSendHelper;
     private final InomarkaStore inomarkaStore;
-
-    @SneakyThrows
-    @Transactional
-    @PostMapping("/application")
-    public ResponseEntity<String> createApplication(@RequestParam("text") String applicationInputDto,
-                                                    @RequestParam("vinNumberPhoto") MultipartFile vinNumberPhoto,
-                                                    @RequestParam("mainPurposePhoto") MultipartFile mainPurposePhoto) {
-        final var applicationInput = new Gson().fromJson(applicationInputDto, ApplicationInputDto.class);
-        validateInput(applicationInput, vinNumberPhoto, mainPurposePhoto);
-        saveApplicationAndSendMessagesToOwner(applicationInput, vinNumberPhoto, mainPurposePhoto);
-        return ResponseEntity.ok("Done");
-    }
-
-    private void validateInput(ApplicationInputDto applicationInput, MultipartFile vinNumberPhoto, MultipartFile mainPurposePhoto) {
-        final var carDetails = applicationInput.getCarDetails();
-        final var comment = applicationInput.getComment();
-        final var name = applicationInput.getName();
-        final var mainPurpose = applicationInput.getMainPurpose();
-        final var vinNumber = applicationInput.getVinNumber();
-        final var phoneNumber = applicationInput.getPhoneNumber();
-        final var errors = new ArrayList<String>();
-        validateCarDetails(carDetails, errors);
-        validateComment(comment, errors);
-        validateName(name, errors);
-        validatePhoneNumber(applicationInput, phoneNumber, errors);
-        validateMainPurpose(mainPurposePhoto, mainPurpose, errors);
-        validateVinNumber(applicationInput, vinNumberPhoto, vinNumber, errors);
-        if (!errors.isEmpty()) {
-            final var errorMessage = errors.stream()
-                    .collect(joining("; ", "Errors: ", EMPTY));
-            throw new ResponseStatusException(BAD_REQUEST, errorMessage);
-        }
-    }
 
     private static void validateVinNumber(ApplicationInputDto applicationInput, MultipartFile vinNumberPhoto, String vinNumber, ArrayList<String> errors) {
         if (isBlank(vinNumber) == vinNumberPhoto.isEmpty()) {
@@ -135,6 +103,40 @@ public class InomarkaController {
     private static void validateCarDetails(String carDetails, ArrayList<String> errors) {
         if (isBlank(carDetails) || carDetails.length() >= 255) {
             errors.add("Car details should be not empty and less than 255 characters");
+        }
+    }
+
+    @SneakyThrows
+    @Transactional
+    @PostMapping("/application")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<String> createApplication(@RequestParam("text") String applicationInputDto,
+                                                    @RequestParam("vinNumberPhoto") MultipartFile vinNumberPhoto,
+                                                    @RequestParam("mainPurposePhoto") MultipartFile mainPurposePhoto) {
+        final var applicationInput = new Gson().fromJson(applicationInputDto, ApplicationInputDto.class);
+        validateInput(applicationInput, vinNumberPhoto, mainPurposePhoto);
+        saveApplicationAndSendMessagesToOwner(applicationInput, vinNumberPhoto, mainPurposePhoto);
+        return ResponseEntity.ok("Done");
+    }
+
+    private void validateInput(ApplicationInputDto applicationInput, MultipartFile vinNumberPhoto, MultipartFile mainPurposePhoto) {
+        final var carDetails = applicationInput.getCarDetails();
+        final var comment = applicationInput.getComment();
+        final var name = applicationInput.getName();
+        final var mainPurpose = applicationInput.getMainPurpose();
+        final var vinNumber = applicationInput.getVinNumber();
+        final var phoneNumber = applicationInput.getPhoneNumber();
+        final var errors = new ArrayList<String>();
+        validateCarDetails(carDetails, errors);
+        validateComment(comment, errors);
+        validateName(name, errors);
+        validatePhoneNumber(applicationInput, phoneNumber, errors);
+        validateMainPurpose(mainPurposePhoto, mainPurpose, errors);
+        validateVinNumber(applicationInput, vinNumberPhoto, vinNumber, errors);
+        if (!errors.isEmpty()) {
+            final var errorMessage = errors.stream()
+                    .collect(joining("; ", "Errors: ", EMPTY));
+            throw new ResponseStatusException(BAD_REQUEST, errorMessage);
         }
     }
 
