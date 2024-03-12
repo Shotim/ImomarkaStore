@@ -2,7 +2,6 @@ FROM openjdk:17-oracle
 MAINTAINER shostkotimofei@gmail.com
 COPY .mvn .mvn
 COPY src src
-COPY .env .env
 COPY lombok.config lombok.config
 COPY pom.xml pom.xml
 COPY mvnw mvnw

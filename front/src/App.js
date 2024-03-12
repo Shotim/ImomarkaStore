@@ -149,7 +149,7 @@ function ApplicationForm() {
             requestFormData.append("text", payload);
             requestFormData.append("vinNumberPhoto", vinNumberFile ? vinNumberFile : new Blob([]));
             requestFormData.append("mainPurposePhoto", mainPurposeFile ? mainPurposeFile : new Blob([]));
-            const url = `http://localhost:8080/application`;
+            const url = `http://localhost:80/api/application`;
             console.log(url);
             axios.post(url,
                 requestFormData, {
